@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_contrasena"
+        android:icon="@drawable/ic_contrasena"
+        android:title="@string/title_contrasenas" />
+
+    <item
+        android:id="@+id/navigation_cuentas"
+        android:icon="@drawable/ic_banco"
+        android:title="@string/title_cuentas" />
+
+    <item
+        android:id="@+id/navigation_tarjetas"
+        android:icon="@drawable/ic_card"
+        android:title="@string/title_tarjetas" />
+
+    <item
+        android:id="@+id/navigation_notas"
+        android:icon="@drawable/ic_nota"
+        android:title="@string/title_notas" />
+
+</menu>

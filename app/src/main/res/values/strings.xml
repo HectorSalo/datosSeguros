@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">datosSeguros</string>
+    <string name="title_contrasenas">Contraseñas</string>
+    <string name="title_cuentas">Cuentas Bancarias</string>
+    <string name="title_tarjetas">Tarjetas Bancarias</string>
+    <string name="title_notas">Notas</string>
+</resources>
