@@ -34,15 +34,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, int i) {
 
-        /*viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
+        viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
         viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
         viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
-        viewHolderContrasena.vencimiento.setText(listContrasena.get(i).getVencimiento());*/
-
-        viewHolderContrasena.servicio.setText("PRueba");
-        viewHolderContrasena.usuario.setText("Linea 2");
-        viewHolderContrasena.contrasena.setText("Linea 3");
-        viewHolderContrasena.vencimiento.setText("Linea 4");
+        viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
 
     }
 

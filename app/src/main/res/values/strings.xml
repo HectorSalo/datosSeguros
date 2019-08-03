@@ -7,7 +7,21 @@
 
     <!-- Cardview contraseña -->
     <string name="servicio">Servicio:</string>
-    <string name="usuario">Usurario:</string>
+    <string name="usuario">Usuario:</string>
     <string name="contrasena">Contraseña:</string>
     <string name="vencimiento">Vencimiento:</string>
+
+    <!-- Cardview banco -->
+    <string name="titular">Titular:</string>
+    <string name="banco">Banco:</string>
+    <string name="numeroCuenta">Cuenta N°:</string>
+    <string name="cedula">Cedula:</string>
+    <string name="tipodeCuenta">Tipo:</string>
+    <string name="telefono">Telefono:</string>
+
+    <!-- Cardview tarjeta -->
+    <string name="numeroTarjeta">Tarjeta N°:</string>
+    <string name="numeroCVV">CVV N°:</string>
+    <string name="tipodeTarjeta">Tipo Tarjeta:</string>
+
 </resources>
