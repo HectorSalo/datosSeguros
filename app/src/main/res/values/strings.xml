@@ -1,7 +1,13 @@
 <resources>
-    <string name="app_name">datosSeguros</string>
+    <string name="app_name">Datos Seguros</string>
     <string name="title_contrasenas">Contraseñas</string>
     <string name="title_cuentas">Cuentas Bancarias</string>
     <string name="title_tarjetas">Tarjetas Bancarias</string>
     <string name="title_notas">Notas</string>
+
+    <!-- Cardview contraseña -->
+    <string name="servicio">Servicio:</string>
+    <string name="usuario">Usurario:</string>
+    <string name="contrasena">Contraseña:</string>
+    <string name="vencimiento">Vencimiento:</string>
 </resources>
