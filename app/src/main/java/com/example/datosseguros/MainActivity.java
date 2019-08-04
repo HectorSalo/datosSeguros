@@ -1,5 +1,6 @@
 package com.example.datosseguros;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
@@ -9,6 +10,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.datosseguros.Adpatadores.AdapterTarjeta;
@@ -43,19 +45,15 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_contrasena:
                     verContrasena();
-                    fabAdd.setImageResource(R.drawable.ic_add_contrasena);
                     return true;
                 case R.id.navigation_cuentas:
                     verCuentasBancarias();
-                    fabAdd.setImageResource(R.drawable.ic_add_banco);
                     return true;
                 case R.id.navigation_tarjetas:
                     verTarjetas();
-                    fabAdd.setImageResource(R.drawable.ic_add_card);
                     return true;
                 case R.id.navigation_notas:
                     verNotas();
-                    fabAdd.setImageResource(R.drawable.ic_add_nota);
                     return true;
             }
             return false;
@@ -76,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
         verContrasena();
 
         fabAdd = (FloatingActionButton) findViewById(R.id.fab_agregar);
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AddActivity.class));
+            }
+        });
 
     }
 

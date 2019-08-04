@@ -1,7 +1,7 @@
 package com.example.datosseguros.Constructores;
 
 public class NotaConstructor {
-    String titulo, contenido;
+    private String titulo, contenido;
 
     public NotaConstructor() {}
 
