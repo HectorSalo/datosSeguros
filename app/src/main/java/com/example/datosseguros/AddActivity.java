@@ -3,8 +3,12 @@ package com.example.datosseguros;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.net.Uri;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import androidx.fragment.app.FragmentTransaction;
+
+
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;

@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Servicio"
+            android:hint="@string/servicio"
             android:inputType="textPersonName" />
 
         <EditText
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Usuario"
+            android:hint="@string/usuario"
             android:inputType="textPersonName" />
 
         <EditText
@@ -32,15 +32,63 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Contraseña"
+            android:hint="@string/contrasena"
             android:inputType="textPersonName" />
 
-        <EditText
-            android:id="@+id/etVencimiento"
+        <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Vencimiento"
-            android:inputType="textPersonName" />
+            android:text="@string/caducidad"
+            android:textSize="18dp" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <RadioButton
+                android:id="@+id/radioButton30"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/treinta" />
+
+            <RadioButton
+                android:id="@+id/radioButton60"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/sesenta" />
+
+            <RadioButton
+                android:id="@+id/radioButton90"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/noventa" />
+
+            <RadioButton
+                android:id="@+id/radioButton120"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cientoVeinte" />
+
+            <RadioButton
+                android:id="@+id/radioButtonOtro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/otro" />
+
+            <RadioButton
+                android:id="@+id/radioButtonIndeterminado"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/indeterminado" />
+        </RadioGroup>
+
     </LinearLayout>
+
 </FrameLayout>

@@ -2,16 +2,15 @@ package com.example.datosseguros;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datosseguros.Adpatadores.AdapterTarjeta;
 import com.example.datosseguros.Adpatadores.BancoAdapter;
@@ -21,6 +20,8 @@ import com.example.datosseguros.Constructores.BancoConstructor;
 import com.example.datosseguros.Constructores.ContrasenaConstructor;
 import com.example.datosseguros.Constructores.NotaConstructor;
 import com.example.datosseguros.Constructores.TarjetaConstructor;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 

@@ -24,7 +24,13 @@
     <string name="numeroCVV">CVV N°:</string>
     <string name="tipodeTarjeta">Tipo Tarjeta:</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Add Constraseña -->
+    <string name="caducidad">Caducidad de la contraseña:</string>
+    <string name="treinta">30 días</string>
+    <string name="sesenta">60 días</string>
+    <string name="noventa">90 días</string>
+    <string name="cientoVeinte">120 días</string>
+    <string name="otro">Otro</string>
+    <string name="indeterminado">Indeterminado</string>
 
 </resources>

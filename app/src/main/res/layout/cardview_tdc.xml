@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:cardBackgroundColor="#AC5AE2"
+        app:cardBackgroundColor="#009688"
         app:cardCornerRadius="16dp"
         app:cardElevation="32dp"
         app:cardPreventCornerOverlap="false"
@@ -43,14 +43,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/titular" />
+                    android:text="@string/titular"
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tvTitularTarjeta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="18dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -64,14 +66,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/numeroTarjeta" />
+                    android:text="@string/numeroTarjeta"
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tvnumeroTarjeta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="18dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -85,14 +89,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/numeroCVV" />
+                    android:text="@string/numeroCVV"
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tvnumeroCVV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="18dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -106,14 +112,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/cedula" />
+                    android:text="@string/cedula"
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tvCedulaTarjeta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="18dp"/>
             </LinearLayout>
 
             <LinearLayout
@@ -127,17 +135,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/tipodeCuenta" />
+                    android:text="@string/tipodeCuenta"
+                    android:textSize="18dp"/>
 
                 <TextView
                     android:id="@+id/tvTipoTarjeta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textSize="18dp"/>
             </LinearLayout>
 
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

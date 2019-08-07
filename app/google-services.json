@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "968596526321",
+    "firebase_url": "https://datos-seguros.firebaseio.com",
+    "project_id": "datos-seguros",
+    "storage_bucket": "datos-seguros.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:968596526321:android:3d30ea5c105e10ca",
+        "android_client_info": {
+          "package_name": "com.example.datosseguros"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "968596526321-62uubaiipgoee14jgak7fhhvtes0u1ji.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.datosseguros",
+            "certificate_hash": "d827183ffa2847f9b61136ed17fedfabdf0dfd96"
+          }
+        },
+        {
+          "client_id": "968596526321-3743ajtp9fn3rt6dplm6pvj9pc475ts3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF46o8EjxnTO9locDsTSvoWch0i9FQcKs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "968596526321-3743ajtp9fn3rt6dplm6pvj9pc475ts3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
