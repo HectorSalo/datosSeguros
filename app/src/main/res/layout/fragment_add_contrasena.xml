@@ -43,6 +43,7 @@
             android:textSize="18dp" />
 
         <RadioGroup
+            android:id="@+id/radioDias"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
 
@@ -75,19 +76,29 @@
                 android:text="@string/cientoVeinte" />
 
             <RadioButton
-                android:id="@+id/radioButtonOtro"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/otro" />
-
-            <RadioButton
                 android:id="@+id/radioButtonIndeterminado"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/indeterminado" />
+
+            <RadioButton
+                android:id="@+id/radioButtonOtro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/otro" />
         </RadioGroup>
+
+        <EditText
+            android:id="@+id/etIngreseOtro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/ingreseTiempo"
+            android:inputType="textPersonName"
+            android:visibility="gone"
+            />
 
     </LinearLayout>
 

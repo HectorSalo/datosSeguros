@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RadioButton;
 
 import com.example.datosseguros.R;
 
@@ -21,8 +23,10 @@ import com.example.datosseguros.R;
  * create an instance of this fragment.
  */
 public class AddCuentasFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono;
+    private RadioButton rbAhorro, rbCorriente;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -67,7 +71,17 @@ public class AddCuentasFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_cuentas, container, false);
+        View vista = inflater.inflate(R.layout.fragment_add_cuentas, container, false);
+
+        etTitular = (EditText) vista.findViewById(R.id.etTitular);
+        etBanco = (EditText) vista.findViewById(R.id.etBanco);
+        etNumeroCuenta = (EditText) vista.findViewById(R.id.etnumeroCuenta);
+        etCedula = (EditText) vista.findViewById(R.id.etCedulaCuenta);
+        etTelefono = (EditText) vista.findViewById(R.id.etTelefono);
+        rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorro);
+        rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
+
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

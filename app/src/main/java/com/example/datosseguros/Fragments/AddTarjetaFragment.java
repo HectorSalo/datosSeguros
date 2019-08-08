@@ -6,9 +6,12 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.RadioButton;
 
 import com.example.datosseguros.R;
 
@@ -21,8 +24,10 @@ import com.example.datosseguros.R;
  * create an instance of this fragment.
  */
 public class AddTarjetaFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
+    private EditText etTitular, etTarjeta, etCVV, etCedula;
+    private RadioButton rbVisa, rbMastercard, rbOtro;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -66,8 +71,16 @@ public class AddTarjetaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_add_tarjeta, container, false);
+        View vista = inflater.inflate(R.layout.fragment_add_tarjeta, container, false);
+
+        etTitular = (EditText) vista.findViewById(R.id.etTitularTarjeta);
+        etCedula = (EditText) vista.findViewById(R.id.etCedulaTarjeta);
+        etTarjeta = (EditText) vista.findViewById(R.id.etTarjeta);
+        etCVV = (EditText) vista.findViewById(R.id.etnumeroCVV);
+        rbMastercard = (RadioButton)vista.findViewById(R.id.radioButtonMaster);
+        rbVisa = (RadioButton) vista.findViewById(R.id.radioButtonVisa);
+        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjeta);
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

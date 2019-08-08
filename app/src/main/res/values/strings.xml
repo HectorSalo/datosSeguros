@@ -31,6 +31,16 @@
     <string name="noventa">90 días</string>
     <string name="cientoVeinte">120 días</string>
     <string name="otro">Otro</string>
+    <string name="ingreseTiempo">Ingrese N° de días:</string>
     <string name="indeterminado">Indeterminado</string>
+
+    <!-- Add Cuenta -->
+    <string name="cuentaAhorro">Ahorro</string>
+    <string name="cuentaCorriente">Corriente</string>
+
+    <!-- Add Tarjeta -->
+    <string name="tarjetaVisa">Visa</string>
+    <string name="tarjetaMaster">Mastercard</string>
+    <string name="otroTarjeta">Ingrese tipo de Tarjeta</string>
 
 </resources>

@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Titular"
+            android:hint="@string/titular"
             android:inputType="textPersonName" />
 
         <EditText
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Banco"
+            android:hint="@string/banco"
             android:inputType="textPersonName" />
 
         <EditText
@@ -32,23 +32,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Cuenta N°"
+            android:hint="@string/numeroCuenta"
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/etCedula"
+            android:id="@+id/etCedulaCuenta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Cedula"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/etTipo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Tipo"
+            android:hint="@string/cedula"
             android:inputType="textPersonName" />
 
         <EditText
@@ -56,8 +48,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Telefono"
+            android:hint="@string/telefono"
             android:inputType="textPersonName" />
+
+        <TextView
+            android:id="@+id/etTipo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="@string/tipodeCuenta"
+            android:textSize="18dp" />
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/radioButtonAhorro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cuentaAhorro" />
+
+            <RadioButton
+                android:id="@+id/radioButtonCorriente"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/cuentaCorriente" />
+
+        </RadioGroup>
     </LinearLayout>
 
 </FrameLayout>

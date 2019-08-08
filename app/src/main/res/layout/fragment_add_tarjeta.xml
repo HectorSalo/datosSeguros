@@ -12,11 +12,11 @@
 
 
         <EditText
-            android:id="@+id/etTitular"
+            android:id="@+id/etTitularTarjeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Titular"
+            android:hint="@string/titular"
             android:inputType="textPersonName" />
 
         <EditText
@@ -24,7 +24,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Tarjeta N°"
+            android:hint="@string/numeroTarjeta"
             android:inputType="textPersonName" />
 
         <EditText
@@ -32,24 +32,60 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="CVV N°"
+            android:hint="@string/numeroCVV"
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/etCedula"
+            android:id="@+id/etCedulaTarjeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Cedula"
+            android:hint="@string/cedula"
             android:inputType="textPersonName" />
 
-        <EditText
+        <TextView
             android:id="@+id/etTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Tipo"
-            android:inputType="textPersonName" />
+            android:text="@string/tipodeCuenta"
+            android:textSize="18dp" />
+
+        <RadioGroup
+            android:id="@+id/radioTarjeta"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <RadioButton
+                android:id="@+id/radioButtonVisa"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tarjetaVisa" />
+
+            <RadioButton
+                android:id="@+id/radioButtonMaster"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tarjetaMaster" />
+
+            <RadioButton
+                android:id="@+id/radioButtonOtroTarjeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/otro" />
+        </RadioGroup>
+
+        <EditText
+            android:id="@+id/editTextOtroTarjeta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="@string/otroTarjeta"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
