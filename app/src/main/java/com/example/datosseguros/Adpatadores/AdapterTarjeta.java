@@ -2,14 +2,17 @@ package com.example.datosseguros.Adpatadores;
 
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datosseguros.Constructores.TarjetaConstructor;
@@ -54,9 +57,11 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
+                                copiar();
                                 break;
 
                             case R.id.menu_compartir:
+                                compartir();
                                 break;
 
                             case R.id.menu_editar:
@@ -96,5 +101,53 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
             tipoTarjeta = (TextView) itemView.findViewById(R.id.tvTipoTarjeta);
             menu = (TextView) itemView.findViewById(R.id.tvmenuTarjeta);
         }
+    }
+
+    public void copiar() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+        dialog.setTitle("¿Qué desea copiar?");
+        dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+            }
+        });
+        dialog.setPositiveButton("Copiar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public void compartir() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+        dialog.setTitle("¿Qué desea compartir?");
+        dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+            }
+        });
+        dialog.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

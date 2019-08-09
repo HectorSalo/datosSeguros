@@ -23,7 +23,9 @@ import java.util.ArrayList;
 public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.ViewHolderContrasena> {
 
     private ArrayList<ContrasenaConstructor> listContrasena;
+    private ArrayList<String> selectedItems;
     private Context mCtx;
+
 
     public ContrasenaAdapter (ArrayList<ContrasenaConstructor> listContrasena, Context mCtx) {
         this.listContrasena = listContrasena;
@@ -39,7 +41,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, int i) {
+    public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
 
         viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
         viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
@@ -60,7 +62,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                                 break;
 
                             case R.id.menu_compartir:
-                                compartir();
+                                compartir(listContrasena.get(i));
                                 break;
 
                             case R.id.menu_editar:
@@ -125,19 +127,33 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         dialog.show();
     }
 
-    public void compartir() {
+    public void compartir(final ContrasenaConstructor i) {
+        selectedItems = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
         dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
 
+                String servicio = i.getServicio();
+                String usuario = i.getUsuario();
+                String contrasena = i.getContrasena();
+
+                if (isChecked) {
+                    //selectedItems.add(items[which]);
+                } else {
+                    //selectedItems.remove(items[which]);
+                }
             }
         });
         dialog.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
+                String selection = "";
+                for (String item: selectedItems) {
+                    selection = selection + "\n" + item;
+                }
+                Toast.makeText(mCtx, selection, Toast.LENGTH_SHORT).show();
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
