@@ -2,12 +2,17 @@ package com.example.datosseguros.Adpatadores;
 
 import android.content.Context;
 
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datosseguros.Constructores.ContrasenaConstructor;
@@ -34,12 +39,45 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, int i) {
+    public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, int i) {
 
         viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
         viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
         viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
         viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
+
+        viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderContrasena.menu);
+                popupMenu.inflate(R.menu.menu_contrasena);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_copiar:
+                                copiar();
+                                break;
+
+                            case R.id.menu_compartir:
+                                compartir();
+                                break;
+
+                            case R.id.menu_editar:
+                                break;
+
+                            case R.id.menu_eliminar:
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
 
     }
 
@@ -50,7 +88,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
 
     public class ViewHolderContrasena extends RecyclerView.ViewHolder {
 
-        TextView servicio, usuario, contrasena, vencimiento;
+        TextView servicio, usuario, contrasena, vencimiento, menu;
 
         public ViewHolderContrasena(@NonNull View itemView) {
             super(itemView);
@@ -59,6 +97,55 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
             usuario = (TextView) itemView.findViewById(R.id.tvUsuario);
             contrasena = (TextView) itemView.findViewById(R.id.tvContrasena);
             vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
         }
+    }
+
+    public void copiar() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+        dialog.setTitle("¿Qué desea copiar?");
+        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+            }
+        });
+        dialog.setPositiveButton("Copiar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
+
+    public void compartir() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+        dialog.setTitle("¿Qué desea compartir?");
+        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+
+            }
+        });
+        dialog.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
+            }
+        });
+        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 }

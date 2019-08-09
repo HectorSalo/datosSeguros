@@ -6,7 +6,7 @@
     tools:context=".Fragments.AddNotaFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -16,7 +16,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Titulo"
+            android:hint="@string/tituloNota"
             android:inputType="textPersonName" />
 
         <EditText
@@ -24,8 +24,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Contenido"
+            android:hint="@string/contenidoNota"
             android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/guardarNota"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="64dp"
+            android:text="@string/buttonGuardar" />
 
 
     </LinearLayout>

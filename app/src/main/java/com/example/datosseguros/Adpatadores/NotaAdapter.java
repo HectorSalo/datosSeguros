@@ -3,8 +3,10 @@ package com.example.datosseguros.Adpatadores;
 import android.content.Context;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,10 +35,41 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderNota viewHolderNota, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderNota viewHolderNota, int i) {
 
         viewHolderNota.titulo.setText(listNota.get(i).getTitulo());
         viewHolderNota.contenido.setText(listNota.get(i).getContenido());
+
+        viewHolderNota.menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderNota.menu);
+                popupMenu.inflate(R.menu.menu_nota);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_copiar:
+                                break;
+
+                            case R.id.menu_compartir:
+                                break;
+
+                            case R.id.menu_editar:
+                                break;
+
+                            case R.id.menu_eliminar:
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
 
     }
 
@@ -47,13 +80,14 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
 
     public class ViewHolderNota extends RecyclerView.ViewHolder {
 
-        TextView titulo, contenido;
+        TextView titulo, contenido, menu;
 
         public ViewHolderNota(@NonNull View itemView) {
             super(itemView);
 
             titulo = (TextView) itemView.findViewById(R.id.tvTituloNota);
             contenido = (TextView) itemView.findViewById(R.id.tvcontenidoNota);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuNota);
         }
     }
 }

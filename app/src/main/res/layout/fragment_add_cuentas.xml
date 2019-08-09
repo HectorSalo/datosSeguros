@@ -6,7 +6,7 @@
     tools:context=".Fragments.AddCuentasFragment">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
@@ -79,6 +79,14 @@
                 android:text="@string/cuentaCorriente" />
 
         </RadioGroup>
+
+        <Button
+            android:id="@+id/guardarCuenta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="64dp"
+            android:text="@string/buttonGuardar" />
     </LinearLayout>
 
 </FrameLayout>

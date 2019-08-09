@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
@@ -80,6 +81,14 @@ public class AddCuentasFragment extends Fragment {
         etTelefono = (EditText) vista.findViewById(R.id.etTelefono);
         rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorro);
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
+
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarCuenta);
+        buttonGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         return vista;
     }

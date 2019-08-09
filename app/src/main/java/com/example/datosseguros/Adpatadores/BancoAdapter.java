@@ -3,8 +3,10 @@ package com.example.datosseguros.Adpatadores;
 import android.content.Context;
 
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,7 +36,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderBanco viewHolderBanco, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderBanco viewHolderBanco, int i) {
 
         viewHolderBanco.titular.setText(listBanco.get(i).getTitular());
         viewHolderBanco.banco.setText(listBanco.get(i).getBanco());
@@ -42,6 +44,37 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
         viewHolderBanco.cedula.setText(String.valueOf(listBanco.get(i).getCedula()));
         viewHolderBanco.tipo.setText(listBanco.get(i).getTipo());
         viewHolderBanco.telefono.setText(String.valueOf(listBanco.get(i).getTelefono()));
+
+        viewHolderBanco.menu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderBanco.menu);
+                popupMenu.inflate(R.menu.menu_banco);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        switch (item.getItemId()) {
+                            case R.id.menu_copiar:
+                                break;
+
+                            case R.id.menu_compartir:
+                                break;
+
+                            case R.id.menu_editar:
+                                break;
+
+                            case R.id.menu_eliminar:
+                                break;
+
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+                popupMenu.show();
+            }
+        });
 
     }
 
@@ -52,7 +85,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
 
     public class ViewHolderBanco extends RecyclerView.ViewHolder {
 
-        TextView titular, banco, numeroCuenta, cedula, tipo, telefono;
+        TextView titular, banco, numeroCuenta, cedula, tipo, telefono, menu;
 
         public ViewHolderBanco(@NonNull View itemView) {
             super(itemView);
@@ -63,6 +96,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
             cedula = (TextView) itemView.findViewById(R.id.tvCedula);
             tipo = (TextView) itemView.findViewById(R.id.tvTipo);
             telefono = (TextView) itemView.findViewById(R.id.tvTelefono);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuBanco);
 
         }
     }

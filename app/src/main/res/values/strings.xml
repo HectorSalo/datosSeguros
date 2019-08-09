@@ -4,6 +4,8 @@
     <string name="title_cuentas">Cuentas Bancarias</string>
     <string name="title_tarjetas">Tarjetas Bancarias</string>
     <string name="title_notas">Notas</string>
+    <string name="buttonGuardar">Guardar</string>
+
 
     <!-- Cardview contraseña -->
     <string name="servicio">Servicio:</string>
@@ -42,5 +44,22 @@
     <string name="tarjetaVisa">Visa</string>
     <string name="tarjetaMaster">Mastercard</string>
     <string name="otroTarjeta">Ingrese tipo de Tarjeta</string>
+
+    <!-- Add Nota -->
+    <string name="tituloNota">Título de la nota</string>
+    <string name="contenidoNota">Ingrese su nota</string>
+
+    <!-- Menu Contrasena -->
+    <string name="copiar">Copiar</string>
+    <string name="compartir">Compartir</string>
+    <string name="editar">Editar</string>
+    <string name="eliminar">Eliminar</string>
+
+    <!-- Copiar Contrasena -->
+    <string-array name="copiarContrasena">
+        <item>Servicio</item>
+        <item>Usuario</item>
+        <item>Contraseña</item>
+    </string-array>
 
 </resources>

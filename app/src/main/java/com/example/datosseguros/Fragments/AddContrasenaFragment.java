@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -29,6 +30,7 @@ public class AddContrasenaFragment extends Fragment {
     private EditText etServicio, etUsuario, etContrasena, etOtroDias;
     private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
     private RadioGroup radioGroup;
+
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -116,6 +118,14 @@ public class AddContrasenaFragment extends Fragment {
                         etOtroDias.setVisibility(View.VISIBLE);
                         break;
                 }
+            }
+        });
+
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarContrasena);
+        buttonGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 

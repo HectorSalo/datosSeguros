@@ -10,8 +10,10 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import com.example.datosseguros.R;
 
@@ -25,8 +27,9 @@ import com.example.datosseguros.R;
  */
 public class AddTarjetaFragment extends Fragment {
 
-    private EditText etTitular, etTarjeta, etCVV, etCedula;
+    private EditText etTitular, etTarjeta, etCVV, etCedula, etOtroTarjeta;
     private RadioButton rbVisa, rbMastercard, rbOtro;
+    private RadioGroup radioTarjeta;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -77,9 +80,39 @@ public class AddTarjetaFragment extends Fragment {
         etCedula = (EditText) vista.findViewById(R.id.etCedulaTarjeta);
         etTarjeta = (EditText) vista.findViewById(R.id.etTarjeta);
         etCVV = (EditText) vista.findViewById(R.id.etnumeroCVV);
+        etOtroTarjeta = (EditText) vista.findViewById(R.id.editTextOtroTarjeta);
         rbMastercard = (RadioButton)vista.findViewById(R.id.radioButtonMaster);
         rbVisa = (RadioButton) vista.findViewById(R.id.radioButtonVisa);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjeta);
+        radioTarjeta = (RadioGroup) vista.findViewById(R.id.radioTarjeta);
+
+        radioTarjeta.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButtonMaster:
+                        etOtroTarjeta.setVisibility(View.GONE);
+                        break;
+
+                    case R.id.radioButtonVisa:
+                        etOtroTarjeta.setVisibility(View.GONE);
+                        break;
+
+                    case R.id.radioButtonOtroTarjeta:
+                        etOtroTarjeta.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarTarjeta);
+        buttonGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return vista;
     }
 
