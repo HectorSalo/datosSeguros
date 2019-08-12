@@ -1,8 +1,11 @@
 package com.example.datosseguros.Adpatadores;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +26,8 @@ import java.util.ArrayList;
 public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHolderTarjeta> {
 
     private ArrayList<TarjetaConstructor> listTarjeta;
+    private ArrayList<String> selectedCopiar;
+    private ArrayList<String> selectedCompartir;
     private Context mCtx;
 
     public AdapterTarjeta(ArrayList<TarjetaConstructor> listTarjeta, Context mCtx) {
@@ -39,7 +44,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, final int i) {
 
         viewHolderTarjeta.titular.setText(listTarjeta.get(i).getTitular());
         viewHolderTarjeta.numeroTarjeta.setText(String.valueOf(listTarjeta.get(i).getNumeroTarjeta()));
@@ -57,11 +62,11 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
-                                copiar();
+                                copiar(listTarjeta.get(i));
                                 break;
 
                             case R.id.menu_compartir:
-                                compartir();
+                                compartir(listTarjeta.get(i));
                                 break;
 
                             case R.id.menu_editar:
@@ -103,18 +108,39 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         }
     }
 
-    public void copiar() {
+    public void copiar(final TarjetaConstructor i) {
+        selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
         dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String titular = i.getTitular();
+                String tarjeta = String.valueOf(i.getNumeroTarjeta());
+                String cvv = String.valueOf(i.getCvv());
+                String cedula = String.valueOf(i.getCedula());
+                String tipo = i.getTipo();
 
+                String [] items = {titular, tarjeta, cvv, cedula, tipo};
+
+                if (isChecked) {
+                    selectedCopiar.add(items[which]);
+                } else {
+                    selectedCopiar.remove(items[which]);
+                }
             }
         });
         dialog.setPositiveButton("Copiar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                String selection = "";
+                for (String item: selectedCopiar) {
+                    selection = selection + "\n" + item;
+                }
+
+                ClipboardManager clipboardManager = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("text", selection);
+                clipboardManager.setPrimaryClip(clip);
                 Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
             }
         });
@@ -127,19 +153,39 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         dialog.show();
     }
 
-    public void compartir() {
+    public void compartir(final TarjetaConstructor i) {
+        selectedCompartir = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
         dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String titular = i.getTitular();
+                String tarjeta = String.valueOf(i.getNumeroTarjeta());
+                String cvv = String.valueOf(i.getCvv());
+                String cedula = String.valueOf(i.getCedula());
+                String tipo = i.getTipo();
 
+                String [] items = {titular, tarjeta, cvv, cedula, tipo};
+
+                if (isChecked) {
+                    selectedCompartir.add(items[which]);
+                } else {
+                    selectedCompartir.remove(items[which]);
+                }
             }
         });
         dialog.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                String selection = "";
+                for (String item: selectedCompartir) {
+                    selection = selection + "\n" + item;
+                }
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, selection);
+                mCtx.startActivity(Intent.createChooser(intent, "Compartir con"));
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

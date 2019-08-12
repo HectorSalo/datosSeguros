@@ -1,8 +1,11 @@
 package com.example.datosseguros.Adpatadores;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +27,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
 
     private ArrayList<ContrasenaConstructor> listContrasena;
     private ArrayList<String> selectedItems;
+    private ArrayList <String> selectedCopiar;
     private Context mCtx;
 
 
@@ -58,7 +62,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
-                                copiar();
+                                copiar(listContrasena.get(i));
                                 break;
 
                             case R.id.menu_compartir:
@@ -103,18 +107,38 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         }
     }
 
-    public void copiar() {
+    public void copiar(final ContrasenaConstructor i) {
+        selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
         dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String servicio = i.getServicio();
+                String usuario = i.getUsuario();
+                String contrasena = i.getContrasena();
 
+                String [] items = {servicio, usuario, contrasena};
+
+                if (isChecked) {
+                    selectedCopiar.add(items[which]);
+                } else {
+                    selectedCopiar.remove(items[which]);
+                }
             }
         });
         dialog.setPositiveButton("Copiar", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                String selection = "";
+                for (String item: selectedCopiar) {
+                    selection = selection + "\n" + item;
+                }
+
+                ClipboardManager clipboardManager = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("text", selection);
+                clipboardManager.setPrimaryClip(clip);
+
                 Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
             }
         });
@@ -139,10 +163,12 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                 String usuario = i.getUsuario();
                 String contrasena = i.getContrasena();
 
+                String [] items = {servicio, usuario, contrasena};
+
                 if (isChecked) {
-                    //selectedItems.add(items[which]);
+                    selectedItems.add(items[which]);
                 } else {
-                    //selectedItems.remove(items[which]);
+                    selectedItems.remove(items[which]);
                 }
             }
         });
@@ -153,7 +179,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                 for (String item: selectedItems) {
                     selection = selection + "\n" + item;
                 }
-                Toast.makeText(mCtx, selection, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, selection);
+                mCtx.startActivity(Intent.createChooser(intent, "Compartir con"));
             }
         });
         dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
