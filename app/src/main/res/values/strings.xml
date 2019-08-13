@@ -62,12 +62,6 @@
         <item>Contraseña</item>
     </string-array>
 
-    <string-array name="copiarContrasenaTest">
-        <item>Contraseña</item>
-        <item>Servicio</item>
-        <item>Usuario</item>
-    </string-array>
-
     <!-- Copiar Contrasena -->
     <string-array name="copiarBanco">
         <item>Titular</item>
@@ -92,6 +86,12 @@
         <item>Título</item>
         <item>Contenido</item>
     </string-array>
+
+    <!-- Iniciar Sesion -->
+    <string name="inicSesion">Iniciar Sesión</string>
+    <string name="pregunta">¿No tienes cuenta?</string>
+    <string name="registrate">Regístrate</string>
+    <string name="cuentaGoogle">usa tu cuenta Google</string>
 
 
 </resources>
