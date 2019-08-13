@@ -30,7 +30,7 @@ public class InicSesionActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Registro", Toast.LENGTH_SHORT).show();
             }
         });
-        
+
         Button inicSesion = (Button) findViewById(R.id.buttonInicSesion);
         inicSesion.setOnClickListener(new View.OnClickListener() {
             @Override
