@@ -1,42 +1,34 @@
 {
   "project_info": {
-    "project_number": "345691585935",
-    "firebase_url": "https://datos-seguros-1420c.firebaseio.com",
-    "project_id": "datos-seguros-1420c",
-    "storage_bucket": "datos-seguros-1420c.appspot.com"
+    "project_number": "470664137768",
+    "firebase_url": "https://datos-seguros-510a9.firebaseio.com",
+    "project_id": "datos-seguros-510a9",
+    "storage_bucket": "datos-seguros-510a9.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:345691585935:android:3d30ea5c105e10ca",
+        "mobilesdk_app_id": "1:470664137768:android:3d30ea5c105e10ca",
         "android_client_info": {
           "package_name": "com.example.datosseguros"
         }
       },
       "oauth_client": [
         {
-          "client_id": "345691585935-0qmdl6ha43tkjqcs5a5d7t5a1suj8ip9.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.datosseguros",
-            "certificate_hash": "d827183ffa2847f9b61136ed17fedfabdf0dfd96"
-          }
-        },
-        {
-          "client_id": "345691585935-m7ihmto2m6anaf2sf62c6h84numsjqpp.apps.googleusercontent.com",
+          "client_id": "470664137768-3k4kf389lbueol536t5j69qm910cf33q.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBSZYeOPGCARb2OaVNTlaeJMq-VkjG-Gl0"
+          "current_key": "AIzaSyCEC3gOjwe8Fdie97ybknwCE4IpiZKWSYI"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "345691585935-m7ihmto2m6anaf2sf62c6h84numsjqpp.apps.googleusercontent.com",
+              "client_id": "470664137768-3k4kf389lbueol536t5j69qm910cf33q.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
