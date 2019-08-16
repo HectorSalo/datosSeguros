@@ -1,4 +1,4 @@
-package com.example.datosseguros.Adpatadores;
+package com.example.datossegurosFirebase.Adpatadores;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,8 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datosseguros.Constructores.BancoConstructor;
-import com.example.datosseguros.R;
+import com.example.datossegurosFirebase.Constructores.BancoConstructor;
+import com.example.datossegurosFirebase.R;
 
 import java.util.ArrayList;
 

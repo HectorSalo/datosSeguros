@@ -92,6 +92,12 @@
     <string name="pregunta">¿No tienes cuenta?</string>
     <string name="registrate">Regístrate</string>
     <string name="cuentaGoogle">usa tu cuenta Google</string>
+    <string name="usuarioCorreo">Correo electrónico</string>
+
+    <!-- Registrar -->
+    <string name="repetirContrasena">Ingrese de nuevo la contraseña:</string>
+    <string name="registrar">Registrar</string>
+    <string name="bienvenido">Bienvenido</string>
 
 
 </resources>

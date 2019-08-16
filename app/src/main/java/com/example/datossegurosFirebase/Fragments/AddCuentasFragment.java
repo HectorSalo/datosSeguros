@@ -1,4 +1,4 @@
-package com.example.datosseguros.Fragments;
+package com.example.datossegurosFirebase.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 
-import com.example.datosseguros.R;
+import com.example.datossegurosFirebase.R;
 
 /**
  * A simple {@link Fragment} subclass.

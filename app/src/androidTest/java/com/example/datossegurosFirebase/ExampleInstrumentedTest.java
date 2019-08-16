@@ -1,4 +1,4 @@
-package com.example.datosseguros;
+package com.example.datossegurosFirebase;
 
 import android.content.Context;
 

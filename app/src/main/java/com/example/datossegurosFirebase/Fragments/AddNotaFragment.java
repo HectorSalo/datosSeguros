@@ -1,37 +1,32 @@
-package com.example.datosseguros.Fragments;
+package com.example.datossegurosFirebase.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 
-import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.Toast;
 
-import com.example.datosseguros.R;
+import com.example.datossegurosFirebase.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AddContrasenaFragment.OnFragmentInteractionListener} interface
+ * {@link AddNotaFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AddContrasenaFragment#newInstance} factory method to
+ * Use the {@link AddNotaFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddContrasenaFragment extends Fragment {
+public class AddNotaFragment extends Fragment {
 
-    private EditText etServicio, etUsuario, etContrasena, etOtroDias;
-    private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
-    private RadioGroup radioGroup;
-
-
+    private EditText titulo, contenido;
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -41,7 +36,7 @@ public class AddContrasenaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AddContrasenaFragment() {
+    public AddNotaFragment() {
         // Required empty public constructor
     }
 
@@ -51,11 +46,11 @@ public class AddContrasenaFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AddContrasenaFragment.
+     * @return A new instance of fragment AddNotaFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddContrasenaFragment newInstance(String param1, String param2) {
-        AddContrasenaFragment fragment = new AddContrasenaFragment();
+    public static AddNotaFragment newInstance(String param1, String param2) {
+        AddNotaFragment fragment = new AddNotaFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -75,60 +70,19 @@ public class AddContrasenaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View vista = inflater.inflate(R.layout.fragment_add_contrasena, container, false);
 
-        etServicio = (EditText) vista.findViewById(R.id.etServicio);
-        etUsuario = (EditText) vista.findViewById(R.id.etUsuario);
-        etContrasena = (EditText) vista.findViewById(R.id.etContrasena);
-        etOtroDias = (EditText) vista.findViewById(R.id.etIngreseOtro);
-        radioGroup = (RadioGroup) vista.findViewById(R.id.radioDias);
-        rbdias30 = (RadioButton) vista.findViewById(R.id.radioButton30);
-        rbdias60 = (RadioButton) vista.findViewById(R.id.radioButton60);
-        rbdias90 = (RadioButton) vista.findViewById(R.id.radioButton90);
-        rbdias120 = (RadioButton) vista.findViewById(R.id.radioButton120);
-        rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminado);
-        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);
+        View vista = inflater.inflate(R.layout.fragment_add_nota, container, false);
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioButton30:
-                        etOtroDias.setVisibility(View.GONE);
-                        break;
+        titulo = (EditText) vista.findViewById(R.id.etTitulo);
+        contenido = (EditText) vista.findViewById(R.id.etContenido);
 
-                    case R.id.radioButton60:
-                        etOtroDias.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButton90:
-                        etOtroDias.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButton120:
-                        etOtroDias.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButtonIndeterminado:
-                        etOtroDias.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButtonOtro:
-                        etOtroDias.setVisibility(View.VISIBLE);
-                        break;
-                }
-            }
-        });
-
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarContrasena);
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-
         return vista;
     }
 
@@ -170,7 +124,4 @@ public class AddContrasenaFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
-
 }

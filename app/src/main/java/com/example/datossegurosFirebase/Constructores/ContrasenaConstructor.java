@@ -1,4 +1,4 @@
-package com.example.datosseguros.Constructores;
+package com.example.datossegurosFirebase.Constructores;
 
 public class ContrasenaConstructor {
     private String servicio, usuario, contrasena;

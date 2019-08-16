@@ -1,27 +1,29 @@
-package com.example.datosseguros;
+package com.example.datossegurosFirebase;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datosseguros.Adpatadores.AdapterTarjeta;
-import com.example.datosseguros.Adpatadores.BancoAdapter;
-import com.example.datosseguros.Adpatadores.ContrasenaAdapter;
-import com.example.datosseguros.Adpatadores.NotaAdapter;
-import com.example.datosseguros.Constructores.BancoConstructor;
-import com.example.datosseguros.Constructores.ContrasenaConstructor;
-import com.example.datosseguros.Constructores.NotaConstructor;
-import com.example.datosseguros.Constructores.TarjetaConstructor;
+import com.example.datossegurosFirebase.Adpatadores.AdapterTarjeta;
+import com.example.datossegurosFirebase.Adpatadores.BancoAdapter;
+import com.example.datossegurosFirebase.Adpatadores.ContrasenaAdapter;
+import com.example.datossegurosFirebase.Adpatadores.NotaAdapter;
+import com.example.datossegurosFirebase.Constructores.BancoConstructor;
+import com.example.datossegurosFirebase.Constructores.ContrasenaConstructor;
+import com.example.datossegurosFirebase.Constructores.NotaConstructor;
+import com.example.datossegurosFirebase.Constructores.TarjetaConstructor;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private NotaAdapter adapterNota;
     private AdapterTarjeta adapterTarjeta;
     private BancoAdapter adapterBanco;
+
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -84,6 +87,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        dialog.setTitle("Confirmar");
+        dialog.setMessage("¿Desea cerrar sesión?");
+        dialog.setIcon(R.drawable.ic_advertencia);
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
+            }
+        });
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
     }
 
     private void verContrasena() {

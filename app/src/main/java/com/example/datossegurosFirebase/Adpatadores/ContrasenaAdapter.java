@@ -1,4 +1,4 @@
-package com.example.datosseguros.Adpatadores;
+package com.example.datossegurosFirebase.Adpatadores;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,51 +18,55 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datosseguros.Constructores.NotaConstructor;
-import com.example.datosseguros.R;
+import com.example.datossegurosFirebase.Constructores.ContrasenaConstructor;
+import com.example.datossegurosFirebase.R;
 
 import java.util.ArrayList;
 
-public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota> {
+public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.ViewHolderContrasena> {
 
-    private ArrayList<NotaConstructor> listNota;
-    private ArrayList<String> selectedCopiar;
-    private ArrayList<String> selectedCompartir;
+    private ArrayList<ContrasenaConstructor> listContrasena;
+    private ArrayList<String> selectedItems;
+    private ArrayList <String> selectedCopiar;
     private Context mCtx;
 
-    public NotaAdapter(ArrayList<NotaConstructor> listNota, Context mCtx) {
-        this.listNota = listNota;
+
+    public ContrasenaAdapter (ArrayList<ContrasenaConstructor> listContrasena, Context mCtx) {
+        this.listContrasena = listContrasena;
         this.mCtx = mCtx;
     }
 
     @NonNull
     @Override
-    public ViewHolderNota onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_notas, null, false);
-        return new ViewHolderNota(view);
+    public ContrasenaAdapter.ViewHolderContrasena onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_contrasena, null, false);
+
+        return new ViewHolderContrasena(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolderNota viewHolderNota, final int i) {
+    public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
 
-        viewHolderNota.titulo.setText(listNota.get(i).getTitulo());
-        viewHolderNota.contenido.setText(listNota.get(i).getContenido());
+        viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
+        viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
+        viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
+        viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
 
-        viewHolderNota.menu.setOnClickListener(new View.OnClickListener() {
+        viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderNota.menu);
-                popupMenu.inflate(R.menu.menu_nota);
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderContrasena.menu);
+                popupMenu.inflate(R.menu.menu_contrasena);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
-                                copiar(listNota.get(i));
+                                copiar(listContrasena.get(i));
                                 break;
 
                             case R.id.menu_compartir:
-                                compartir(listNota.get(i));
+                                compartir(listContrasena.get(i));
                                 break;
 
                             case R.id.menu_editar:
@@ -85,33 +89,36 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
 
     @Override
     public int getItemCount() {
-        return listNota.size();
+        return listContrasena.size();
     }
 
-    public class ViewHolderNota extends RecyclerView.ViewHolder {
+    public class ViewHolderContrasena extends RecyclerView.ViewHolder {
 
-        TextView titulo, contenido, menu;
+        TextView servicio, usuario, contrasena, vencimiento, menu;
 
-        public ViewHolderNota(@NonNull View itemView) {
+        public ViewHolderContrasena(@NonNull View itemView) {
             super(itemView);
 
-            titulo = (TextView) itemView.findViewById(R.id.tvTituloNota);
-            contenido = (TextView) itemView.findViewById(R.id.tvcontenidoNota);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuNota);
+            servicio = (TextView) itemView.findViewById(R.id.tvServicio);
+            usuario = (TextView) itemView.findViewById(R.id.tvUsuario);
+            contrasena = (TextView) itemView.findViewById(R.id.tvContrasena);
+            vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
         }
     }
 
-    public void copiar(final NotaConstructor i) {
+    public void copiar(final ContrasenaConstructor i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
-        dialog.setMultiChoiceItems(R.array.copiarNota, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                String titulo = i.getTitulo();
-                String contenido = i.getContenido();
+                String servicio = i.getServicio();
+                String usuario = i.getUsuario();
+                String contrasena = i.getContrasena();
 
-                String [] items = {titulo, contenido};
+                String [] items = {servicio, usuario, contrasena};
 
                 if (isChecked) {
                     selectedCopiar.add(items[which]);
@@ -131,6 +138,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                 ClipboardManager clipboardManager = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("text", selection);
                 clipboardManager.setPrimaryClip(clip);
+
                 Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
             }
         });
@@ -143,22 +151,24 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
         dialog.show();
     }
 
-    public void compartir(final NotaConstructor i) {
-        selectedCompartir = new ArrayList<>();
+    public void compartir(final ContrasenaConstructor i) {
+        selectedItems = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
-        dialog.setMultiChoiceItems(R.array.copiarNota, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                String titulo = i.getTitulo();
-                String contenido = i.getContenido();
 
-                String [] items = {titulo, contenido};
+                String servicio = i.getServicio();
+                String usuario = i.getUsuario();
+                String contrasena = i.getContrasena();
+
+                String [] items = {servicio, usuario, contrasena};
 
                 if (isChecked) {
-                    selectedCopiar.add(items[which]);
+                    selectedItems.add(items[which]);
                 } else {
-                    selectedCopiar.remove(items[which]);
+                    selectedItems.remove(items[which]);
                 }
             }
         });
@@ -166,7 +176,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String selection = "";
-                for (String item: selectedCompartir) {
+                for (String item: selectedItems) {
                     selection = selection + "\n" + item;
                 }
                 Intent intent = new Intent(Intent.ACTION_SEND);

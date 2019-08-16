@@ -1,4 +1,4 @@
-package com.example.datosseguros.Fragments;
+package com.example.datossegurosFirebase.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -6,7 +6,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.example.datosseguros.R;
+import com.example.datossegurosFirebase.R;
 
 /**
  * A simple {@link Fragment} subclass.
