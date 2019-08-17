@@ -1,10 +1,15 @@
 package com.example.datossegurosFirebase.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +17,21 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
+import com.example.datossegurosFirebase.AddActivity;
+import com.example.datossegurosFirebase.MainActivity;
 import com.example.datossegurosFirebase.R;
+import com.example.datossegurosFirebase.Utilidades.UtilidadesStatic;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,6 +46,9 @@ public class AddContrasenaFragment extends Fragment {
     private EditText etServicio, etUsuario, etContrasena, etOtroDias;
     private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
     private RadioGroup radioGroup;
+    private int duracionVigencia;
+    private FirebaseUser user;
+    private ProgressDialog progress;
 
 
     private static final String ARG_PARAM1 = "param1";
@@ -88,23 +109,29 @@ public class AddContrasenaFragment extends Fragment {
         rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminado);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.radioButton30:
+                        duracionVigencia = 30;
                         etOtroDias.setVisibility(View.GONE);
                         break;
 
                     case R.id.radioButton60:
+                        duracionVigencia = 60;
                         etOtroDias.setVisibility(View.GONE);
                         break;
 
                     case R.id.radioButton90:
+                        duracionVigencia = 90;
                         etOtroDias.setVisibility(View.GONE);
                         break;
 
                     case R.id.radioButton120:
+                        duracionVigencia = 120;
                         etOtroDias.setVisibility(View.GONE);
                         break;
 
@@ -123,7 +150,7 @@ public class AddContrasenaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                guardarContrasena();
             }
         });
 
@@ -169,6 +196,52 @@ public class AddContrasenaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+    public void guardarContrasena() {
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Guardando...");
+        progress.setCancelable(false);
+        progress.show();
 
+        String servicio = etServicio.getText().toString();
+        String usuario = etUsuario.getText().toString();
+        String contrasena = etContrasena.getText().toString();
+        String userID = user.getUid();
+
+        String vigencia = "";
+        if (rbIndeterminado.isChecked()) {
+            vigencia = "";
+        } else if (rbOtro.isChecked()) {
+            vigencia = etOtroDias.getText().toString();
+        } else if (rbdias30.isChecked() || rbdias60.isChecked() || rbdias90.isChecked() || rbdias120.isChecked()) {
+            vigencia = String.valueOf(duracionVigencia);
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> contrasenaM = new HashMap<>();
+        contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
+        contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
+        contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasena);
+        contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+
+        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                progress.dismiss();
+                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                Intent myIntent = new Intent(getContext(), MainActivity.class);
+                startActivity(myIntent);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progress.dismiss();
+                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
 
 }
