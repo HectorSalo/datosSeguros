@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Constructores;
+package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class NotaConstructor {
     private String titulo, contenido;

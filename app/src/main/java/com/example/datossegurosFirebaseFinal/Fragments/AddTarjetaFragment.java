@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Fragments;
+package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,22 +11,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
-import com.example.datossegurosFirebase.R;
+import com.example.datossegurosFirebaseFinal.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AddNotaFragment.OnFragmentInteractionListener} interface
+ * {@link AddTarjetaFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AddNotaFragment#newInstance} factory method to
+ * Use the {@link AddTarjetaFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddNotaFragment extends Fragment {
+public class AddTarjetaFragment extends Fragment {
 
-    private EditText titulo, contenido;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private EditText etTitular, etTarjeta, etCVV, etCedula, etOtroTarjeta;
+    private RadioButton rbVisa, rbMastercard, rbOtro;
+    private RadioGroup radioTarjeta;
+
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -36,7 +39,7 @@ public class AddNotaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AddNotaFragment() {
+    public AddTarjetaFragment() {
         // Required empty public constructor
     }
 
@@ -46,11 +49,11 @@ public class AddNotaFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AddNotaFragment.
+     * @return A new instance of fragment AddTarjetaFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddNotaFragment newInstance(String param1, String param2) {
-        AddNotaFragment fragment = new AddNotaFragment();
+    public static AddTarjetaFragment newInstance(String param1, String param2) {
+        AddTarjetaFragment fragment = new AddTarjetaFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -70,19 +73,45 @@ public class AddNotaFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View vista = inflater.inflate(R.layout.fragment_add_tarjeta, container, false);
 
-        View vista = inflater.inflate(R.layout.fragment_add_nota, container, false);
+        etTitular = (EditText) vista.findViewById(R.id.etTitularTarjeta);
+        etCedula = (EditText) vista.findViewById(R.id.etCedulaTarjeta);
+        etTarjeta = (EditText) vista.findViewById(R.id.etTarjeta);
+        etCVV = (EditText) vista.findViewById(R.id.etnumeroCVV);
+        etOtroTarjeta = (EditText) vista.findViewById(R.id.editTextOtroTarjeta);
+        rbMastercard = (RadioButton)vista.findViewById(R.id.radioButtonMaster);
+        rbVisa = (RadioButton) vista.findViewById(R.id.radioButtonVisa);
+        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjeta);
+        radioTarjeta = (RadioGroup) vista.findViewById(R.id.radioTarjeta);
 
-        titulo = (EditText) vista.findViewById(R.id.etTitulo);
-        contenido = (EditText) vista.findViewById(R.id.etContenido);
+        radioTarjeta.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioButtonMaster:
+                        etOtroTarjeta.setVisibility(View.GONE);
+                        break;
 
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
+                    case R.id.radioButtonVisa:
+                        etOtroTarjeta.setVisibility(View.GONE);
+                        break;
+
+                    case R.id.radioButtonOtroTarjeta:
+                        etOtroTarjeta.setVisibility(View.VISIBLE);
+                        break;
+                }
+            }
+        });
+
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarTarjeta);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
+
         return vista;
     }
 

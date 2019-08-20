@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Utilidades;
+package com.example.datossegurosFirebaseFinal.Utilidades;
 
 public class UtilidadesStatic {
     public static final String BD_PROPIETARIOS = "propietarios";

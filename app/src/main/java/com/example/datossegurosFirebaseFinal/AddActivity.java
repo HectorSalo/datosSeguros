@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase;
+package com.example.datossegurosFirebaseFinal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -15,10 +15,10 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.example.datossegurosFirebase.Fragments.AddContrasenaFragment;
-import com.example.datossegurosFirebase.Fragments.AddCuentasFragment;
-import com.example.datossegurosFirebase.Fragments.AddNotaFragment;
-import com.example.datossegurosFirebase.Fragments.AddTarjetaFragment;
+import com.example.datossegurosFirebaseFinal.Fragments.AddContrasenaFragment;
+import com.example.datossegurosFirebaseFinal.Fragments.AddCuentasFragment;
+import com.example.datossegurosFirebaseFinal.Fragments.AddNotaFragment;
+import com.example.datossegurosFirebaseFinal.Fragments.AddTarjetaFragment;
 
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
         AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {

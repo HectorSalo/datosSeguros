@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Fragments;
+package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,23 +11,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 
-import com.example.datossegurosFirebase.R;
+import com.example.datossegurosFirebaseFinal.R;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link AddCuentasFragment.OnFragmentInteractionListener} interface
+ * {@link AddNotaFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link AddCuentasFragment#newInstance} factory method to
+ * Use the {@link AddNotaFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddCuentasFragment extends Fragment {
+public class AddNotaFragment extends Fragment {
 
-    private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono;
-    private RadioButton rbAhorro, rbCorriente;
-
+    private EditText titulo, contenido;
+    // TODO: Rename parameter arguments, choose names that match
+    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
@@ -37,7 +36,7 @@ public class AddCuentasFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public AddCuentasFragment() {
+    public AddNotaFragment() {
         // Required empty public constructor
     }
 
@@ -47,11 +46,11 @@ public class AddCuentasFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment AddCuentasFragment.
+     * @return A new instance of fragment AddNotaFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static AddCuentasFragment newInstance(String param1, String param2) {
-        AddCuentasFragment fragment = new AddCuentasFragment();
+    public static AddNotaFragment newInstance(String param1, String param2) {
+        AddNotaFragment fragment = new AddNotaFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -71,25 +70,19 @@ public class AddCuentasFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View vista = inflater.inflate(R.layout.fragment_add_cuentas, container, false);
 
-        etTitular = (EditText) vista.findViewById(R.id.etTitular);
-        etBanco = (EditText) vista.findViewById(R.id.etBanco);
-        etNumeroCuenta = (EditText) vista.findViewById(R.id.etnumeroCuenta);
-        etCedula = (EditText) vista.findViewById(R.id.etCedulaCuenta);
-        etTelefono = (EditText) vista.findViewById(R.id.etTelefono);
-        rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorro);
-        rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
+        View vista = inflater.inflate(R.layout.fragment_add_nota, container, false);
 
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarCuenta);
+        titulo = (EditText) vista.findViewById(R.id.etTitulo);
+        contenido = (EditText) vista.findViewById(R.id.etContenido);
+
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-
         return vista;
     }
 

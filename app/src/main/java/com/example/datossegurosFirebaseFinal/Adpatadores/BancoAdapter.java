@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Adpatadores;
+package com.example.datossegurosFirebaseFinal.Adpatadores;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,55 +18,56 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datossegurosFirebase.Constructores.TarjetaConstructor;
-import com.example.datossegurosFirebase.R;
+import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
+import com.example.datossegurosFirebaseFinal.R;
 
 import java.util.ArrayList;
 
-public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHolderTarjeta> {
+public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBanco> {
 
-    private ArrayList<TarjetaConstructor> listTarjeta;
+    private ArrayList<BancoConstructor> listBanco;
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
 
-    public AdapterTarjeta(ArrayList<TarjetaConstructor> listTarjeta, Context mCtx) {
-        this.listTarjeta = listTarjeta;
+    public BancoAdapter (ArrayList<BancoConstructor> listBanco, Context mCtx){
+        this.listBanco = listBanco;
         this.mCtx = mCtx;
     }
 
 
     @NonNull
     @Override
-    public ViewHolderTarjeta onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_tdc, null, false);
-        return new ViewHolderTarjeta(view);
+    public ViewHolderBanco onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_banco, null, false);
+        return new ViewHolderBanco(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderBanco viewHolderBanco, final int i) {
 
-        viewHolderTarjeta.titular.setText(listTarjeta.get(i).getTitular());
-        viewHolderTarjeta.numeroTarjeta.setText(String.valueOf(listTarjeta.get(i).getNumeroTarjeta()));
-        viewHolderTarjeta.numeroCVV.setText(String.valueOf(listTarjeta.get(i).getCvv()));
-        viewHolderTarjeta.cedula.setText(String.valueOf(listTarjeta.get(i).getCedula()));
-        viewHolderTarjeta.tipoTarjeta.setText(listTarjeta.get(i).getTipo());
+        viewHolderBanco.titular.setText(listBanco.get(i).getTitular());
+        viewHolderBanco.banco.setText(listBanco.get(i).getBanco());
+        viewHolderBanco.numeroCuenta.setText(String.valueOf(listBanco.get(i).getNumeroCuenta()));
+        viewHolderBanco.cedula.setText(String.valueOf(listBanco.get(i).getCedula()));
+        viewHolderBanco.tipo.setText(listBanco.get(i).getTipo());
+        viewHolderBanco.telefono.setText(String.valueOf(listBanco.get(i).getTelefono()));
 
-        viewHolderTarjeta.menu.setOnClickListener(new View.OnClickListener() {
+        viewHolderBanco.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderTarjeta.menu);
-                popupMenu.inflate(R.menu.menu_tarjeta);
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderBanco.menu);
+                popupMenu.inflate(R.menu.menu_banco);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
-                                copiar(listTarjeta.get(i));
+                                copiar(listBanco.get(i));
                                 break;
 
                             case R.id.menu_compartir:
-                                compartir(listTarjeta.get(i));
+                                compartir(listBanco.get(i));
                                 break;
 
                             case R.id.menu_editar:
@@ -89,39 +90,42 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
 
     @Override
     public int getItemCount() {
-        return listTarjeta.size();
+        return listBanco.size();
     }
 
-    public class ViewHolderTarjeta extends RecyclerView.ViewHolder {
+    public class ViewHolderBanco extends RecyclerView.ViewHolder {
 
-        TextView titular, numeroTarjeta, numeroCVV, cedula, tipoTarjeta, menu;
+        TextView titular, banco, numeroCuenta, cedula, tipo, telefono, menu;
 
-        public ViewHolderTarjeta(@NonNull View itemView) {
+        public ViewHolderBanco(@NonNull View itemView) {
             super(itemView);
 
-            titular = (TextView) itemView.findViewById(R.id.tvTitularTarjeta);
-            numeroTarjeta = (TextView) itemView.findViewById(R.id.tvnumeroTarjeta);
-            numeroCVV = (TextView) itemView.findViewById(R.id.tvnumeroCVV);
-            cedula = (TextView) itemView.findViewById(R.id.tvCedulaTarjeta);
-            tipoTarjeta = (TextView) itemView.findViewById(R.id.tvTipoTarjeta);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuTarjeta);
+            titular = (TextView) itemView.findViewById(R.id.tvTitular);
+            banco = (TextView) itemView.findViewById(R.id.tvBanco);
+            numeroCuenta = (TextView) itemView.findViewById(R.id.tvnumeroCuenta);
+            cedula = (TextView) itemView.findViewById(R.id.tvCedula);
+            tipo = (TextView) itemView.findViewById(R.id.tvTipo);
+            telefono = (TextView) itemView.findViewById(R.id.tvTelefono);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuBanco);
+
         }
     }
 
-    public void copiar(final TarjetaConstructor i) {
+    public void copiar(final BancoConstructor i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
-        dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarBanco, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 String titular = i.getTitular();
-                String tarjeta = String.valueOf(i.getNumeroTarjeta());
-                String cvv = String.valueOf(i.getCvv());
+                String banco = i.getBanco();
+                String cuenta = String.valueOf(i.getNumeroCuenta());
                 String cedula = String.valueOf(i.getCedula());
                 String tipo = i.getTipo();
+                String telefono = String.valueOf(i.getTelefono());
 
-                String [] items = {titular, tarjeta, cvv, cedula, tipo};
+                String [] items = {titular, banco, cuenta, cedula, tipo, telefono};
 
                 if (isChecked) {
                     selectedCopiar.add(items[which]);
@@ -153,20 +157,21 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         dialog.show();
     }
 
-    public void compartir(final TarjetaConstructor i) {
+    public void compartir(final BancoConstructor i) {
         selectedCompartir = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
-        dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarBanco, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 String titular = i.getTitular();
-                String tarjeta = String.valueOf(i.getNumeroTarjeta());
-                String cvv = String.valueOf(i.getCvv());
+                String banco = i.getBanco();
+                String cuenta = String.valueOf(i.getNumeroCuenta());
                 String cedula = String.valueOf(i.getCedula());
                 String tipo = i.getTipo();
+                String telefono = String.valueOf(i.getTelefono());
 
-                String [] items = {titular, tarjeta, cvv, cedula, tipo};
+                String [] items = {titular, banco, cuenta, cedula, tipo, telefono};
 
                 if (isChecked) {
                     selectedCompartir.add(items[which]);

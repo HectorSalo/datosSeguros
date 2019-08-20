@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Constructores;
+package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class TarjetaConstructor {
     private String titular, tipo;

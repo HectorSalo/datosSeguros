@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase;
+package com.example.datossegurosFirebaseFinal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -13,14 +13,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datossegurosFirebase.Adpatadores.AdapterTarjeta;
-import com.example.datossegurosFirebase.Adpatadores.BancoAdapter;
-import com.example.datossegurosFirebase.Adpatadores.ContrasenaAdapter;
-import com.example.datossegurosFirebase.Adpatadores.NotaAdapter;
-import com.example.datossegurosFirebase.Constructores.BancoConstructor;
-import com.example.datossegurosFirebase.Constructores.ContrasenaConstructor;
-import com.example.datossegurosFirebase.Constructores.NotaConstructor;
-import com.example.datossegurosFirebase.Constructores.TarjetaConstructor;
+import com.example.datossegurosFirebaseFinal.Adpatadores.AdapterTarjeta;
+import com.example.datossegurosFirebaseFinal.Adpatadores.BancoAdapter;
+import com.example.datossegurosFirebaseFinal.Adpatadores.ContrasenaAdapter;
+import com.example.datossegurosFirebaseFinal.Adpatadores.NotaAdapter;
+import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
+import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
+import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
+import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;

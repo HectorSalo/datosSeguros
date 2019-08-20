@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Adpatadores;
+package com.example.datossegurosFirebaseFinal.Adpatadores;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,55 +18,55 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datossegurosFirebase.Constructores.ContrasenaConstructor;
-import com.example.datossegurosFirebase.R;
+import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
+import com.example.datossegurosFirebaseFinal.R;
 
 import java.util.ArrayList;
 
-public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.ViewHolderContrasena> {
+public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHolderTarjeta> {
 
-    private ArrayList<ContrasenaConstructor> listContrasena;
-    private ArrayList<String> selectedItems;
-    private ArrayList <String> selectedCopiar;
+    private ArrayList<TarjetaConstructor> listTarjeta;
+    private ArrayList<String> selectedCopiar;
+    private ArrayList<String> selectedCompartir;
     private Context mCtx;
 
-
-    public ContrasenaAdapter (ArrayList<ContrasenaConstructor> listContrasena, Context mCtx) {
-        this.listContrasena = listContrasena;
+    public AdapterTarjeta(ArrayList<TarjetaConstructor> listTarjeta, Context mCtx) {
+        this.listTarjeta = listTarjeta;
         this.mCtx = mCtx;
     }
 
+
     @NonNull
     @Override
-    public ContrasenaAdapter.ViewHolderContrasena onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_contrasena, null, false);
-
-        return new ViewHolderContrasena(view);
+    public ViewHolderTarjeta onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_tdc, null, false);
+        return new ViewHolderTarjeta(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, final int i) {
 
-        viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
-        viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
-        viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
-        viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
+        viewHolderTarjeta.titular.setText(listTarjeta.get(i).getTitular());
+        viewHolderTarjeta.numeroTarjeta.setText(String.valueOf(listTarjeta.get(i).getNumeroTarjeta()));
+        viewHolderTarjeta.numeroCVV.setText(String.valueOf(listTarjeta.get(i).getCvv()));
+        viewHolderTarjeta.cedula.setText(String.valueOf(listTarjeta.get(i).getCedula()));
+        viewHolderTarjeta.tipoTarjeta.setText(listTarjeta.get(i).getTipo());
 
-        viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
+        viewHolderTarjeta.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderContrasena.menu);
-                popupMenu.inflate(R.menu.menu_contrasena);
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderTarjeta.menu);
+                popupMenu.inflate(R.menu.menu_tarjeta);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
-                                copiar(listContrasena.get(i));
+                                copiar(listTarjeta.get(i));
                                 break;
 
                             case R.id.menu_compartir:
-                                compartir(listContrasena.get(i));
+                                compartir(listTarjeta.get(i));
                                 break;
 
                             case R.id.menu_editar:
@@ -89,36 +89,39 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
 
     @Override
     public int getItemCount() {
-        return listContrasena.size();
+        return listTarjeta.size();
     }
 
-    public class ViewHolderContrasena extends RecyclerView.ViewHolder {
+    public class ViewHolderTarjeta extends RecyclerView.ViewHolder {
 
-        TextView servicio, usuario, contrasena, vencimiento, menu;
+        TextView titular, numeroTarjeta, numeroCVV, cedula, tipoTarjeta, menu;
 
-        public ViewHolderContrasena(@NonNull View itemView) {
+        public ViewHolderTarjeta(@NonNull View itemView) {
             super(itemView);
 
-            servicio = (TextView) itemView.findViewById(R.id.tvServicio);
-            usuario = (TextView) itemView.findViewById(R.id.tvUsuario);
-            contrasena = (TextView) itemView.findViewById(R.id.tvContrasena);
-            vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
+            titular = (TextView) itemView.findViewById(R.id.tvTitularTarjeta);
+            numeroTarjeta = (TextView) itemView.findViewById(R.id.tvnumeroTarjeta);
+            numeroCVV = (TextView) itemView.findViewById(R.id.tvnumeroCVV);
+            cedula = (TextView) itemView.findViewById(R.id.tvCedulaTarjeta);
+            tipoTarjeta = (TextView) itemView.findViewById(R.id.tvTipoTarjeta);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuTarjeta);
         }
     }
 
-    public void copiar(final ContrasenaConstructor i) {
+    public void copiar(final TarjetaConstructor i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
-        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                String servicio = i.getServicio();
-                String usuario = i.getUsuario();
-                String contrasena = i.getContrasena();
+                String titular = i.getTitular();
+                String tarjeta = String.valueOf(i.getNumeroTarjeta());
+                String cvv = String.valueOf(i.getCvv());
+                String cedula = String.valueOf(i.getCedula());
+                String tipo = i.getTipo();
 
-                String [] items = {servicio, usuario, contrasena};
+                String [] items = {titular, tarjeta, cvv, cedula, tipo};
 
                 if (isChecked) {
                     selectedCopiar.add(items[which]);
@@ -138,7 +141,6 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                 ClipboardManager clipboardManager = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("text", selection);
                 clipboardManager.setPrimaryClip(clip);
-
                 Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
             }
         });
@@ -151,24 +153,25 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         dialog.show();
     }
 
-    public void compartir(final ContrasenaConstructor i) {
-        selectedItems = new ArrayList<>();
+    public void compartir(final TarjetaConstructor i) {
+        selectedCompartir = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
-        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+                String titular = i.getTitular();
+                String tarjeta = String.valueOf(i.getNumeroTarjeta());
+                String cvv = String.valueOf(i.getCvv());
+                String cedula = String.valueOf(i.getCedula());
+                String tipo = i.getTipo();
 
-                String servicio = i.getServicio();
-                String usuario = i.getUsuario();
-                String contrasena = i.getContrasena();
-
-                String [] items = {servicio, usuario, contrasena};
+                String [] items = {titular, tarjeta, cvv, cedula, tipo};
 
                 if (isChecked) {
-                    selectedItems.add(items[which]);
+                    selectedCompartir.add(items[which]);
                 } else {
-                    selectedItems.remove(items[which]);
+                    selectedCompartir.remove(items[which]);
                 }
             }
         });
@@ -176,7 +179,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String selection = "";
-                for (String item: selectedItems) {
+                for (String item: selectedCompartir) {
                     selection = selection + "\n" + item;
                 }
                 Intent intent = new Intent(Intent.ACTION_SEND);

@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Fragments;
+package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -19,10 +19,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.datossegurosFirebase.AddActivity;
-import com.example.datossegurosFirebase.MainActivity;
-import com.example.datossegurosFirebase.R;
-import com.example.datossegurosFirebase.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.MainActivity;
+import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;

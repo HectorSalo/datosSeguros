@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase.Adpatadores;
+package com.example.datossegurosFirebaseFinal.Adpatadores;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -18,56 +18,51 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.datossegurosFirebase.Constructores.BancoConstructor;
-import com.example.datossegurosFirebase.R;
+import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
+import com.example.datossegurosFirebaseFinal.R;
 
 import java.util.ArrayList;
 
-public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBanco> {
+public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota> {
 
-    private ArrayList<BancoConstructor> listBanco;
+    private ArrayList<NotaConstructor> listNota;
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
 
-    public BancoAdapter (ArrayList<BancoConstructor> listBanco, Context mCtx){
-        this.listBanco = listBanco;
+    public NotaAdapter(ArrayList<NotaConstructor> listNota, Context mCtx) {
+        this.listNota = listNota;
         this.mCtx = mCtx;
     }
 
-
     @NonNull
     @Override
-    public ViewHolderBanco onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_banco, null, false);
-        return new ViewHolderBanco(view);
+    public ViewHolderNota onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_notas, null, false);
+        return new ViewHolderNota(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolderBanco viewHolderBanco, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolderNota viewHolderNota, final int i) {
 
-        viewHolderBanco.titular.setText(listBanco.get(i).getTitular());
-        viewHolderBanco.banco.setText(listBanco.get(i).getBanco());
-        viewHolderBanco.numeroCuenta.setText(String.valueOf(listBanco.get(i).getNumeroCuenta()));
-        viewHolderBanco.cedula.setText(String.valueOf(listBanco.get(i).getCedula()));
-        viewHolderBanco.tipo.setText(listBanco.get(i).getTipo());
-        viewHolderBanco.telefono.setText(String.valueOf(listBanco.get(i).getTelefono()));
+        viewHolderNota.titulo.setText(listNota.get(i).getTitulo());
+        viewHolderNota.contenido.setText(listNota.get(i).getContenido());
 
-        viewHolderBanco.menu.setOnClickListener(new View.OnClickListener() {
+        viewHolderNota.menu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderBanco.menu);
-                popupMenu.inflate(R.menu.menu_banco);
+                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderNota.menu);
+                popupMenu.inflate(R.menu.menu_nota);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.menu_copiar:
-                                copiar(listBanco.get(i));
+                                copiar(listNota.get(i));
                                 break;
 
                             case R.id.menu_compartir:
-                                compartir(listBanco.get(i));
+                                compartir(listNota.get(i));
                                 break;
 
                             case R.id.menu_editar:
@@ -90,42 +85,33 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
 
     @Override
     public int getItemCount() {
-        return listBanco.size();
+        return listNota.size();
     }
 
-    public class ViewHolderBanco extends RecyclerView.ViewHolder {
+    public class ViewHolderNota extends RecyclerView.ViewHolder {
 
-        TextView titular, banco, numeroCuenta, cedula, tipo, telefono, menu;
+        TextView titulo, contenido, menu;
 
-        public ViewHolderBanco(@NonNull View itemView) {
+        public ViewHolderNota(@NonNull View itemView) {
             super(itemView);
 
-            titular = (TextView) itemView.findViewById(R.id.tvTitular);
-            banco = (TextView) itemView.findViewById(R.id.tvBanco);
-            numeroCuenta = (TextView) itemView.findViewById(R.id.tvnumeroCuenta);
-            cedula = (TextView) itemView.findViewById(R.id.tvCedula);
-            tipo = (TextView) itemView.findViewById(R.id.tvTipo);
-            telefono = (TextView) itemView.findViewById(R.id.tvTelefono);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuBanco);
-
+            titulo = (TextView) itemView.findViewById(R.id.tvTituloNota);
+            contenido = (TextView) itemView.findViewById(R.id.tvcontenidoNota);
+            menu = (TextView) itemView.findViewById(R.id.tvmenuNota);
         }
     }
 
-    public void copiar(final BancoConstructor i) {
+    public void copiar(final NotaConstructor i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
-        dialog.setMultiChoiceItems(R.array.copiarBanco, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarNota, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                String titular = i.getTitular();
-                String banco = i.getBanco();
-                String cuenta = String.valueOf(i.getNumeroCuenta());
-                String cedula = String.valueOf(i.getCedula());
-                String tipo = i.getTipo();
-                String telefono = String.valueOf(i.getTelefono());
+                String titulo = i.getTitulo();
+                String contenido = i.getContenido();
 
-                String [] items = {titular, banco, cuenta, cedula, tipo, telefono};
+                String [] items = {titulo, contenido};
 
                 if (isChecked) {
                     selectedCopiar.add(items[which]);
@@ -157,26 +143,22 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
         dialog.show();
     }
 
-    public void compartir(final BancoConstructor i) {
+    public void compartir(final NotaConstructor i) {
         selectedCompartir = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
-        dialog.setMultiChoiceItems(R.array.copiarBanco, null, new DialogInterface.OnMultiChoiceClickListener() {
+        dialog.setMultiChoiceItems(R.array.copiarNota, null, new DialogInterface.OnMultiChoiceClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                String titular = i.getTitular();
-                String banco = i.getBanco();
-                String cuenta = String.valueOf(i.getNumeroCuenta());
-                String cedula = String.valueOf(i.getCedula());
-                String tipo = i.getTipo();
-                String telefono = String.valueOf(i.getTelefono());
+                String titulo = i.getTitulo();
+                String contenido = i.getContenido();
 
-                String [] items = {titular, banco, cuenta, cedula, tipo, telefono};
+                String [] items = {titulo, contenido};
 
                 if (isChecked) {
-                    selectedCompartir.add(items[which]);
+                    selectedCopiar.add(items[which]);
                 } else {
-                    selectedCompartir.remove(items[which]);
+                    selectedCopiar.remove(items[which]);
                 }
             }
         });

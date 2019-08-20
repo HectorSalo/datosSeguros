@@ -1,4 +1,4 @@
-package com.example.datossegurosFirebase;
+package com.example.datossegurosFirebaseFinal;
 
 import org.junit.Test;
 
