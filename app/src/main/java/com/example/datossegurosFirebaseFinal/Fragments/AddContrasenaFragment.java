@@ -196,50 +196,59 @@ public class AddContrasenaFragment extends Fragment {
     }
 
     public void guardarContrasena() {
-        progress = new ProgressDialog(getContext());
-        progress.setMessage("Guardando...");
-        progress.setCancelable(false);
-        progress.show();
-
         String servicio = etServicio.getText().toString();
         String usuario = etUsuario.getText().toString();
         String contrasena = etContrasena.getText().toString();
         String userID = user.getUid();
 
-        String vigencia = "";
-        if (rbIndeterminado.isChecked()) {
-            vigencia = "";
-        } else if (rbOtro.isChecked()) {
-            vigencia = etOtroDias.getText().toString();
-        } else if (rbdias30.isChecked() || rbdias60.isChecked() || rbdias90.isChecked() || rbdias120.isChecked()) {
-            vigencia = String.valueOf(duracionVigencia);
+        if (servicio.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
+                Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
+            } else {
+                progress = new ProgressDialog(getContext());
+                progress.setMessage("Guardando...");
+                progress.setCancelable(false);
+                progress.show();
+
+                String vigencia = "";
+                if (rbIndeterminado.isChecked()) {
+                    vigencia = "0";
+                } else if (rbOtro.isChecked()) {
+                    vigencia = etOtroDias.getText().toString();
+                } else if (rbdias30.isChecked() || rbdias60.isChecked() || rbdias90.isChecked() || rbdias120.isChecked()) {
+                    vigencia = String.valueOf(duracionVigencia);
+                }
+
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                Map<String, Object> contrasenaM = new HashMap<>();
+                contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
+                contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasena);
+                contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+                contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
+
+                db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        progress.dismiss();
+                        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(getContext(), MainActivity.class);
+                        startActivity(myIntent);
+
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("msg", "Error adding document", e);
+                        progress.dismiss();
+                        Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
         }
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        Map<String, Object> contrasenaM = new HashMap<>();
-        contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-        contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-        contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasena);
-        contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-
-        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                progress.dismiss();
-                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                Intent myIntent = new Intent(getContext(), MainActivity.class);
-                startActivity(myIntent);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("msg", "Error adding document", e);
-                progress.dismiss();
-                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-            }
-        });
 
     }
 

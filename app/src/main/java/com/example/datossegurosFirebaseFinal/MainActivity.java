@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,9 +22,18 @@ import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -39,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private NotaAdapter adapterNota;
     private AdapterTarjeta adapterTarjeta;
     private BancoAdapter adapterBanco;
+    private FirebaseUser user;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -72,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -112,16 +125,43 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void verContrasena() {
+        String userID = user.getUid();
         listContrasena = new ArrayList<>();
-        testContrasena();
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
         recycler.setAdapter(adapterContrasena);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS);
+
+        Query query = reference.orderBy(UtilidadesStatic.BD_SERVICIO, Query.Direction.ASCENDING);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                        ContrasenaConstructor pass = new ContrasenaConstructor();
+                        pass.setServicio(doc.getString(UtilidadesStatic.BD_SERVICIO));
+                        pass.setUsuario(doc.getString(UtilidadesStatic.BD_USUARIO));
+                        pass.setContrasena(doc.getString(UtilidadesStatic.BD_PASSWORD));
+                        if (doc.getString(UtilidadesStatic.BD_PASSWORD).equals("0")) {
+                            pass.setVencimiento(0);
+                        } else {
+                            pass.setVencimiento(Integer.parseInt(doc.getString(UtilidadesStatic.BD_VIGENCIA)));
+                        }
+
+                        listContrasena.add(pass);
+
+                    }
+                    adapterContrasena.updateList(listContrasena);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 
-    private void testContrasena() {
-        listContrasena.add(new ContrasenaConstructor("Digitel", "Hector", "1234", 12));
-        listContrasena.add(new ContrasenaConstructor("Google", "Salomon", "5678", 60));
-    }
+
 
     private void verCuentasBancarias() {
         listBancos = new ArrayList<>();

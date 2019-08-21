@@ -50,7 +50,11 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
         viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
         viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
-        viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
+        if (listContrasena.get(i).getVencimiento() == 0) {
+            viewHolderContrasena.vencimiento.setText("Sin fecha de vencimiento");
+        } else {
+            viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
+        }
 
         viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,5 +196,11 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
             }
         });
         dialog.show();
+    }
+
+    public void updateList (ArrayList<ContrasenaConstructor> newList) {
+        listContrasena = new ArrayList<>();
+        listContrasena.addAll(newList);
+        notifyDataSetChanged();
     }
 }

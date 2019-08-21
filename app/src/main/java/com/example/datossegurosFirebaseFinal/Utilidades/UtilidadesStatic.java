@@ -2,7 +2,8 @@ package com.example.datossegurosFirebaseFinal.Utilidades;
 
 public class UtilidadesStatic {
     public static final String BD_PROPIETARIOS = "propietarios";
-    public static final String BD_CONTRASENAS= "contraseñas";
+    public static final String BD_PROPIETARIO = "propietario";
+    public static final String BD_CONTRASENAS= "contrasenas";
     public static final String BD_SERVICIO = "servicio";
     public static final String BD_USUARIO = "usuario";
     public static final String BD_PASSWORD = "password";
