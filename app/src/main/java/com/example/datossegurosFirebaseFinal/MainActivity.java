@@ -1,6 +1,7 @@
 package com.example.datossegurosFirebaseFinal;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private AdapterTarjeta adapterTarjeta;
     private BancoAdapter adapterBanco;
     private FirebaseUser user;
+    private ProgressDialog progress;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -125,6 +128,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void verContrasena() {
+        progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
         String userID = user.getUid();
         listContrasena = new ArrayList<>();
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
@@ -140,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot doc : task.getResult()) {
                         ContrasenaConstructor pass = new ContrasenaConstructor();
+                        pass.setIdContrasena(doc.getId());
                         pass.setServicio(doc.getString(UtilidadesStatic.BD_SERVICIO));
                         pass.setUsuario(doc.getString(UtilidadesStatic.BD_USUARIO));
                         pass.setContrasena(doc.getString(UtilidadesStatic.BD_PASSWORD));
@@ -153,7 +161,9 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     adapterContrasena.updateList(listContrasena);
+                    progress.dismiss();
                 } else {
+                    progress.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -164,6 +174,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void verCuentasBancarias() {
+        progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
         String userID = user.getUid();
         listBancos = new ArrayList<>();
         adapterBanco = new BancoAdapter(listBancos, this);
@@ -177,18 +191,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
                         BancoConstructor bank = new BancoConstructor();
+                        bank.setIdCuenta(doc.getId());
                         bank.setTitular(doc.getString(UtilidadesStatic.BD_TITULAR_BANCO));
                         bank.setBanco(doc.getString(UtilidadesStatic.BD_BANCO));
-                        bank.setNumeroCuenta(Integer.parseInt(doc.getString(UtilidadesStatic.BD_NUMERO_CUENTA)));
-                        //bank.setCedula();
+                        bank.setNumeroCuenta(doc.getString(UtilidadesStatic.BD_NUMERO_CUENTA));
+                        bank.setCedula(doc.getString(UtilidadesStatic.BD_CEDULA_BANCO));
+                        bank.setTipo(doc.getString(UtilidadesStatic.BD_TIPO_CUENTA));
+                        bank.setTelefono(doc.getString(UtilidadesStatic.BD_TELEFONO));
 
                         listBancos.add(bank);
 
                     }
                     adapterBanco.updateList(listBancos);
+                    progress.dismiss();
                 } else {
+                    progress.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -198,19 +217,82 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void verTarjetas() {
+        progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+        String userID = user.getUid();
         listTarjetas = new ArrayList<>();
-
         adapterTarjeta = new AdapterTarjeta(listTarjetas, this);
         recycler.setAdapter(adapterTarjeta);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS);
+
+        Query query = reference.orderBy(UtilidadesStatic.BD_TITULAR_TARJETA, Query.Direction.ASCENDING);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                        TarjetaConstructor tarjeta = new TarjetaConstructor();
+                        tarjeta.setIdTarjeta(doc.getId());
+                        tarjeta.setTitular(doc.getString(UtilidadesStatic.BD_TITULAR_TARJETA));
+                        tarjeta.setNumeroTarjeta(doc.getString(UtilidadesStatic.BD_NUMERO_TARJETA));
+                        tarjeta.setCvv(doc.getString(UtilidadesStatic.BD_CVV));
+                        tarjeta.setCedula(doc.getString(UtilidadesStatic.BD_CEDULA_TARJETA));
+                        tarjeta.setTipo(doc.getString(UtilidadesStatic.BD_TIPO_TARJETA));
+
+                        listTarjetas.add(tarjeta);
+
+                    }
+                    adapterTarjeta.updateList(listTarjetas);
+                    progress.dismiss();
+                } else {
+                    progress.dismiss();
+                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 
 
     private void verNotas() {
+        progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+        String userID = user.getUid();
         listNota = new ArrayList<>();
-
         adapterNota = new NotaAdapter(listNota, this);
         recycler.setAdapter(adapterNota);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS);
+
+        Query query = reference.orderBy(UtilidadesStatic.BD_TITULO_NOTAS, Query.Direction.ASCENDING);
+        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                        NotaConstructor nota = new NotaConstructor();
+                        nota.setIdNota(doc.getId());
+                        nota.setTitulo(doc.getString(UtilidadesStatic.BD_TITULO_NOTAS));
+                        nota.setContenido(doc.getString(UtilidadesStatic.BD_CONTENIDO_NOTAS));
+
+                        listNota.add(nota);
+
+                    }
+                    adapterNota.updateList(listNota);
+                    progress.dismiss();
+                } else {
+                    progress.dismiss();
+                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
 

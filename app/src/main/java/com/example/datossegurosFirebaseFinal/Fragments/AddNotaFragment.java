@@ -1,18 +1,34 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +41,9 @@ import com.example.datossegurosFirebaseFinal.R;
 public class AddNotaFragment extends Fragment {
 
     private EditText titulo, contenido;
+    private FirebaseUser user;
+    private ProgressDialog progress;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,12 +94,13 @@ public class AddNotaFragment extends Fragment {
 
         titulo = (EditText) vista.findViewById(R.id.etTitulo);
         contenido = (EditText) vista.findViewById(R.id.etContenido);
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
         Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                guardarNota();
             }
         });
         return vista;
@@ -123,5 +143,39 @@ public class AddNotaFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void guardarNota() {
+        String userID = user.getUid();
+        String tituloS = titulo.getText().toString();
+        String contenidoS = contenido.getText().toString();
+
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Guardando...");
+        progress.setCancelable(false);
+        progress.show();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> nota = new HashMap<>();
+        nota.put(UtilidadesStatic.BD_TITULO_NOTAS, tituloS);
+        nota.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenidoS);
+
+        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                progress.dismiss();
+                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                Intent myIntent = new Intent(getContext(), MainActivity.class);
+                startActivity(myIntent);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progress.dismiss();
+                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

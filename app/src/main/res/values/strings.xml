@@ -56,13 +56,30 @@
     <string name="eliminar">Eliminar</string>
 
     <!-- Copiar Contrasena -->
+    <string name="inicSesion">Iniciar Sesión</string>
+
+    <!-- Copiar Contrasena -->
+    <string name="pregunta">¿No tienes cuenta?</string>
+
+    <!-- Copiar Tarjeta -->
+    <string name="registrate">Regístrate</string>
+
+    <!-- Copiar Nota -->
+    <string name="cuentaGoogle">usa tu cuenta Google</string>
+
+    <!-- Iniciar Sesion -->
+    <string name="usuarioCorreo">Correo electrónico</string>
+    <string name="repetirContrasena">Ingrese de nuevo la contraseña:</string>
+    <string name="registrar">Registrar</string>
+    <string name="bienvenido">Bienvenido</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Registrar -->
     <string-array name="copiarContrasena">
         <item>Servicio</item>
         <item>Usuario</item>
         <item>Contraseña</item>
     </string-array>
-
-    <!-- Copiar Contrasena -->
     <string-array name="copiarBanco">
         <item>Titular</item>
         <item>Banco</item>
@@ -71,8 +88,6 @@
         <item>Tipo</item>
         <item>Telefono</item>
     </string-array>
-
-    <!-- Copiar Tarjeta -->
     <string-array name="copiarTarjeta">
         <item>Titular</item>
         <item>N° Tarjeta</item>
@@ -81,23 +96,11 @@
         <item>Tipo</item>
     </string-array>
 
-    <!-- Copiar Nota -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string-array name="copiarNota">
         <item>Título</item>
         <item>Contenido</item>
     </string-array>
-
-    <!-- Iniciar Sesion -->
-    <string name="inicSesion">Iniciar Sesión</string>
-    <string name="pregunta">¿No tienes cuenta?</string>
-    <string name="registrate">Regístrate</string>
-    <string name="cuentaGoogle">usa tu cuenta Google</string>
-    <string name="usuarioCorreo">Correo electrónico</string>
-
-    <!-- Registrar -->
-    <string name="repetirContrasena">Ingrese de nuevo la contraseña:</string>
-    <string name="registrar">Registrar</string>
-    <string name="bienvenido">Bienvenido</string>
 
 
 </resources>

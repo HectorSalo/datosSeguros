@@ -20,7 +20,8 @@
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="#ffff"/>
 
     <EditText
         android:id="@+id/etRegistrarUsuario"
@@ -34,7 +35,8 @@
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        android:textColorHint="#ffff"/>
 
     <EditText
         android:id="@+id/etRegistrarContrasena"
@@ -48,7 +50,8 @@
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etRegistrarUsuario" />
+        app:layout_constraintTop_toBottomOf="@+id/etRegistrarUsuario"
+        android:textColorHint="#ffff"/>
 
     <EditText
         android:id="@+id/etRegistrarContrasenaRepetir"
@@ -63,7 +66,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etRegistrarContrasena" />
+        app:layout_constraintTop_toBottomOf="@+id/etRegistrarContrasena"
+        android:textColorHint="#ffff"/>
 
     <Button
         android:id="@+id/buttonRegistrar"

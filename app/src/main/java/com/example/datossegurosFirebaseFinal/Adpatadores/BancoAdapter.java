@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +21,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
+import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -30,6 +39,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
+    private FirebaseUser user;
 
     public BancoAdapter (ArrayList<BancoConstructor> listBanco, Context mCtx){
         this.listBanco = listBanco;
@@ -72,9 +82,29 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
                                 break;
 
                             case R.id.menu_editar:
+                                editar(listBanco.get(i));
                                 break;
 
                             case R.id.menu_eliminar:
+                                AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+                                dialog.setTitle("Confirmar");
+                                dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
+
+                                dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        eliminar(listBanco.get(i));
+                                    }
+                                });
+                                dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.setIcon(R.drawable.ic_delete);
+                                dialog.show();
+
                                 break;
 
                             default:
@@ -201,6 +231,43 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
             }
         });
         dialog.show();
+    }
+
+    public void editar(BancoConstructor i) {
+        String id = i.getIdCuenta();
+        Intent myIntent = new Intent(mCtx, EditarActivity.class);
+        Bundle myBundle = new Bundle();
+        myBundle.putInt("data", 1);
+        myBundle.putString("idEditar", id);
+        myIntent.putExtras(myBundle);
+        mCtx.startActivity(myIntent);
+    }
+
+    public void eliminar(final BancoConstructor i) {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
+        String doc = i.getIdCuenta();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS);
+
+        reference.document(doc)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        listBanco.remove(i);
+                        notifyDataSetChanged();
+                        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
     }
 
     public void updateList (ArrayList<BancoConstructor> newList) {

@@ -1,16 +1,21 @@
 package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class ContrasenaConstructor {
-    private String servicio, usuario, contrasena;
+    private String servicio, usuario, contrasena, idContrasena;
     private int vencimiento;
 
     public ContrasenaConstructor() {}
 
-    public ContrasenaConstructor(String servicio, String usuario, String contrasena, int vencimiento) {
+    public ContrasenaConstructor(String servicio, String usuario, String contrasena, int vencimiento, String idContrasena) {
         this.servicio = servicio;
         this.usuario = usuario;
         this.contrasena = contrasena;
         this.vencimiento = vencimiento;
+        this.idContrasena = idContrasena;
+    }
+
+    public String getIdContrasena() {
+        return idContrasena;
     }
 
     public String getServicio() {
@@ -27,6 +32,10 @@ public class ContrasenaConstructor {
 
     public int getVencimiento() {
         return vencimiento;
+    }
+
+    public void setIdContrasena(String idContrasena) {
+        this.idContrasena = idContrasena;
     }
 
     public void setServicio(String servicio) {

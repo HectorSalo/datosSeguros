@@ -1,17 +1,21 @@
 package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class TarjetaConstructor {
-    private String titular, tipo;
-    private int numeroTarjeta, cedula, cvv;
+    private String titular, tipo,numeroTarjeta, cedula, cvv, idTarjeta;
+
 
     public TarjetaConstructor() {}
 
-    public TarjetaConstructor (String titular, int numeroTarjeta, int cvv, int cedula, String tipo) {
+    public TarjetaConstructor (String titular, String numeroTarjeta, String cvv, String cedula, String tipo) {
         this.titular = titular;
         this.numeroTarjeta = numeroTarjeta;
         this.cvv = cvv;
         this.cedula = cedula;
         this.tipo = tipo;
+    }
+
+    public String getIdTarjeta() {
+        return idTarjeta;
     }
 
     public String getTitular() {
@@ -22,15 +26,15 @@ public class TarjetaConstructor {
         return tipo;
     }
 
-    public int getNumeroTarjeta() {
+    public String getNumeroTarjeta() {
         return numeroTarjeta;
     }
 
-    public int getCedula() {
+    public String getCedula() {
         return cedula;
     }
 
-    public int getCvv() {
+    public String getCvv() {
         return cvv;
     }
 
@@ -42,15 +46,19 @@ public class TarjetaConstructor {
         this.tipo = tipo;
     }
 
-    public void setNumeroTarjeta(int numeroTarjeta) {
+    public void setNumeroTarjeta(String numeroTarjeta) {
         this.numeroTarjeta = numeroTarjeta;
     }
 
-    public void setCedula(int cedula) {
+    public void setCedula(String cedula) {
         this.cedula = cedula;
     }
 
-    public void setCvv(int cvv) {
+    public void setCvv(String cvv) {
         this.cvv = cvv;
+    }
+
+    public void setIdTarjeta(String idTarjeta) {
+        this.idTarjeta = idTarjeta;
     }
 }

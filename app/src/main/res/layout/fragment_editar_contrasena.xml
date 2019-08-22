@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.AddContrasenaFragment">
+    tools:context=".FragmentsEditar.EditarContrasenaFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
 
 
         <EditText
-            android:id="@+id/etServicio"
+            android:id="@+id/etServicioEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -20,7 +20,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/etUsuario"
+            android:id="@+id/etUsuarioEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -28,7 +28,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/etContrasena"
+            android:id="@+id/etContrasenaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -43,47 +43,47 @@
             android:textSize="18dp" />
 
         <RadioGroup
-            android:id="@+id/radioDias"
+            android:id="@+id/radioDiasEditar"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <RadioButton
-                android:id="@+id/radioButton30"
+                android:id="@+id/radioButton30Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/treinta" />
 
             <RadioButton
-                android:id="@+id/radioButton60"
+                android:id="@+id/radioButton60Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/sesenta" />
 
             <RadioButton
-                android:id="@+id/radioButton90"
+                android:id="@+id/radioButton90Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/noventa" />
 
             <RadioButton
-                android:id="@+id/radioButton120"
+                android:id="@+id/radioButton120Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/cientoVeinte" />
 
             <RadioButton
-                android:id="@+id/radioButtonIndeterminado"
+                android:id="@+id/radioButtonIndeterminadoEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/indeterminado" />
 
             <RadioButton
-                android:id="@+id/radioButtonOtro"
+                android:id="@+id/radioButtonOtroEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -91,7 +91,7 @@
         </RadioGroup>
 
         <EditText
-            android:id="@+id/etIngreseOtro"
+            android:id="@+id/etIngreseOtroEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -100,7 +100,7 @@
             android:visibility="gone" />
 
         <Button
-            android:id="@+id/guardarContrasena"
+            android:id="@+id/editarContrasena"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

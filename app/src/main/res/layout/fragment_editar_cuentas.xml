@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.AddCuentasFragment">
+    tools:context=".FragmentsEditar.EditarCuentasFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,7 +12,7 @@
 
 
         <EditText
-            android:id="@+id/etTitular"
+            android:id="@+id/etTitularEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -20,7 +20,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/etBanco"
+            android:id="@+id/etBancoEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -28,7 +28,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/etnumeroCuenta"
+            android:id="@+id/etnumeroCuentaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -36,7 +36,7 @@
             android:inputType="number" />
 
         <EditText
-            android:id="@+id/etCedulaCuenta"
+            android:id="@+id/etCedulaCuentaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -44,7 +44,7 @@
             android:inputType="number" />
 
         <EditText
-            android:id="@+id/etTelefono"
+            android:id="@+id/etTelefonoEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -52,7 +52,7 @@
             android:inputType="number" />
 
         <TextView
-            android:id="@+id/etTipo"
+            android:id="@+id/etTipoEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -65,14 +65,14 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/radioButtonAhorro"
+                android:id="@+id/radioButtonAhorroEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/cuentaAhorro" />
 
             <RadioButton
-                android:id="@+id/radioButtonCorriente"
+                android:id="@+id/radioButtonCorrienteEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -81,7 +81,7 @@
         </RadioGroup>
 
         <Button
-            android:id="@+id/guardarCuenta"
+            android:id="@+id/guardarCuentaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

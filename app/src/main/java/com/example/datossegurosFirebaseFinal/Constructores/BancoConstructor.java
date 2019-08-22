@@ -2,18 +2,22 @@ package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class BancoConstructor {
 
-    private String titular, banco, tipo;
-    private int numeroCuenta, cedula, telefono;
+    private String titular, banco, tipo, numeroCuenta, cedula, telefono, idCuenta;
+
 
     public BancoConstructor() {}
 
-    public BancoConstructor (String titular, String banco, String tipo, int numeroCuenta, int cedula, int telefono) {
+    public BancoConstructor (String titular, String banco, String tipo, String numeroCuenta, String cedula, String telefono) {
         this.titular = titular;
         this.banco = banco;
         this.tipo = tipo;
         this.numeroCuenta = numeroCuenta;
         this.cedula = cedula;
         this.telefono = telefono;
+    }
+
+    public String getIdCuenta() {
+        return idCuenta;
     }
 
     public String getTitular() {
@@ -28,15 +32,15 @@ public class BancoConstructor {
         return tipo;
     }
 
-    public int getNumeroCuenta() {
+    public String getNumeroCuenta() {
         return numeroCuenta;
     }
 
-    public int getCedula() {
+    public String getCedula() {
         return cedula;
     }
 
-    public int getTelefono() {
+    public String getTelefono() {
         return telefono;
     }
 
@@ -52,15 +56,19 @@ public class BancoConstructor {
         this.tipo = tipo;
     }
 
-    public void setNumeroCuenta(int numeroCuenta) {
+    public void setNumeroCuenta(String numeroCuenta) {
         this.numeroCuenta = numeroCuenta;
     }
 
-    public void setCedula(int cedula) {
+    public void setCedula(String cedula) {
         this.cedula = cedula;
     }
 
-    public void setTelefono(int telefono) {
+    public void setTelefono(String telefono) {
         this.telefono = telefono;
+    }
+
+    public void setIdCuenta(String idCuenta) {
+        this.idCuenta = idCuenta;
     }
 }

@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +19,17 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
+import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 
@@ -29,6 +39,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
+    private FirebaseUser user;
 
     public NotaAdapter(ArrayList<NotaConstructor> listNota, Context mCtx) {
         this.listNota = listNota;
@@ -66,9 +77,29 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                                 break;
 
                             case R.id.menu_editar:
+                                editar(listNota.get(i));
                                 break;
 
                             case R.id.menu_eliminar:
+                                AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+                                dialog.setTitle("Confirmar");
+                                dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
+
+                                dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        eliminar(listNota.get(i));
+                                    }
+                                });
+                                dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                dialog.setIcon(R.drawable.ic_delete);
+                                dialog.show();
+
                                 break;
 
                             default:
@@ -182,5 +213,47 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
             }
         });
         dialog.show();
+    }
+
+    public void editar(NotaConstructor i) {
+        String id = i.getIdNota();
+        Intent myIntent = new Intent(mCtx, EditarActivity.class);
+        Bundle myBundle = new Bundle();
+        myBundle.putInt("data", 3);
+        myBundle.putString("idEditar", id);
+        myIntent.putExtras(myBundle);
+        mCtx.startActivity(myIntent);
+    }
+
+    public void eliminar(final NotaConstructor i) {
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
+        String doc = i.getIdNota();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS);
+
+        reference.document(doc)
+                .delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        listNota.remove(i);
+                        notifyDataSetChanged();
+                        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void updateList (ArrayList<NotaConstructor> newList) {
+        listNota = new ArrayList<>();
+        listNota.addAll(newList);
+        notifyDataSetChanged();
     }
 }
