@@ -19,6 +19,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
+import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.R;
 
 import java.util.ArrayList;
@@ -200,5 +201,11 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
             }
         });
         dialog.show();
+    }
+
+    public void updateList (ArrayList<BancoConstructor> newList) {
+        listBanco = new ArrayList<>();
+        listBanco.addAll(newList);
+        notifyDataSetChanged();
     }
 }
