@@ -23,6 +23,7 @@ import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -229,11 +230,10 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     }
 
     public void editar(TarjetaConstructor i) {
-        String id = i.getIdTarjeta();
+        Utilidades.idTarjeta = i.getIdTarjeta();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putInt("data", 2);
-        myBundle.putString("idEditar", id);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }

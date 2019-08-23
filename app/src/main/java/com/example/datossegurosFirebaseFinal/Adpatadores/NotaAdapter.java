@@ -23,6 +23,7 @@ import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -216,11 +217,10 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     }
 
     public void editar(NotaConstructor i) {
-        String id = i.getIdNota();
+        Utilidades.idNota = i.getIdNota();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putInt("data", 3);
-        myBundle.putString("idEditar", id);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }

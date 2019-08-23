@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -228,11 +229,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     }
 
     public void editar(ContrasenaConstructor i) {
-        String id = i.getIdContrasena();
+        Utilidades.idContrasena = i.getIdContrasena();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putInt("data", 0);
-        myBundle.putString("idEditar", id);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }

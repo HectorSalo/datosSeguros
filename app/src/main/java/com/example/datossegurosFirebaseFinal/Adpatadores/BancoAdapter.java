@@ -23,6 +23,7 @@ import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -234,11 +235,10 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     }
 
     public void editar(BancoConstructor i) {
-        String id = i.getIdCuenta();
+        Utilidades.idCuenta = i.getIdCuenta();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putInt("data", 1);
-        myBundle.putString("idEditar", id);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }

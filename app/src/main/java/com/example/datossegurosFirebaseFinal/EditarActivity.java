@@ -15,7 +15,6 @@ import com.example.datossegurosFirebaseFinal.FragmentsEditar.EditarTarjetaFragme
 public class EditarActivity extends AppCompatActivity implements EditarContrasenaFragment.OnFragmentInteractionListener, EditarCuentasFragment.OnFragmentInteractionListener,
 EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragmentInteractionListener{
 
-    private String idData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +28,6 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
 
         Bundle myBundle = this.getIntent().getExtras();
         int data = myBundle.getInt("data");
-        idData = myBundle.getString("idEditar");
 
         if (data == 0) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsEditar, editarContrasenaFragment).commit();
