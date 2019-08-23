@@ -91,6 +91,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
+                android:paddingEnd="2dp"
                 android:text="@string/registrate"
                 android:textSize="18sp"
                 android:textStyle="bold|italic" />

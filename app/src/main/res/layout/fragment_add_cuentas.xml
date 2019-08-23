@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.AddCuentasFragment">
+    tools:context=".Fragments.AddCuentasFragment"
+    android:background="#DA8068">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -57,7 +58,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:paddingTop="24dp"/>
 
         <RadioGroup
             android:layout_width="match_parent"

@@ -23,7 +23,9 @@ import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -41,7 +43,6 @@ import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
-    private FloatingActionButton fabAdd;
     private RecyclerView recycler;
     private ContrasenaAdapter adapterContrasena;
     private ArrayList<ContrasenaConstructor> listContrasena;
@@ -53,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private BancoAdapter adapterBanco;
     private FirebaseUser user;
     private ProgressDialog progress;
+    private FloatingActionsMenu fabGrupo;
+    private com.getbase.floatingactionbutton.FloatingActionButton fabContrasena, fabCuenta, fabNota, fabTarjeta;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -95,15 +98,49 @@ public class MainActivity extends AppCompatActivity {
 
         verContrasena();
 
-        fabAdd = (FloatingActionButton) findViewById(R.id.fab_agregar);
-        fabAdd.setOnClickListener(new View.OnClickListener() {
+        fabGrupo = (FloatingActionsMenu) findViewById(R.id.fabGrupo);
+        fabContrasena = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabContrasena);
+        fabCuenta = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabCuenta);
+        fabTarjeta = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabTarjeta);
+        fabNota = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabNota);
+
+        fabContrasena.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Utilidades.Add = 0;
                 startActivity(new Intent(MainActivity.this, AddActivity.class));
+                fabGrupo.collapse();
             }
         });
 
-    }
+        fabCuenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utilidades.Add = 1;
+                startActivity(new Intent(MainActivity.this, AddActivity.class));
+                fabGrupo.collapse();
+            }
+        });
+
+        fabTarjeta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utilidades.Add = 2;
+                startActivity(new Intent(MainActivity.this, AddActivity.class));
+                fabGrupo.collapse();
+            }
+        });
+
+        fabNota.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Utilidades.Add = 3;
+                startActivity(new Intent(MainActivity.this, AddActivity.class));
+                fabGrupo.collapse();
+            }
+        });
+
+        }
 
     @Override
     public void onBackPressed() {

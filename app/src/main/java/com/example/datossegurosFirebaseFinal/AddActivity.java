@@ -19,6 +19,7 @@ import com.example.datossegurosFirebaseFinal.Fragments.AddContrasenaFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddCuentasFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddNotaFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddTarjetaFragment;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
         AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {
@@ -36,7 +37,7 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
 
         spinnerOpciones = (Spinner) findViewById(R.id.spinnerOpciones);
 
-        String [] spOpciones = {"Contraseña", "Cuenta Bancaria", "Tarjeta Bancaria", "Nota"};
+        String [] spOpciones = {"Cambiar opción", "Contraseña", "Cuenta Bancaria", "Tarjeta Bancaria", "Nota"};
         ArrayAdapter<String> adapterOpciones = new ArrayAdapter<String>(this, R.layout.spinner_opciones, spOpciones);
         spinnerOpciones.setAdapter(adapterOpciones);
 
@@ -45,7 +46,18 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
         addTarjetaFragment = new AddTarjetaFragment();
         addNotaFragment = new AddNotaFragment();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addContrasenaFragment).commit();
+
+        if (Utilidades.Add == 0) {
+            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addContrasenaFragment).commit();
+        } else if (Utilidades.Add == 1) {
+            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addCuentasFragment).commit();
+        } else if (Utilidades.Add == 2) {
+            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addTarjetaFragment).commit();
+        } else if (Utilidades.Add == 3) {
+            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addNotaFragment).commit();
+        }
+
+
 
         spinnerOpciones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -54,16 +66,16 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
                 int seleccion = spinnerOpciones.getSelectedItemPosition();
 
                 switch (seleccion) {
-                    case 0:
+                    case 1:
                         transaction.replace(R.id.contenedorFragments, addContrasenaFragment);
                         break;
-                    case 1:
+                    case 2:
                         transaction.replace(R.id.contenedorFragments, addCuentasFragment);
                         break;
-                    case 2:
+                    case 3:
                         transaction.replace(R.id.contenedorFragments, addTarjetaFragment);
                         break;
-                    case 3:
+                    case 4:
                         transaction.replace(R.id.contenedorFragments, addNotaFragment);
                         break;
                 }

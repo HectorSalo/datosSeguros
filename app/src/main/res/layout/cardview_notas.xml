@@ -6,28 +6,18 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="400dp"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        app:cardBackgroundColor="#32DF8E"
+        app:cardBackgroundColor="#FFCCBC"
         app:cardCornerRadius="8dp"
         app:cardElevation="32dp"
         app:cardPreventCornerOverlap="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tvmenuNota"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:gravity="center"
-            android:paddingEnd="16dp"
-            android:text="&#8942;"
-            android:textSize="18dp"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,32 +27,42 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tvTituloNota"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView"
-                    android:textSize="22dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+                    android:hint="@string/tituloNota"
+                    android:paddingStart="16dp"
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/tvcontenidoNota"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="TextView"
-                    android:textSize="22dp"/>
+                    android:ems="10"
+                    android:hint="@string/contenidoNota"
+                    android:inputType="textMultiLine"
+                    android:paddingStart="16dp"
+                    android:paddingTop="32dp"
+                    android:textSize="22sp" />
             </LinearLayout>
 
+
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvmenuNota"
+            android:layout_width="35dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:gravity="center"
+            android:paddingEnd="16dp"
+            android:text="&#8942;"
+            android:textSize="18dp" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

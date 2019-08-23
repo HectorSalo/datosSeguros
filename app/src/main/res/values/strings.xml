@@ -68,11 +68,11 @@
     <string name="cuentaGoogle">usa tu cuenta Google</string>
 
     <!-- Iniciar Sesion -->
-    <string name="usuarioCorreo">Correo electrónico</string>
+    <string name="usuarioCorreo">Correo electrónico:</string>
     <string name="repetirContrasena">Ingrese de nuevo la contraseña:</string>
     <string name="registrar">Registrar</string>
     <string name="bienvenido">Bienvenido</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
     <!-- Registrar -->
     <string-array name="copiarContrasena">

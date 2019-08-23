@@ -89,12 +89,14 @@ public class RegistrarActivity extends AppCompatActivity {
         if (contrasenaS.isEmpty() || (contrasenaS.length() < 6)) {
             passwordValido = false;
             contrasena.setError("Mínimo 6 caracteres");
+            repetirContrasena.setError("Mínimo 6 caracteres");
         } else {
             if (contrasenaS.equals(repetirContrasenaS)) {
                 passwordValido = true;
             } else {
                 passwordValido = false;
                 contrasena.setError("Las contraseñas deben coincidir");
+                repetirContrasena.setError("Las contraseñas deben coincidir");
             }
 
         }
