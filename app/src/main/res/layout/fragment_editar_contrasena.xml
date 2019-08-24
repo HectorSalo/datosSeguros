@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarContrasenaFragment">
+    tools:context=".FragmentsEditar.EditarContrasenaFragment"
+    android:background="#455A64">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +18,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/servicio"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etUsuarioEditar"
@@ -25,7 +28,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/usuario"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etContrasenaEditar"
@@ -33,14 +38,19 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/contrasena"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/caducidad"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:paddingTop="24dp"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <RadioGroup
             android:id="@+id/radioDiasEditar"
@@ -52,42 +62,57 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/treinta" />
+                android:buttonTint="#fff"
+                android:text="@string/treinta"
+
+                android:textColor="#fff"
+                android:textColorHighlight="#fff"
+                android:textColorLink="@color/colorAccent" />
 
             <RadioButton
                 android:id="@+id/radioButton60Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/sesenta" />
+                android:buttonTint="#fff"
+                android:text="@string/sesenta"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButton90Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/noventa" />
+                android:buttonTint="#fff"
+                android:text="@string/noventa"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButton120Editar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/cientoVeinte" />
+                android:buttonTint="#fff"
+                android:text="@string/cientoVeinte"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButtonIndeterminadoEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/indeterminado" />
+                android:buttonTint="#fff"
+                android:text="@string/indeterminado"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButtonOtroEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/otro" />
+                android:buttonTint="#fff"
+                android:text="@string/otro"
+                android:textColor="#fff" />
         </RadioGroup>
 
         <EditText
@@ -97,7 +122,9 @@
             android:ems="10"
             android:hint="@string/ingreseTiempo"
             android:inputType="number"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <Button
             android:id="@+id/editarContrasena"

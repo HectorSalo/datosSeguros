@@ -26,7 +26,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroTarjeta"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="16"/>
 
         <EditText
             android:id="@+id/etnumeroCVV"
@@ -34,7 +35,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCVV"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="3"/>
 
         <EditText
             android:id="@+id/etCedulaTarjeta"

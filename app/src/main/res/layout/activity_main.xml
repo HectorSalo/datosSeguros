@@ -10,7 +10,8 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:background="@color/colorAccent">
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -47,8 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginBottom="48dp"
-        app:fab_addButtonColorNormal="@color/colorAccent"
-        app:fab_addButtonColorPressed="@color/colorAccent"
+        app:fab_addButtonColorNormal="@color/colorPrimaryDark"
+        app:fab_addButtonColorPressed="@color/colorPrimary"
         app:fab_labelStyle="@style/etiqueta"
         app:layout_constraintBottom_toTopOf="@+id/container"
         app:layout_constraintEnd_toStartOf="@+id/container"
@@ -58,9 +59,9 @@
             android:id="@+id/fabContrasena"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
-            app:fab_icon="@drawable/ic_add_contrasena"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_icon="@drawable/ic_contrasena"
             app:fab_size="mini"
             app:fab_title="@string/title_contrasenas" />
 
@@ -68,9 +69,9 @@
             android:id="@+id/fabCuenta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
-            app:fab_icon="@drawable/ic_add_banco"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_icon="@drawable/ic_banco"
             app:fab_size="mini"
             app:fab_title="@string/title_cuentas" />
 
@@ -78,9 +79,9 @@
             android:id="@+id/fabTarjeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
-            app:fab_icon="@drawable/ic_add_card"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_icon="@drawable/ic_card"
             app:fab_size="mini"
             app:fab_title="@string/title_tarjetas" />
 
@@ -88,9 +89,9 @@
             android:id="@+id/fabNota"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:fab_colorNormal="@color/colorAccent"
-            app:fab_colorPressed="@color/colorAccent"
-            app:fab_icon="@drawable/ic_add_nota"
+            app:fab_colorNormal="@color/colorPrimary"
+            app:fab_colorPressed="@color/colorPrimaryDark"
+            app:fab_icon="@drawable/ic_nota"
             app:fab_size="mini"
             app:fab_title="@string/title_notas" />
 

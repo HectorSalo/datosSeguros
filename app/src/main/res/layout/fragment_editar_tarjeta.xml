@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarTarjetaFragment">
+    tools:context=".FragmentsEditar.EditarTarjetaFragment"
+    android:background="#455A64">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +18,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/titular"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etTarjetaEditar"
@@ -25,7 +28,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroTarjeta"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="16"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etnumeroCVVEditar"
@@ -33,7 +39,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCVV"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="3"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etCedulaTarjetaEditar"
@@ -41,7 +50,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/cedula"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <TextView
             android:id="@+id/etTipoEditar"
@@ -49,7 +60,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:paddingTop="24dp"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <RadioGroup
             android:id="@+id/radioTarjetaEditar"
@@ -61,21 +75,27 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/tarjetaVisa" />
+                android:buttonTint="#fff"
+                android:text="@string/tarjetaVisa"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButtonMasterEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/tarjetaMaster" />
+                android:buttonTint="#fff"
+                android:text="@string/tarjetaMaster"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButtonOtroTarjetaEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/otro" />
+                android:buttonTint="#fff"
+                android:text="@string/otro"
+                android:textColor="#fff" />
         </RadioGroup>
 
         <EditText
@@ -85,7 +105,9 @@
             android:ems="10"
             android:inputType="textPersonName"
             android:hint="@string/otroTarjeta"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <Button
             android:id="@+id/guardarTarjetaEditar"

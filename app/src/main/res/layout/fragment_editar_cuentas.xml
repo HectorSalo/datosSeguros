@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarCuentasFragment">
+    tools:context=".FragmentsEditar.EditarCuentasFragment"
+    android:background="#455A64">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +18,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/titular"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etBancoEditar"
@@ -25,7 +28,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/banco"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etnumeroCuentaEditar"
@@ -33,7 +38,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCuenta"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="20"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etCedulaCuentaEditar"
@@ -41,7 +49,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/cedula"
-            android:inputType="number" />
+            android:inputType="number"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etTelefonoEditar"
@@ -49,7 +59,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/telefono"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="11"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <TextView
             android:id="@+id/etTipoEditar"
@@ -57,7 +70,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:paddingTop="24dp"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <RadioGroup
             android:layout_width="match_parent"
@@ -69,14 +85,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/cuentaAhorro" />
+                android:buttonTint="#fff"
+                android:text="@string/cuentaAhorro"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButtonCorrienteEditar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/cuentaCorriente" />
+                android:buttonTint="#fff"
+                android:text="@string/cuentaCorriente"
+                android:textColor="#fff" />
 
         </RadioGroup>
 

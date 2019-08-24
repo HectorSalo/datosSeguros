@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarNotaFragment">
+    tools:context=".FragmentsEditar.EditarNotaFragment"
+    android:background="#455A64">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,19 +14,24 @@
 
         <EditText
             android:id="@+id/etTituloEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/tituloNota"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <EditText
             android:id="@+id/etContenidoEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="24dp"
             android:ems="10"
             android:hint="@string/contenidoNota"
-            android:inputType="textPersonName" />
+            android:inputType="textMultiLine"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
 
         <Button
             android:id="@+id/guardarNotaEditar"

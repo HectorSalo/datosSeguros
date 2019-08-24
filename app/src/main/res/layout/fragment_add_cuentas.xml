@@ -34,7 +34,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCuenta"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="20"/>
 
         <EditText
             android:id="@+id/etCedulaCuenta"
@@ -50,7 +51,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/telefono"
-            android:inputType="number" />
+            android:inputType="number"
+            android:maxLength="11"/>
 
         <TextView
             android:id="@+id/etTipo"

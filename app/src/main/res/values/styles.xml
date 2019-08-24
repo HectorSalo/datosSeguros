@@ -9,7 +9,7 @@
     </style>
 
     <style name="etiqueta">
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textColor">#fff</item>
     </style>
 
 </resources>

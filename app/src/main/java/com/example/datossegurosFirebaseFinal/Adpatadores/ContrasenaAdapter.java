@@ -63,7 +63,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         if (listContrasena.get(i).getVencimiento() == 0) {
             viewHolderContrasena.vencimiento.setText("Sin fecha de vencimiento");
         } else {
-            viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()));
+            viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()) + " días");
         }
 
         viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
