@@ -29,6 +29,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,6 +50,7 @@ public class AddContrasenaFragment extends Fragment {
     private int duracionVigencia;
     private FirebaseUser user;
     private ProgressDialog progress;
+    private Date fechaActual;
 
 
     private static final String ARG_PARAM1 = "param1";
@@ -107,6 +110,13 @@ public class AddContrasenaFragment extends Fragment {
         rbdias120 = (RadioButton) vista.findViewById(R.id.radioButton120);
         rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminado);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);
+
+        Calendar almanaque = Calendar.getInstance();
+        int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
+        int mesActual = almanaque.get(Calendar.MONTH);
+        int anualActual = almanaque.get(Calendar.YEAR);
+        almanaque.set(anualActual, mesActual, diaActual);
+        fechaActual = almanaque.getTime();
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -229,6 +239,7 @@ public class AddContrasenaFragment extends Fragment {
                 contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasena);
                 contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
                 contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
+                contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaActual);
 
                 db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override

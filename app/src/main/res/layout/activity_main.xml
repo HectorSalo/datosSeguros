@@ -97,4 +97,16 @@
 
     </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
+    <TextView
+        android:id="@+id/tvSinLista"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/sin_lista"
+        android:fontFamily="@font/aref_ruqaa"
+        android:textColor="#fff"
+        android:textSize="32sp"
+        android:gravity="center"
+        android:visibility="gone"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".EditarActivity"></activity>
+        <activity android:name=".AcercaActivity"></activity>
+        <activity android:name=".EditarActivity" />
         <activity android:name=".RegistrarActivity" />
         <activity android:name=".InicSesionActivity">
             <intent-filter>

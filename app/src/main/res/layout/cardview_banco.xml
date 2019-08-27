@@ -11,7 +11,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:background="@drawable/fondo_contrasena"
+        app:cardCornerRadius="18dp"
         app:cardPreventCornerOverlap="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,7 +20,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/fondo_contrasena">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -33,14 +34,16 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/titular"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
 
                 <TextView
                     android:id="@+id/tvTitular"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
             </LinearLayout>
 
             <LinearLayout
@@ -54,14 +57,16 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/banco"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
 
                 <TextView
                     android:id="@+id/tvBanco"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
             </LinearLayout>
 
             <LinearLayout
@@ -75,14 +80,16 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/numeroCuenta"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
 
                 <TextView
                     android:id="@+id/tvnumeroCuenta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
             </LinearLayout>
 
             <LinearLayout
@@ -96,14 +103,16 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/cedula"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
 
                 <TextView
                     android:id="@+id/tvCedula"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
             </LinearLayout>
 
             <LinearLayout
@@ -117,14 +126,16 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/tipodeCuenta"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
 
                 <TextView
                     android:id="@+id/tvTipo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
             </LinearLayout>
 
             <LinearLayout
@@ -138,14 +149,16 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/telefono"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
 
                 <TextView
                     android:id="@+id/tvTelefono"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp" />
+                    android:textSize="18dp"
+                    android:textColor="#fff"/>
             </LinearLayout>
         </LinearLayout>
 
@@ -157,7 +170,8 @@
             android:gravity="center"
             android:paddingEnd="16dp"
             android:text="&#8942;"
-            android:textSize="18dp" />
+            android:textSize="18dp"
+            android:textColor="#fff"/>
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

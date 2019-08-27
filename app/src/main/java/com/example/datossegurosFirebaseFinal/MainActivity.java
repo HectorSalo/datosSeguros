@@ -6,8 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -56,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressDialog progress;
     private FloatingActionsMenu fabGrupo;
     private com.getbase.floatingactionbutton.FloatingActionButton fabContrasena, fabCuenta, fabNota, fabTarjeta;
+    private TextView sinLista;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -89,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
+        sinLista = (TextView) findViewById(R.id.tvSinLista);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -140,7 +145,31 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.menu_acerca) {
+            startActivity(new Intent(getApplicationContext(), AcercaActivity.class));
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+
 
     @Override
     public void onBackPressed() {
@@ -198,6 +227,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     adapterContrasena.updateList(listContrasena);
+                    if (listContrasena.isEmpty()) {
+                        sinLista.setVisibility(View.VISIBLE);
+                    } else {
+                        sinLista.setVisibility(View.GONE);
+                    }
                     progress.dismiss();
                 } else {
                     progress.dismiss();
@@ -242,7 +276,13 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     adapterBanco.updateList(listBancos);
+                    if (listBancos.isEmpty()) {
+                        sinLista.setVisibility(View.VISIBLE);
+                    } else {
+                        sinLista.setVisibility(View.GONE);
+                    }
                     progress.dismiss();
+
                 } else {
                     progress.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
@@ -284,6 +324,11 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     adapterTarjeta.updateList(listTarjetas);
+                    if (listTarjetas.isEmpty()) {
+                        sinLista.setVisibility(View.VISIBLE);
+                    } else {
+                        sinLista.setVisibility(View.GONE);
+                    }
                     progress.dismiss();
                 } else {
                     progress.dismiss();
@@ -323,7 +368,13 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     adapterNota.updateList(listNota);
+                    if (listNota.isEmpty()) {
+                        sinLista.setVisibility(View.VISIBLE);
+                    } else {
+                        sinLista.setVisibility(View.GONE);
+                    }
                     progress.dismiss();
+
                 } else {
                     progress.dismiss();
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
