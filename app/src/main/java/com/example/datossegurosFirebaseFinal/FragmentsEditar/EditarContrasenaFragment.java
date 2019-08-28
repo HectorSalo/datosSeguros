@@ -154,6 +154,7 @@ public class EditarContrasenaFragment extends Fragment {
                         break;
 
                     case R.id.radioButtonIndeterminadoEditar:
+                        duracionVigencia = 0;
                         etOtro.setVisibility(View.GONE);
                         break;
 
@@ -382,10 +383,6 @@ public class EditarContrasenaFragment extends Fragment {
                     progress.setCancelable(false);
                     progress.show();
 
-                    fechaEnviar = fechaActual;
-                    vigencia = "0";
-
-
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> contrasenaM = new HashMap<>();
@@ -393,7 +390,7 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
                     contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progress.dismiss();

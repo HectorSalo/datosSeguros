@@ -188,9 +188,9 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                 String [] items = {titulo, contenido};
 
                 if (isChecked) {
-                    selectedCopiar.add(items[which]);
+                    selectedCompartir.add(items[which]);
                 } else {
-                    selectedCopiar.remove(items[which]);
+                    selectedCompartir.remove(items[which]);
                 }
             }
         });
