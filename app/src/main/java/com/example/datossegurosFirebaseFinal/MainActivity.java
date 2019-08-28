@@ -41,6 +41,8 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionsMenu fabGrupo;
     private com.getbase.floatingactionbutton.FloatingActionButton fabContrasena, fabCuenta, fabNota, fabTarjeta;
     private TextView sinLista;
+    private Date fechaMomento;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -92,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
+        Calendar almanaque = Calendar.getInstance();
+        int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
+        int mesActual = almanaque.get(Calendar.MONTH);
+        int anualActual = almanaque.get(Calendar.YEAR);
+        almanaque.set(anualActual, mesActual, diaActual);
+        fechaMomento = almanaque.getTime();
 
         sinLista = (TextView) findViewById(R.id.tvSinLista);
 
@@ -217,10 +227,26 @@ public class MainActivity extends AppCompatActivity {
                         pass.setServicio(doc.getString(UtilidadesStatic.BD_SERVICIO));
                         pass.setUsuario(doc.getString(UtilidadesStatic.BD_USUARIO));
                         pass.setContrasena(doc.getString(UtilidadesStatic.BD_PASSWORD));
-                        if (doc.getString(UtilidadesStatic.BD_PASSWORD).equals("0")) {
+
+                        Date momentoCreacion = doc.getDate(UtilidadesStatic.BD_FECHA_CREACION);
+                        long fechaCreacion = momentoCreacion.getTime();
+                        long fechaActual = fechaMomento.getTime();
+
+                        long diasRestantes = fechaActual - fechaCreacion;
+
+                        long segundos = diasRestantes / 1000;
+                        long minutos = segundos / 60;
+                        long horas = minutos / 60;
+                        long dias = horas / 24;
+                        int diasTranscurridos = (int) dias;
+
+
+                        if (doc.getString(UtilidadesStatic.BD_VIGENCIA).equals("0")) {
                             pass.setVencimiento(0);
                         } else {
-                            pass.setVencimiento(Integer.parseInt(doc.getString(UtilidadesStatic.BD_VIGENCIA)));
+                            int vencimiento = Integer.parseInt(doc.getString(UtilidadesStatic.BD_VIGENCIA));
+                            int faltante = vencimiento - diasTranscurridos;
+                            pass.setVencimiento(faltante);
                         }
 
                         listContrasena.add(pass);
