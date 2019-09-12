@@ -113,5 +113,9 @@
         <item>Contenido</item>
     </string-array>
 
+    <!-- Mi Perfil -->
+    <string name="titleMiPerfil">¿Qué desea actualizar?</string>
+    <string name="btUpdateemail">Actualizar Correo</string>
+    <string name="btUpdatePass">Actualizar Contraseña</string>
 
 </resources>

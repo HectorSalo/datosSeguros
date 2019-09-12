@@ -12,4 +12,8 @@
         <item name="android:textColor">#fff</item>
     </style>
 
+    <style name="Theme.Dialog.MiPerfil" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
+
 </resources>
