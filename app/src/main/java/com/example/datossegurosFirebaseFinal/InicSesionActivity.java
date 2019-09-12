@@ -1,9 +1,11 @@
 package com.example.datossegurosFirebaseFinal;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,6 +46,7 @@ public class InicSesionActivity extends AppCompatActivity {
         contrasena = (EditText) findViewById(R.id.etInicSesionContrasena);
         TextView registrate = (TextView) findViewById(R.id.tvRegistrate);
         TextView cuentaGoogle = (TextView) findViewById(R.id.tvcuentaGoogle);
+        TextView olvidoPass = (TextView) findViewById(R.id.tvOlvidoPass);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -69,6 +72,13 @@ public class InicSesionActivity extends AppCompatActivity {
             }
         });
 
+        olvidoPass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                recuperarPass();
+            }
+        });
+
         Button inicSesion = (Button) findViewById(R.id.buttonInicSesion);
         inicSesion.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +87,30 @@ public class InicSesionActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void recuperarPass() {
+        final EditText usuario = new EditText(this);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setMessage("Ingrese correo electrónico")
+                .setTitle("Recuperación de contraseña")
+                .setView(usuario)
+                .setPositiveButton("Recuperar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String correo = usuario.getText().toString();
+                        enviarCorreo(correo);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setCancelable(false)
+                .show();
     }
 
     @Override
@@ -192,6 +226,19 @@ public class InicSesionActivity extends AppCompatActivity {
                         // ...
                     }
                 });
+    }
+
+    public void enviarCorreo(String email) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+
+        auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Log.d("msg", "Correo enviado");
+                }
+            }
+        });
     }
 
 

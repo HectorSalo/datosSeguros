@@ -114,5 +114,33 @@
                 android:textSize="18sp"
                 android:textStyle="bold|italic" />
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingTop="20dp">
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:paddingEnd="2dp"
+                android:text="@string/olvidoPass"
+                android:textSize="18sp"
+                 />
+
+            <TextView
+                android:id="@+id/tvOlvidoPass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/aqui"
+                android:textSize="18sp"
+                android:textStyle="bold|italic"
+                android:paddingStart="2dp"/>
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

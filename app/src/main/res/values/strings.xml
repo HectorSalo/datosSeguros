@@ -6,6 +6,7 @@
     <string name="title_notas">Notas</string>
     <string name="buttonGuardar">Guardar</string>
     <string name="sin_lista">No tiene información almacenada</string>
+    <string name="perfil">Mi Perfil</string>
 
 
     <!-- Cardview contraseña -->
@@ -67,6 +68,8 @@
 
     <!-- Copiar Nota -->
     <string name="cuentaGoogle">usa tu cuenta Google</string>
+    <string name="olvidoPass">Si olvido su contraseña presione</string>
+    <string name="aqui">aquí</string>
 
     <!-- Iniciar Sesion -->
     <string name="usuarioCorreo">Correo electrónico:</string>
@@ -76,6 +79,15 @@
 
 
     <!-- Registrar -->
+    <string name="acerca">Información</string>
+    <string name="desarrollado">Desarrollado por</string>
+    <string name="skysam">Inversiones SkySam, C.A.</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="atencion_cliente">Atención al usuario:</string>
+
+    <!-- Acerca -->
+    <string name="contacto">inversionesskysam@gmail.com</string>
     <string-array name="copiarContrasena">
         <item>Servicio</item>
         <item>Usuario</item>
@@ -96,19 +108,10 @@
         <item>Cédula</item>
         <item>Tipo</item>
     </string-array>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string-array name="copiarNota">
         <item>Título</item>
         <item>Contenido</item>
     </string-array>
-
-    <!-- Acerca -->
-    <string name="acerca">Información</string>
-    <string name="desarrollado">Desarrollado por</string>
-    <string name="skysam">Inversiones SkySam, C.A.</string>
-    <string name="atencion_cliente">Atención al usuario:</string>
-    <string name="contacto">inversionesskysam@gmail.com</string>
 
 
 </resources>

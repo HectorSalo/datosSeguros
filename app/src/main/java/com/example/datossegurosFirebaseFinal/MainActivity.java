@@ -175,6 +175,9 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.menu_acerca) {
             startActivity(new Intent(getApplicationContext(), AcercaActivity.class));
             return true;
+        } else if (id == R.id.menu_perfil) {
+            startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
+            return  true;
         }
         return super.onOptionsItemSelected(item);
     }
