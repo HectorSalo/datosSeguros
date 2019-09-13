@@ -115,7 +115,12 @@
 
     <!-- Mi Perfil -->
     <string name="titleMiPerfil">¿Qué desea actualizar?</string>
-    <string name="btUpdateemail">Actualizar Correo</string>
-    <string name="btUpdatePass">Actualizar Contraseña</string>
+    <string name="updateEmail">Actualizar Correo</string>
+    <string name="updatePass">Actualizar Contraseña</string>
+    <string name="btUpdate">Actualizar</string>
+    <string name="nuevoEmail">Ingrese nueva dirección de correo</string>
+    <string name="repetirEmail">Repita la dirección de correo</string>
+    <string name="nuevoPass">Ingrese nueva Contraseña</string>
+    <string name="repetirPass">Repita la Contraseña</string>
 
 </resources>

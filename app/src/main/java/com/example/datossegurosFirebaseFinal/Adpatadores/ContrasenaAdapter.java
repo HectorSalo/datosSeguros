@@ -1,5 +1,6 @@
 package com.example.datossegurosFirebaseFinal.Adpatadores;
 
+import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -40,7 +41,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
     private FirebaseUser user;
-
+    
     public ContrasenaAdapter (ArrayList<ContrasenaConstructor> listContrasena, Context mCtx) {
         this.listContrasena = listContrasena;
         this.mCtx = mCtx;
@@ -64,6 +65,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
             viewHolderContrasena.vencimiento.setText("Sin fecha de vencimiento");
         } else {
             viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()) + " días");
+            if (listContrasena.get(i).getVencimiento() <= 7 && listContrasena.get(i).getVencimiento() != 0) {
+                viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.colorRed));
+
+            }
         }
 
         viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {

@@ -26,4 +26,7 @@ public class UtilidadesStatic {
     public static final String BD_TITULO_NOTAS = "titulonotas";
     public static final String BD_CONTENIDO_NOTAS= "contenidonotas";
 
+    public static final String CHANNEL_ID = "NOTIFICACION";
+    public static final int NOTIFICACION_ID = 0;
+
 }
