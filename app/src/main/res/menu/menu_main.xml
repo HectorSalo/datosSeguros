@@ -5,15 +5,24 @@
     <item
         android:title="@string/perfil"
         android:id="@+id/menu_perfil"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_perfil"/>
+        />
+
+    <item
+        android:title="@string/cerrarSesion"
+        android:id="@+id/menu_cerrar_sesion"
+        />
 
     <item
         android:title="@string/acerca"
         android:id="@+id/menu_acerca"
-        app:showAsAction="always"
-        android:icon="@drawable/ic_info"/>
+        />
 
+    <item
+        android:title="@string/acerca"
+        android:id="@+id/menu_buscar"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_buscar"
+        app:actionViewClass="android.widget.SearchView"/>
 
 
 </menu>

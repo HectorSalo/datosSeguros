@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private RecyclerView recycler;
     private ContrasenaAdapter adapterContrasena;
@@ -62,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private com.getbase.floatingactionbutton.FloatingActionButton fabContrasena, fabCuenta, fabNota, fabTarjeta;
     private TextView sinLista;
     private Date fechaMomento;
+    private int listaBuscar;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -72,15 +74,19 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_contrasena:
                     verContrasena();
+                    listaBuscar = 0;
                     return true;
                 case R.id.navigation_cuentas:
                     verCuentasBancarias();
+                    listaBuscar = 1;
                     return true;
                 case R.id.navigation_tarjetas:
                     verTarjetas();
+                    listaBuscar = 2;
                     return true;
                 case R.id.navigation_notas:
                     verNotas();
+                    listaBuscar = 3;
                     return true;
             }
             return false;
@@ -161,6 +167,10 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        MenuItem menuItem = menu.findItem(R.id.menu_buscar);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(this);
+
         return true;
     }
 
@@ -178,6 +188,11 @@ public class MainActivity extends AppCompatActivity {
         } else if (id == R.id.menu_perfil) {
             startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
             return  true;
+        } else if (id == R.id.menu_cerrar_sesion) {
+            cerrarSesion();
+            return true;
+        } else if (id == R.id.menu_buscar) {
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -186,24 +201,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-        dialog.setTitle("Confirmar");
-        dialog.setMessage("¿Desea cerrar sesión?");
-        dialog.setIcon(R.drawable.ic_advertencia);
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
-            }
-        });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        dialog.show();
+        cerrarSesion();
     }
 
     private void verContrasena() {
@@ -412,6 +410,102 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void cerrarSesion() {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+        dialog.setTitle("Confirmar");
+        dialog.setMessage("¿Desea cerrar sesión?");
+        dialog.setIcon(R.drawable.ic_advertencia);
+        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
+            }
+        });
+        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+    }
 
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
 
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        if (listaBuscar == 0) {
+            if (listContrasena.isEmpty()) {
+                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
+            } else {
+                String userInput = newText.toLowerCase();
+                final ArrayList<ContrasenaConstructor> newList = new ArrayList<>();
+
+                for (ContrasenaConstructor name : listContrasena) {
+
+                    if (name.getServicio().toLowerCase().contains(userInput) || name.getUsuario().toLowerCase().contains(userInput)) {
+
+                        newList.add(name);
+                    }
+                }
+
+                adapterContrasena.updateList(newList);
+
+            }
+        } else if (listaBuscar == 1) {
+            if (listBancos.isEmpty()) {
+                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
+            } else {
+                String userInput = newText.toLowerCase();
+                final ArrayList<BancoConstructor> newList = new ArrayList<>();
+
+                for (BancoConstructor name : listBancos) {
+
+                    if (name.getBanco().toLowerCase().contains(userInput) || name.getTitular().toLowerCase().contains(userInput)) {
+
+                        newList.add(name);
+                    }
+                }
+                adapterBanco.updateList(newList);
+            }
+
+        } else if (listaBuscar == 2) {
+            if (listTarjetas.isEmpty()) {
+                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
+            } else {
+                String userInput = newText.toLowerCase();
+                final ArrayList<TarjetaConstructor> newList = new ArrayList<>();
+
+                for (TarjetaConstructor name : listTarjetas) {
+
+                    if (name.getTitular().toLowerCase().contains(userInput)) {
+
+                        newList.add(name);
+                    }
+                }
+                adapterTarjeta.updateList(newList);
+            }
+        } else if (listaBuscar == 3) {
+            if (listNota.isEmpty()) {
+                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
+            } else {
+                String userInput = newText.toLowerCase();
+                final ArrayList<NotaConstructor> newList = new ArrayList<>();
+
+                for (NotaConstructor name : listNota) {
+
+                    if (name.getTitulo().toLowerCase().contains(userInput) || name.getContenido().toLowerCase().contains(userInput)) {
+
+                        newList.add(name);
+                    }
+                }
+                adapterNota.updateList(newList);
+            }
+        }
+        return false;
+    }
 }

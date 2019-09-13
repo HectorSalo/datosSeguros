@@ -26,7 +26,6 @@ import com.google.firebase.auth.FirebaseUser;
 public class PerfilActivity extends AppCompatActivity {
 
     private EditText etEmail, etRepetirEmail, etPass, etRepetirPass;
-    private RadioGroup radioGroup;
     private RadioButton rbEmail, rbPass;
     private ProgressDialog progress;
 
@@ -39,7 +38,7 @@ public class PerfilActivity extends AppCompatActivity {
         etRepetirEmail = (EditText) findViewById(R.id.editTextRepetirUpdateEmail);
         etPass = (EditText) findViewById(R.id.editTextUpdatePass);
         etRepetirPass = (EditText) findViewById(R.id.editTextRepetirUpdatePass);
-        radioGroup = (RadioGroup) findViewById(R.id.radioGroupUpdate);
+        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroupUpdate);
         rbEmail = (RadioButton) findViewById(R.id.radioButtonUpdateEmail);
         rbPass = (RadioButton) findViewById(R.id.radioButtonUpdatePass);
         final LinearLayout layoutEmail = (LinearLayout) findViewById(R.id.layoutEmail);
@@ -47,6 +46,7 @@ public class PerfilActivity extends AppCompatActivity {
 
         rbEmail.setChecked(true);
         layoutPass.setVisibility(View.GONE);
+        layoutEmail.setVisibility(View.VISIBLE);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {

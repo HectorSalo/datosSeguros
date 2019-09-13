@@ -59,7 +59,7 @@ public class EditarContrasenaFragment extends Fragment {
     private FirebaseUser user;
     private ProgressDialog progress;
     private int duracionVigencia;
-    private String contrasenaNueva, contrasenaVieja, vigencia;
+    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5;
     private Date fechaActual, fechaCreacion, fechaEnviar;
     private int vigenciaAnterior, vigenciaNueva;
 
@@ -128,6 +128,12 @@ public class EditarContrasenaFragment extends Fragment {
         int anualActual = almanaque.get(Calendar.YEAR);
         almanaque.set(anualActual, mesActual, diaActual);
         fechaActual = almanaque.getTime();
+
+        pass1 = null;
+        pass2 = null;
+        pass3 = null;
+        pass4 = null;
+        pass5 = null;
 
         radioEditar.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -258,6 +264,25 @@ public class EditarContrasenaFragment extends Fragment {
                         etOtro.setText(vigencia);
                     }
 
+                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_1) != null) {
+                        pass1 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_1);
+
+                    }
+
+                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_2) != null) {
+                        pass2 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_2);
+
+                    }
+
+                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_3) != null) {
+                        pass3 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_3);
+
+                    }
+
+                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_4) != null) {
+                        pass4 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_4);
+
+                    }
 
                     progress.dismiss();
 
@@ -309,6 +334,11 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
                     contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
                     contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviar);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
 
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
@@ -347,6 +377,11 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
                     contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
                     contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviar);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
 
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 

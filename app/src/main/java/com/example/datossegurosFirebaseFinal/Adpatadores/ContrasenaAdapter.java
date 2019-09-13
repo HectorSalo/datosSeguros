@@ -1,6 +1,7 @@
 package com.example.datossegurosFirebaseFinal.Adpatadores;
 
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -8,10 +9,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +28,15 @@ import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -112,6 +119,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                                 dialog.setIcon(R.drawable.ic_delete);
                                 dialog.show();
 
+                                break;
+
+                            case R.id.menu_ultimos_pass:
+                                verUltimosPass(listContrasena.get(i).getIdContrasena());
                                 break;
 
                             default:
@@ -266,6 +277,104 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                         Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void verUltimosPass(String idPass) {
+        final ProgressDialog progress = new ProgressDialog(mCtx);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        String userID = user.getUid();
+        DocumentReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(idPass);
+
+        LinearLayout layout = new LinearLayout(mCtx);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        final TextView textView1 = new TextView(mCtx);
+        final TextView textView2 = new TextView(mCtx);
+        final TextView textView3 = new TextView(mCtx);
+        final TextView textView4 = new TextView(mCtx);
+        final TextView textView5 = new TextView(mCtx);
+        textView1.setTextSize(24);
+        textView2.setTextSize(24);
+        textView3.setTextSize(24);
+        textView4.setTextSize(24);
+        textView5.setTextSize(24);
+        textView1.setPadding(50, 5, 5, 5);
+        textView2.setPadding(50, 5, 5, 5);
+        textView3.setPadding(50, 5, 5, 5);
+        textView4.setPadding(50, 5, 5, 5);
+        textView5.setPadding(50, 5, 5, 5);
+        textView1.setText("");
+        textView2.setText("");
+        textView3.setText("");
+        textView4.setText("");
+        textView5.setText("");
+
+        reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+
+                    if (doc.exists()) {
+                        if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_1) != null) {
+                            String pass1 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_1);
+                            textView1.setText(pass1);
+                        } else {
+                            textView1.setText("Sin historial de contraseñas");
+                        }
+
+                        if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_2) != null) {
+                            String pass2 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_2);
+                            textView2.setText(pass2);
+                        }
+
+                        if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_3) != null) {
+                            String pass3 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_3);
+                            textView3.setText(pass3);
+                        }
+
+                        if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_4) != null) {
+                            String pass4 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_4);
+                            textView4.setText(pass4);
+                        }
+
+                        if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_5) != null) {
+                            String pass5 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_5);
+                            textView5.setText(pass5);
+                        }
+                        progress.dismiss();
+                    } else {
+                        Log.d("msg", "No such document");
+                        progress.dismiss();
+                    }
+
+                } else {
+                    Log.d("msg", "Error:", task.getException());
+                    progress.dismiss();
+                }
+            }
+        });
+
+
+        layout.addView(textView1);
+        layout.addView(textView2);
+        layout.addView(textView3);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+        dialog.setTitle("Últimas contraseñas usadas")
+                .setView(layout)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
+
     }
 
     public void updateList (ArrayList<ContrasenaConstructor> newList) {

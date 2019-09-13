@@ -9,6 +9,11 @@ public class UtilidadesStatic {
     public static final String BD_PASSWORD = "password";
     public static final String BD_VIGENCIA = "vigencia";
     public static final String BD_FECHA_CREACION = "fechacreacion";
+    public static final String BD_ULTIMO_PASS_1 = "passviejo1";
+    public static final String BD_ULTIMO_PASS_2 = "passviejo2";
+    public static final String BD_ULTIMO_PASS_3 = "passviejo3";
+    public static final String BD_ULTIMO_PASS_4 = "passviejo4";
+    public static final String BD_ULTIMO_PASS_5 = "passviejo5";
     public static final String BD_CUENTAS = "cuentas";
     public static final String BD_TITULAR_BANCO = "titularbanco";
     public static final String BD_BANCO = "banco";

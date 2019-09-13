@@ -6,7 +6,8 @@
     <string name="title_notas">Notas</string>
     <string name="buttonGuardar">Guardar</string>
     <string name="sin_lista">No tiene información almacenada</string>
-    <string name="perfil">Mi Perfil</string>
+    <string name="perfil">Actualizar Perfil</string>
+    <string name="cerrarSesion">Cerrar Sesión</string>
 
 
     <!-- Cardview contraseña -->
@@ -56,6 +57,7 @@
     <string name="compartir">Compartir</string>
     <string name="editar">Editar</string>
     <string name="eliminar">Eliminar</string>
+    <string name="ultimosPass">Últimas contraseñas</string>
 
     <!-- Copiar Contrasena -->
     <string name="inicSesion">Iniciar Sesión</string>
@@ -79,7 +81,7 @@
 
 
     <!-- Registrar -->
-    <string name="acerca">Información</string>
+    <string name="acerca">Información de App</string>
     <string name="desarrollado">Desarrollado por</string>
     <string name="skysam">Inversiones SkySam, C.A.</string>
 

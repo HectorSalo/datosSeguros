@@ -12,7 +12,7 @@
         <item name="android:textColor">#fff</item>
     </style>
 
-    <style name="Theme.Dialog.MiPerfil" parent="Theme.MaterialComponents.BottomSheetDialog">
+    <style name="Theme.Dialog.MiPerfil" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 

@@ -17,4 +17,9 @@
         android:id="@+id/menu_eliminar"
         />
 
+    <item
+        android:title="@string/ultimosPass"
+        android:id="@+id/menu_ultimos_pass"
+        />
+
 </menu>
