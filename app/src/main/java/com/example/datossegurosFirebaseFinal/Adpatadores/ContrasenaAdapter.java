@@ -41,7 +41,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
     private FirebaseUser user;
-    
+
     public ContrasenaAdapter (ArrayList<ContrasenaConstructor> listContrasena, Context mCtx) {
         this.listContrasena = listContrasena;
         this.mCtx = mCtx;
