@@ -2,8 +2,11 @@ package com.example.datossegurosFirebaseFinal;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import android.view.Menu;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -33,6 +37,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -64,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private TextView sinLista;
     private Date fechaMomento;
     private int listaBuscar;
+    private CoordinatorLayout coordinatorLayout;
 
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
@@ -101,6 +107,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         Calendar almanaque = Calendar.getInstance();
         int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
@@ -161,6 +169,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
 
+
+        SharedPreferences preferences = getSharedPreferences(UtilidadesStatic.ALMACENAMIENTO, Context.MODE_PRIVATE);
+        boolean escogerAlmacenamiento = preferences.getBoolean(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, false);
+        if (!escogerAlmacenamiento) {
+            seleccionAlmacenamiento();
+        }
+
     }
 
     @Override
@@ -202,6 +217,33 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onBackPressed() {
         cerrarSesion();
+    }
+
+    public void seleccionAlmacenamiento () {
+        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+        dialog.setTitle("Escoja lugar de almacenamiento")
+                .setMessage("Una vez seleccionado dónde se almacenarán sus datos, no puede deshacer la elección")
+                .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Test", Snackbar.LENGTH_LONG)
+                                .setAction("DESHACER", new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                    }
+                                }).setActionTextColor(Color.YELLOW);
+                        snackbar.show();
+
+
+                    }
+                }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        })
+                .setCancelable(false).show();
     }
 
     private void verContrasena() {

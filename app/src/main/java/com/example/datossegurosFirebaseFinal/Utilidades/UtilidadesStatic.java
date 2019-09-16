@@ -34,4 +34,9 @@ public class UtilidadesStatic {
     public static final String CHANNEL_ID = "NOTIFICACION";
     public static final int NOTIFICACION_ID = 0;
 
+    public static final String ALMACENAMIENTO = "almacenamiento";
+    public static final String ALMACENAMIENTO_ESCOGIDO = "escogido";
+    public static final String INTERNO = "interno";
+    public static final String EXTERNO = "externo";
+
 }
