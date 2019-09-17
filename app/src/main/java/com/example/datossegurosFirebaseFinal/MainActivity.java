@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,8 @@ import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -41,6 +44,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -49,6 +53,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private CoordinatorLayout coordinatorLayout;
 
 
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -79,19 +86,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_contrasena:
-                    verContrasena();
+                    if (Utilidades.almacenamientoExterno) {
+                        verContrasenaFirebase();
+                    } else if (Utilidades.almacenamientoInterno) {
+
+                    }
+
                     listaBuscar = 0;
                     return true;
                 case R.id.navigation_cuentas:
-                    verCuentasBancarias();
+                    if (Utilidades.almacenamientoExterno) {
+                        verCuentasBancariasFirebase();
+                    } else if (Utilidades.almacenamientoInterno) {
+
+                    }
+
                     listaBuscar = 1;
                     return true;
                 case R.id.navigation_tarjetas:
-                    verTarjetas();
+                    if (Utilidades.almacenamientoExterno) {
+                        verTarjetasFirebase();
+                    } else if (Utilidades.almacenamientoInterno) {
+
+                    }
                     listaBuscar = 2;
                     return true;
                 case R.id.navigation_notas:
-                    verNotas();
+                    if (Utilidades.almacenamientoExterno) {
+                        verNotasFirebase();
+                    } else if (Utilidades.almacenamientoInterno) {
+
+                    }
                     listaBuscar = 3;
                     return true;
             }
@@ -124,8 +149,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setHasFixedSize(true);
-
-        verContrasena();
 
         fabGrupo = (FloatingActionsMenu) findViewById(R.id.fabGrupo);
         fabContrasena = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabContrasena);
@@ -169,12 +192,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
 
+        //escogenciaAlmacenamiento();
 
-        SharedPreferences preferences = getSharedPreferences(UtilidadesStatic.ALMACENAMIENTO, Context.MODE_PRIVATE);
-        boolean escogerAlmacenamiento = preferences.getBoolean(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, false);
-        if (!escogerAlmacenamiento) {
+
+        if (!Utilidades.escogerAlmacenamiento) {
             seleccionAlmacenamiento();
+        } else if (Utilidades.almacenamientoExterno) {
+            verContrasenaFirebase();
+        } else if (Utilidades.almacenamientoInterno) {
+
         }
+
 
     }
 
@@ -220,26 +248,71 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public void seleccionAlmacenamiento () {
+
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Escoja lugar de almacenamiento")
-                .setMessage("Una vez seleccionado dónde se almacenarán sus datos, no puede deshacer la elección")
+                .setMessage("Una vez seleccionado dónde se almacenarán sus datos, no podrá cambiarlo")
                 .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        verSnackBar("Dispositivo");
+                        String userID = user.getUid();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                        Map<String, Object> almacenar = new HashMap<>();
+                        almacenar.put(UtilidadesStatic.INTERNO, true);
+                        almacenar.put(UtilidadesStatic.EXTERNO, false);
+                        almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
+
+                        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).add(almacenar).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Log.d("msg", "Succes");
+                                recreate();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.w("msg", "Error adding document", e);
+                                Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                                seleccionAlmacenamiento();
+                            }
+                        });
 
                     }
                 }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                        verSnackBar("La Nube");
+                String userID = user.getUid();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                Map<String, Object> almacenar = new HashMap<>();
+                almacenar.put(UtilidadesStatic.INTERNO, false);
+                almacenar.put(UtilidadesStatic.EXTERNO, true);
+                almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
+
+                db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).add(almacenar).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("msg", "Succes");
+                        recreate();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("msg", "Error adding document", e);
+                        Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        seleccionAlmacenamiento();
+                    }
+                });
+
             }
         })
-                .setCancelable(false).show();
+                .setCancelable(true).show();
     }
 
     public void verSnackBar(String almacenamiento) {
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Seleccionado: " + almacenamiento, Snackbar.LENGTH_LONG)
+
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Seleccionado: " + almacenamiento, 5000)
                 .setAction("DESHACER", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -247,9 +320,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     }
                 }).setActionTextColor(Color.YELLOW);
         snackbar.show();
+
     }
 
-    private void verContrasena() {
+    public void escogenciaAlmacenamiento() {
+
+    }
+
+    private void verContrasenaFirebase() {
         progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
@@ -316,7 +394,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
-    private void verCuentasBancarias() {
+    private void verCuentasBancariasFirebase() {
         progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
@@ -365,7 +443,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
-    private void verTarjetas() {
+    private void verTarjetasFirebase() {
         progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
@@ -412,7 +490,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
-    private void verNotas() {
+    private void verNotasFirebase() {
         progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);

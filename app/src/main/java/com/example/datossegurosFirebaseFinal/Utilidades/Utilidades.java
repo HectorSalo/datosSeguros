@@ -7,4 +7,9 @@ public class Utilidades {
     public static String idNota = null;
 
     public static int Add = 1000;
+
+    public static boolean almacenamientoInterno = false;
+    public static boolean almacenamientoExterno = false;
+    public static boolean escogerAlmacenamiento = false;
+
 }
