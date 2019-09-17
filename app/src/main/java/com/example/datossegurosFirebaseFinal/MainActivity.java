@@ -226,24 +226,27 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Test", Snackbar.LENGTH_LONG)
-                                .setAction("DESHACER", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                    }
-                                }).setActionTextColor(Color.YELLOW);
-                        snackbar.show();
-
+                        verSnackBar("Dispositivo");
 
                     }
                 }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-
+                        verSnackBar("La Nube");
             }
         })
                 .setCancelable(false).show();
+    }
+
+    public void verSnackBar(String almacenamiento) {
+        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Seleccionado: " + almacenamiento, Snackbar.LENGTH_LONG)
+                .setAction("DESHACER", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        seleccionAlmacenamiento();
+                    }
+                }).setActionTextColor(Color.YELLOW);
+        snackbar.show();
     }
 
     private void verContrasena() {
