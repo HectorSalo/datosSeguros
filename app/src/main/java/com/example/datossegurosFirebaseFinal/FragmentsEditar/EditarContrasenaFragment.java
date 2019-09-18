@@ -2,9 +2,12 @@ package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -21,6 +24,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
@@ -171,13 +175,21 @@ public class EditarContrasenaFragment extends Fragment {
             }
         });
 
-        cargarData();
+        if (Utilidades.almacenamientoExterno) {
+            cargarDataFirebase();
+        } else if (Utilidades.almacenamientoInterno) {
+            cargarDataSQLite();
+        }
 
         Button button = (Button) vista.findViewById(R.id.editarContrasena);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarData();
+                if (Utilidades.almacenamientoExterno) {
+                    guardarDataFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarDataSQLite();
+                }
             }
         });
         return vista;
@@ -222,8 +234,8 @@ public class EditarContrasenaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void cargarData() {
-        progress = new ProgressDialog(getContext());
+    public void cargarDataFirebase() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -295,7 +307,49 @@ public class EditarContrasenaFragment extends Fragment {
         });
     }
 
-    public void guardarData() {
+    public void cargarDataSQLite() {
+        ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+        String idContrasena = Utilidades.idContrasena;
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
+
+        if (cursor.moveToFirst()) {
+            etServicio.setText(cursor.getString(1));
+            etUsuario.setText(cursor.getString(2));
+            etContrasena.setText((cursor.getString(3)));
+            contrasenaVieja = cursor.getString(3);
+
+            String vigencia = cursor.getString(4);
+
+            if (vigencia.equals("0")) {
+                rbIndeterminado.setChecked(true);
+            } else if (vigencia.equals("30")) {
+                rb30.setChecked(true);
+            } else if (vigencia.equals("60")) {
+                rb60.setChecked(true);
+            } else if (vigencia.equals("90")) {
+                rb90.setChecked(true);
+            } else if (vigencia.equals("120")) {
+                rb120.setChecked(true);
+            } else {
+                rbOtro.setChecked(true);
+                etOtro.setVisibility(View.VISIBLE);
+                etOtro.setText(vigencia);
+            }
+
+            progress.dismiss();
+            db.close();
+
+        }
+    }
+
+    public void guardarDataFirebase() {
         String servicio = etServicio.getText().toString();
         String usuario = etUsuario.getText().toString();
         contrasenaNueva = etContrasena.getText().toString();
@@ -318,7 +372,7 @@ public class EditarContrasenaFragment extends Fragment {
 
                     }
 
-                    progress = new ProgressDialog(getContext());
+                    final ProgressDialog progress = new ProgressDialog(getContext());
                     progress.setMessage("Guardando...");
                     progress.setCancelable(false);
                     progress.show();
@@ -359,7 +413,7 @@ public class EditarContrasenaFragment extends Fragment {
                     });
 
                 } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
-                    progress = new ProgressDialog(getContext());
+                    final ProgressDialog progress = new ProgressDialog(getContext());
                     progress.setMessage("Guardando...");
                     progress.setCancelable(false);
                     progress.show();
@@ -413,7 +467,7 @@ public class EditarContrasenaFragment extends Fragment {
                     });
                     dialog.show();
                 } else {
-                    progress = new ProgressDialog(getContext());
+                    final ProgressDialog progress = new ProgressDialog(getContext());
                     progress.setMessage("Guardando...");
                     progress.setCancelable(false);
                     progress.show();
@@ -442,6 +496,146 @@ public class EditarContrasenaFragment extends Fragment {
                             Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
+                }
+            }
+        }
+    }
+
+    public void guardarDataSQLite() {
+        String servicio = etServicio.getText().toString();
+        String usuario = etUsuario.getText().toString();
+        contrasenaNueva = etContrasena.getText().toString();
+        vigencia = "";
+
+        if (servicio.isEmpty() || usuario.isEmpty() || contrasenaNueva.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!rb30.isChecked() && !rb60.isChecked() && !rb90.isChecked() && !rb120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
+                Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
+            } else {
+
+                if (!contrasenaNueva.equals(contrasenaVieja) && !rbIndeterminado.isChecked()) {
+                    if (rbOtro.isChecked()) {
+                        vigencia = etOtro.getText().toString();
+
+                    } else if (rb30.isChecked() || rb60.isChecked() || rb90.isChecked() || rb120.isChecked()) {
+                        vigencia = String.valueOf(duracionVigencia);
+
+                    }
+
+                    final ProgressDialog progress = new ProgressDialog(getContext());
+                    progress.setMessage("Guardando...");
+                    progress.setCancelable(false);
+                    progress.show();
+
+                    fechaEnviar = fechaActual;
+
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    SQLiteDatabase db = conect.getWritableDatabase();
+
+                    ContentValues values = new ContentValues();
+                    /*db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                        public void onSuccess(Void aVoid) {
+                            progress.dismiss();
+                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                            Intent myIntent = new Intent(getContext(), MainActivity.class);
+                            startActivity(myIntent);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("msg", "Error adding document", e);
+                            progress.dismiss();
+                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
+
+                } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
+                    final ProgressDialog progress = new ProgressDialog(getContext());
+                    progress.setMessage("Guardando...");
+                    progress.setCancelable(false);
+                    progress.show();
+
+                    fechaEnviar = fechaActual;
+                    vigencia = "0";
+
+
+                    /*FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    Map<String, Object> contrasenaM = new HashMap<>();
+                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
+                    contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
+                    contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
+                    contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviar);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
+                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+
+                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                        public void onSuccess(Void aVoid) {
+                            progress.dismiss();
+                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                            Intent myIntent = new Intent(getContext(), MainActivity.class);
+                            startActivity(myIntent);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("msg", "Error adding document", e);
+                            progress.dismiss();
+                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
+                } else if (contrasenaNueva.equals(contrasenaVieja) && vigenciaAnterior != duracionVigencia){
+                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                    dialog.setTitle("Aviso");
+                    dialog.setMessage("No puede cambiar la vigencia si no se ha cambiado la contraseña");
+                    dialog.setIcon(R.drawable.ic_advertencia);
+                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    final ProgressDialog progress = new ProgressDialog(getContext());
+                    progress.setMessage("Guardando...");
+                    progress.setCancelable(false);
+                    progress.show();
+
+                    /*FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                    Map<String, Object> contrasenaM = new HashMap<>();
+                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
+                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
+
+                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+
+                        public void onSuccess(Void aVoid) {
+                            progress.dismiss();
+                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                            Intent myIntent = new Intent(getContext(), MainActivity.class);
+                            startActivity(myIntent);
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w("msg", "Error adding document", e);
+                            progress.dismiss();
+                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        }
+                    });*/
                 }
             }
         }

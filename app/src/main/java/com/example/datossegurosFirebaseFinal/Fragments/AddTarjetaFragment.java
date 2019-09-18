@@ -1,8 +1,10 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,8 +21,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -127,7 +131,11 @@ public class AddTarjetaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarTarjeta();
+                if (Utilidades.almacenamientoExterno) {
+                    guardarTarjetaFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarTarjetaSQLite();
+                }
             }
         });
 
@@ -173,7 +181,7 @@ public class AddTarjetaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void guardarTarjeta() {
+    public void guardarTarjetaFirebase() {
         String userID = user.getUid();
         String titular = etTitular.getText().toString();
         String numeroTarjeta = etTarjeta.getText().toString();
@@ -231,6 +239,60 @@ public class AddTarjetaFragment extends Fragment {
                                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                             }
                         });
+                    }
+                }
+            }
+        }
+    }
+
+    public void guardarTarjetaSQLite() {
+        String titular = etTitular.getText().toString();
+        String numeroTarjeta = etTarjeta.getText().toString();
+        String cvv = etCVV.getText().toString();
+        String cedula = etCedula.getText().toString();
+        String tipo = "";
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked()) {
+                Toast.makeText(getContext(), "Debe seleccionar un tipo de tarjeta", Toast.LENGTH_SHORT).show();
+            } else {
+                if (numeroTarjeta.length() != 16) {
+                    Toast.makeText(getContext(), "La longitud del número de tarjeta debe ser 16 dígitos", Toast.LENGTH_LONG).show();
+                } else {
+                    if (cvv.length() != 3) {
+                        Toast.makeText(getContext(), "La longitud del número de CVV debe ser 3 dígitos", Toast.LENGTH_LONG).show();
+                    } else {
+                        if (rbMastercard.isChecked()) {
+                            tipo = "Mastercard";
+                        } else if (rbVisa.isChecked()) {
+                            tipo = "Visa";
+                        } else if (rbOtro.isChecked()) {
+                            tipo = etOtroTarjeta.getText().toString();
+                        }
+
+                        final ProgressDialog progress = new ProgressDialog(getContext());
+                        progress.setMessage("Guardando...");
+                        progress.setCancelable(false);
+                        progress.show();
+
+                        ContentValues values = new ContentValues();
+                        values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
+                        values.put(UtilidadesStatic.BD_NUMERO_TARJETA, numeroTarjeta);
+                        values.put(UtilidadesStatic.BD_CVV, cvv);
+                        values.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
+                        values.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
+
+                        db.insert(UtilidadesStatic.BD_CUENTAS, null, values);
+                        db.close();
+
+                        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(getContext(), MainActivity.class);
+                        startActivity(myIntent);
                     }
                 }
             }

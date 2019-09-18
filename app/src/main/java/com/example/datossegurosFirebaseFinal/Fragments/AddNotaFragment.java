@@ -1,8 +1,10 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,8 +19,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -100,7 +104,11 @@ public class AddNotaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarNota();
+                if (Utilidades.almacenamientoExterno) {
+                    guardarNotaFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarNotaSQLite();
+                }
             }
         });
         return vista;
@@ -145,7 +153,7 @@ public class AddNotaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void guardarNota() {
+    public void guardarNotaFirebase() {
         String userID = user.getUid();
         String tituloS = titulo.getText().toString();
         String contenidoS = contenido.getText().toString();
@@ -177,5 +185,29 @@ public class AddNotaFragment extends Fragment {
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void guardarNotaSQLite() {
+        String tituloS = titulo.getText().toString();
+        String contenidoS = contenido.getText().toString();
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Guardando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        ContentValues values = new ContentValues();
+        values.put(UtilidadesStatic.BD_TITULO_NOTAS, tituloS);
+        values.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenidoS);
+
+        db.insert(UtilidadesStatic.BD_NOTAS, null, values);
+        db.close();
+
+        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+        Intent myIntent = new Intent(getContext(), MainActivity.class);
+        startActivity(myIntent);
     }
 }

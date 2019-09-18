@@ -226,7 +226,7 @@ public class AddCuentasFragment extends Fragment {
     }
 
     public void guardarCuentaSQLite() {
-        String userID = user.getUid();
+
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
         String cuentaNumero = etNumeroCuenta.getText().toString();

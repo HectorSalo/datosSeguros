@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (Utilidades.almacenamientoExterno) {
                         verContrasenaFirebase();
                     } else if (Utilidades.almacenamientoInterno) {
-                        verCuentasBancariasSQLite();
+                        verContrasenasSQLite();
                     }
 
                     listaBuscar = 0;
@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (Utilidades.almacenamientoExterno) {
                         verCuentasBancariasFirebase();
                     } else if (Utilidades.almacenamientoInterno) {
-
+                        verCuentasBancariasSQLite();
                     }
 
                     listaBuscar = 1;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (Utilidades.almacenamientoExterno) {
                         verTarjetasFirebase();
                     } else if (Utilidades.almacenamientoInterno) {
-
+                        verTarjetasSQLite();
                     }
                     listaBuscar = 2;
                     return true;
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (Utilidades.almacenamientoExterno) {
                         verNotasFirebase();
                     } else if (Utilidades.almacenamientoInterno) {
-
+                        verNotasSQLite();
                     }
                     listaBuscar = 3;
                     return true;
@@ -360,7 +360,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         } else if (Utilidades.almacenamientoExterno) {
             verContrasenaFirebase();
         } else if (Utilidades.almacenamientoInterno) {
-            verCuentasBancariasSQLite();
+            verContrasenasSQLite();
         }
     }
 
@@ -570,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         });
     }
 
-    public void verCuentasBancariasSQLite() {
+    public void verContrasenasSQLite() {
         ProgressDialog progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
@@ -604,6 +604,112 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             progress.dismiss();
         }
 
+    }
+
+    public void verCuentasBancariasSQLite() {
+        ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        listBancos = new ArrayList<>();
+        adapterBanco = new BancoAdapter(listBancos, this);
+        recycler.setAdapter(adapterBanco);
+
+        SQLiteDatabase db = conect.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * from " + UtilidadesStatic.BD_CUENTAS, null);
+
+        while (cursor.moveToNext()) {
+            BancoConstructor bank = new BancoConstructor();
+            bank.setIdCuenta(String.valueOf(cursor.getInt(0)));
+            bank.setTitular(cursor.getString(1));
+            bank.setBanco(cursor.getString(2));
+            bank.setNumeroCuenta(cursor.getString(3));
+            bank.setCedula(cursor.getString(4));
+            bank.setTipo(cursor.getString(5));
+            bank.setTelefono(cursor.getString(6));
+
+            listBancos.add(bank);
+        }
+
+        adapterBanco.updateList(listBancos);
+        if (listBancos.isEmpty()) {
+            sinLista.setVisibility(View.VISIBLE);
+            progress.dismiss();
+        } else {
+            sinLista.setVisibility(View.GONE);
+            progress.dismiss();
+        }
+    }
+
+    public void verTarjetasSQLite() {
+        ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        listTarjetas = new ArrayList<>();
+        adapterTarjeta = new AdapterTarjeta(listTarjetas, this);
+        recycler.setAdapter(adapterTarjeta);
+
+        SQLiteDatabase db = conect.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * from " + UtilidadesStatic.BD_TARJETAS, null);
+
+        while (cursor.moveToNext()) {
+            TarjetaConstructor card = new TarjetaConstructor();
+            card.setIdTarjeta(String.valueOf(cursor.getInt(0)));
+            card.setTitular(cursor.getString(1));
+            card.setNumeroTarjeta(cursor.getString(2));
+            card.setCvv(cursor.getString(3));
+            card.setCedula(cursor.getString(4));
+            card.setTipo(cursor.getString(5));
+
+            listTarjetas.add(card);
+        }
+
+        adapterTarjeta.updateList(listTarjetas);
+        if (listTarjetas.isEmpty()) {
+            sinLista.setVisibility(View.VISIBLE);
+            progress.dismiss();
+        } else {
+            sinLista.setVisibility(View.GONE);
+            progress.dismiss();
+        }
+    }
+
+    public void verNotasSQLite() {
+        ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        listNota = new ArrayList<>();
+        adapterNota = new NotaAdapter(listNota, this);
+        recycler.setAdapter(adapterNota);
+
+        SQLiteDatabase db = conect.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * from " + UtilidadesStatic.BD_NOTAS, null);
+
+        while (cursor.moveToNext()) {
+            NotaConstructor note = new NotaConstructor();
+            note.setIdNota(String.valueOf(cursor.getInt(0)));
+            note.setTitulo(cursor.getString(1));
+            note.setContenido(cursor.getString(2));
+
+            listNota.add(note);
+        }
+
+        adapterNota.updateList(listNota);
+        if (listNota.isEmpty()) {
+            sinLista.setVisibility(View.VISIBLE);
+            progress.dismiss();
+        } else {
+            sinLista.setVisibility(View.GONE);
+            progress.dismiss();
+        }
     }
 
     public void cerrarSesion() {
