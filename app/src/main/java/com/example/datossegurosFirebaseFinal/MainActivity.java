@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 
@@ -45,6 +47,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -76,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private Date fechaMomento;
     private int listaBuscar;
     private CoordinatorLayout coordinatorLayout;
+    private ConexionSQLite conect;
 
 
 
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     if (Utilidades.almacenamientoExterno) {
                         verContrasenaFirebase();
                     } else if (Utilidades.almacenamientoInterno) {
-
+                        verCuentasBancariasSQLite();
                     }
 
                     listaBuscar = 0;
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         sinLista = (TextView) findViewById(R.id.tvSinLista);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
+        conect = new ConexionSQLite(getApplicationContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -192,16 +197,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
 
-        //escogenciaAlmacenamiento();
-
-
-        if (!Utilidades.escogerAlmacenamiento) {
-            seleccionAlmacenamiento();
-        } else if (Utilidades.almacenamientoExterno) {
-            verContrasenaFirebase();
-        } else if (Utilidades.almacenamientoInterno) {
-
-        }
+        escogenciaAlmacenamiento();
 
 
     }
@@ -251,10 +247,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Escoja lugar de almacenamiento")
-                .setMessage("Una vez seleccionado dónde se almacenarán sus datos, no podrá cambiarlo")
+                .setMessage("Puede guardar algunos datos en la nube y otros en su dispositivo, de acuerdo a su preferencia. Para intercambiar el lugar, ingrese a Actualizar Mi Perfil. Escoja con cuál desea inciar")
                 .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        final ProgressDialog progress = new ProgressDialog(MainActivity.this);
+                        progress.setMessage("Cargando...");
+                        progress.setCancelable(false);
+                        progress.show();
                         String userID = user.getUid();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -263,10 +263,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         almacenar.put(UtilidadesStatic.EXTERNO, false);
                         almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
 
-                        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).add(almacenar).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).document(UtilidadesStatic.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
-                            public void onSuccess(DocumentReference documentReference) {
+                            public void onSuccess(Void aVoid) {
                                 Log.d("msg", "Succes");
+                                progress.dismiss();
                                 recreate();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -274,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             public void onFailure(@NonNull Exception e) {
                                 Log.w("msg", "Error adding document", e);
                                 Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                                progress.dismiss();
                                 seleccionAlmacenamiento();
                             }
                         });
@@ -282,6 +284,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                final ProgressDialog progress = new ProgressDialog(MainActivity.this);
+                progress.setMessage("Cargando...");
+                progress.setCancelable(false);
+                progress.show();
                 String userID = user.getUid();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -290,16 +296,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 almacenar.put(UtilidadesStatic.EXTERNO, true);
                 almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
 
-                db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).add(almacenar).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).document(UtilidadesStatic.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(DocumentReference documentReference) {
+                    public void onSuccess(Void aVoid) {
                         Log.d("msg", "Succes");
+                        progress.dismiss();
                         recreate();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("msg", "Error adding document", e);
+                        progress.dismiss();
                         Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         seleccionAlmacenamiento();
                     }
@@ -307,28 +315,57 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             }
         })
-                .setCancelable(true).show();
+                .setCancelable(false).show();
     }
 
-    public void verSnackBar(String almacenamiento) {
-
-        Snackbar snackbar = Snackbar.make(coordinatorLayout, "Seleccionado: " + almacenamiento, 5000)
-                .setAction("DESHACER", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        seleccionAlmacenamiento();
-                    }
-                }).setActionTextColor(Color.YELLOW);
-        snackbar.show();
-
-    }
 
     public void escogenciaAlmacenamiento() {
+        final ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+        String userID = user.getUid();
+        FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
+        CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO);
 
+        reference.document(UtilidadesStatic.ALMACENAMIENTO_DOC).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+
+                    if(doc.exists()) {
+
+                        Utilidades.escogerAlmacenamiento = doc.getBoolean(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO);
+                        Utilidades.almacenamientoExterno = doc.getBoolean(UtilidadesStatic.EXTERNO);
+                        Utilidades.almacenamientoInterno = doc.getBoolean(UtilidadesStatic.INTERNO);
+                    }
+
+                    validarEscogencia();
+                    progress.dismiss();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d ("msg", "Failed", e);
+                progress.dismiss();
+            }
+        });
+    }
+
+    public void validarEscogencia() {
+        if (!Utilidades.escogerAlmacenamiento) {
+            seleccionAlmacenamiento();
+        } else if (Utilidades.almacenamientoExterno) {
+            verContrasenaFirebase();
+        } else if (Utilidades.almacenamientoInterno) {
+            verCuentasBancariasSQLite();
+        }
     }
 
     private void verContrasenaFirebase() {
-        progress = new ProgressDialog(this);
+        final ProgressDialog progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -395,7 +432,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     private void verCuentasBancariasFirebase() {
-        progress = new ProgressDialog(this);
+        final ProgressDialog progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -444,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     private void verTarjetasFirebase() {
-        progress = new ProgressDialog(this);
+        final ProgressDialog progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -491,7 +528,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     private void verNotasFirebase() {
-        progress = new ProgressDialog(this);
+        final ProgressDialog progress = new ProgressDialog(this);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -531,6 +568,42 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }
             }
         });
+    }
+
+    public void verCuentasBancariasSQLite() {
+        ProgressDialog progress = new ProgressDialog(this);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        listContrasena = new ArrayList<>();
+        adapterContrasena = new ContrasenaAdapter(listContrasena, this);
+        recycler.setAdapter(adapterContrasena);
+
+        SQLiteDatabase db = conect.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * from " + UtilidadesStatic.BD_CONTRASENAS, null);
+
+        while (cursor.moveToNext()) {
+            ContrasenaConstructor pass = new ContrasenaConstructor();
+            pass.setIdContrasena(String.valueOf(cursor.getInt(0)));
+            pass.setServicio(cursor.getString(1));
+            pass.setUsuario(cursor.getString(2));
+            pass.setContrasena(cursor.getString(3));
+            pass.setVencimiento(Integer.parseInt(cursor.getString(4)));
+
+            listContrasena.add(pass);
+        }
+
+        adapterContrasena.updateList(listContrasena);
+        if (listContrasena.isEmpty()) {
+            sinLista.setVisibility(View.VISIBLE);
+            progress.dismiss();
+        } else {
+            sinLista.setVisibility(View.GONE);
+            progress.dismiss();
+        }
+
     }
 
     public void cerrarSesion() {
@@ -631,4 +704,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
         return false;
     }
+
+
 }

@@ -18,15 +18,25 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PerfilActivity extends AppCompatActivity {
 
     private EditText etEmail, etRepetirEmail, etPass, etRepetirPass;
-    private RadioButton rbEmail, rbPass;
+    private RadioButton rbEmail, rbPass, rbNube, rbDispositivo, rbAlmacenamiento;
     private ProgressDialog progress;
 
     @Override
@@ -38,15 +48,25 @@ public class PerfilActivity extends AppCompatActivity {
         etRepetirEmail = (EditText) findViewById(R.id.editTextRepetirUpdateEmail);
         etPass = (EditText) findViewById(R.id.editTextUpdatePass);
         etRepetirPass = (EditText) findViewById(R.id.editTextRepetirUpdatePass);
-        RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroupUpdate);
+        final RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroupUpdate);
+        final RadioGroup radioGroupAlmacenamiento = (RadioGroup) findViewById(R.id.radioGroupAlmacenamiento);
         rbEmail = (RadioButton) findViewById(R.id.radioButtonUpdateEmail);
+        rbAlmacenamiento = (RadioButton) findViewById(R.id.radioButtonUpdateAlmacenamiento);
         rbPass = (RadioButton) findViewById(R.id.radioButtonUpdatePass);
+        rbNube = (RadioButton) findViewById(R.id.radioButtonNube);
+        rbDispositivo = (RadioButton) findViewById(R.id.radioButtonDispositivo);
         final LinearLayout layoutEmail = (LinearLayout) findViewById(R.id.layoutEmail);
         final LinearLayout layoutPass = (LinearLayout) findViewById(R.id.layoutPass);
 
         rbEmail.setChecked(true);
+        if (Utilidades.almacenamientoInterno) {
+            rbDispositivo.setChecked(true);
+        } else if (Utilidades.almacenamientoExterno) {
+            rbNube.setChecked(true);
+        }
         layoutPass.setVisibility(View.GONE);
         layoutEmail.setVisibility(View.VISIBLE);
+        radioGroupAlmacenamiento.setVisibility(View.GONE);
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -54,11 +74,19 @@ public class PerfilActivity extends AppCompatActivity {
                     case R.id.radioButtonUpdateEmail:
                         layoutEmail.setVisibility(View.VISIBLE);
                         layoutPass.setVisibility(View.GONE);
+                        radioGroupAlmacenamiento.setVisibility(View.GONE);
                         break;
 
                     case R.id.radioButtonUpdatePass:
                         layoutEmail.setVisibility(View.GONE);
                         layoutPass.setVisibility(View.VISIBLE);
+                        radioGroupAlmacenamiento.setVisibility(View.GONE);
+                        break;
+
+                    case R.id.radioButtonUpdateAlmacenamiento:
+                        layoutEmail.setVisibility(View.GONE);
+                        layoutPass.setVisibility(View.GONE);
+                        radioGroupAlmacenamiento.setVisibility(View.VISIBLE);
                         break;
 
                 }
@@ -73,6 +101,8 @@ public class PerfilActivity extends AppCompatActivity {
                     validarEmail();
                 } else if (rbPass.isChecked()) {
                     validarPass();
+                } else if (rbAlmacenamiento.isChecked()) {
+                    actualizarAlmacenamiento();
                 }
             }
         });
@@ -176,5 +206,47 @@ public class PerfilActivity extends AppCompatActivity {
                         }
                     });
         }
+    }
+
+    public void actualizarAlmacenamiento() {
+        progress = new ProgressDialog(this);
+        progress.setMessage("Actualizando...");
+        progress.setCancelable(false);
+        progress.show();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String userID = user.getUid();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> almacenar = new HashMap<>();
+
+
+        if (rbNube.isChecked()) {
+
+            almacenar.put(UtilidadesStatic.INTERNO, false);
+            almacenar.put(UtilidadesStatic.EXTERNO, true);
+            almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
+        } else if (rbDispositivo.isChecked()) {
+            almacenar.put(UtilidadesStatic.INTERNO, true);
+            almacenar.put(UtilidadesStatic.EXTERNO, false);
+            almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
+        }
+
+
+
+        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).document(UtilidadesStatic.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("msg", "Succes");
+                progress.dismiss();
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                progress.dismiss();
+            }
+        });
     }
 }

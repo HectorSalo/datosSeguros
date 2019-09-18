@@ -1,8 +1,10 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,8 +21,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -159,7 +163,12 @@ public class AddContrasenaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarContrasena();
+                if (Utilidades.almacenamientoExterno) {
+                    guardarContrasenaFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarContrasenaSQLite();
+                }
+
             }
         });
 
@@ -205,7 +214,7 @@ public class AddContrasenaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void guardarContrasena() {
+    public void guardarContrasenaFirebase() {
         String servicio = etServicio.getText().toString();
         String usuario = etUsuario.getText().toString();
         String contrasena = etContrasena.getText().toString();
@@ -260,6 +269,52 @@ public class AddContrasenaFragment extends Fragment {
                 });
             }
         }
+
+    }
+
+    public void guardarContrasenaSQLite() {
+        String servicio = etServicio.getText().toString();
+        String usuario = etUsuario.getText().toString();
+        String contrasena = etContrasena.getText().toString();
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        if (servicio.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
+                Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
+            } else {
+                progress = new ProgressDialog(getContext());
+                progress.setMessage("Guardando...");
+                progress.setCancelable(false);
+                progress.show();
+
+                String vigencia = "";
+                if (rbIndeterminado.isChecked()) {
+                    vigencia = "0";
+                } else if (rbOtro.isChecked()) {
+                    vigencia = etOtroDias.getText().toString();
+                } else if (rbdias30.isChecked() || rbdias60.isChecked() || rbdias90.isChecked() || rbdias120.isChecked()) {
+                    vigencia = String.valueOf(duracionVigencia);
+                }
+
+                ContentValues values = new ContentValues();
+                values.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                values.put(UtilidadesStatic.BD_USUARIO, usuario);
+                values.put(UtilidadesStatic.BD_PASSWORD, contrasena);
+                values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+
+                db.insert(UtilidadesStatic.BD_CONTRASENAS, null, values);
+                db.close();
+
+                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                Intent myIntent = new Intent(getContext(), MainActivity.class);
+                startActivity(myIntent);
+            }
+        }
+
 
     }
 

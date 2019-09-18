@@ -23,7 +23,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -39,6 +39,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/updatePass" />
+
+        <RadioButton
+            android:id="@+id/radioButtonUpdateAlmacenamiento"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/updateAlmacenamiento" />
     </RadioGroup>
 
     <LinearLayout
@@ -98,4 +105,29 @@
             android:hint="@string/repetirPass"
             android:inputType="textPassword" />
     </LinearLayout>
+
+    <RadioGroup
+        android:id="@+id/radioGroupAlmacenamiento"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroupUpdate"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/radioButtonNube"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/radioNube" />
+
+        <RadioButton
+            android:id="@+id/radioButtonDispositivo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/radioDispositivo" />
+    </RadioGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>

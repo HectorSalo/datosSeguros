@@ -34,7 +34,10 @@ public class UtilidadesStatic {
     public static final String CHANNEL_ID = "NOTIFICACION";
     public static final int NOTIFICACION_ID = 0;
 
+    public static final int VERSION_SQLITE = 1;
+
     public static final String ALMACENAMIENTO = "almacenamientos";
+    public static final String ALMACENAMIENTO_DOC = "almacenamientoDoc";
     public static final String ALMACENAMIENTO_ESCOGIDO = "escogido";
     public static final String INTERNO = "interno";
     public static final String EXTERNO = "externo";
