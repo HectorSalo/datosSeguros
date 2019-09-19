@@ -324,6 +324,7 @@ public class EditarContrasenaFragment extends Fragment {
             etUsuario.setText(cursor.getString(2));
             etContrasena.setText((cursor.getString(3)));
             contrasenaVieja = cursor.getString(3);
+            vigenciaAnterior = Integer.parseInt(cursor.getString(4));
             fechaCracionS = cursor.getString(10);
 
             String vigencia = cursor.getString(4);
@@ -527,6 +528,7 @@ public class EditarContrasenaFragment extends Fragment {
         String usuario = etUsuario.getText().toString();
         contrasenaNueva = etContrasena.getText().toString();
         vigencia = "";
+        String idContrasena = Utilidades.idContrasena;
 
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY_MM_DD HH:MM");
 
@@ -569,23 +571,13 @@ public class EditarContrasenaFragment extends Fragment {
                     values.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
                     values.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
 
-                    /*db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.close();
 
-                        public void onSuccess(Void aVoid) {
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
+                    progress.dismiss();
+                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    startActivity(myIntent);
 
                 } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
                     final ProgressDialog progress = new ProgressDialog(getContext());
@@ -593,42 +585,32 @@ public class EditarContrasenaFragment extends Fragment {
                     progress.setCancelable(false);
                     progress.show();
 
-                    fechaEnviar = fechaActual;
+                    fechaEnviarS = fechaCracionS;
                     vigencia = "0";
 
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    SQLiteDatabase db = conect.getWritableDatabase();
 
-                    /*FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    ContentValues values = new ContentValues();
+                    values.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                    values.put(UtilidadesStatic.BD_USUARIO, usuario);
+                    values.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
+                    values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+                    values.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviarS);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
 
-                    Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
-                    contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
-                    contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviar);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+                    db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.close();
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    progress.dismiss();
+                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    startActivity(myIntent);
 
-                        public void onSuccess(Void aVoid) {
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
                 } else if (contrasenaNueva.equals(contrasenaVieja) && vigenciaAnterior != duracionVigencia){
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
                     dialog.setTitle("Aviso");
@@ -647,30 +629,21 @@ public class EditarContrasenaFragment extends Fragment {
                     progress.setCancelable(false);
                     progress.show();
 
-                    /*FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    SQLiteDatabase db = conect.getWritableDatabase();
 
-                    Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
+                    ContentValues values = new ContentValues();
+                    values.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                    values.put(UtilidadesStatic.BD_USUARIO, usuario);
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.close();
 
-                        public void onSuccess(Void aVoid) {
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
+                    progress.dismiss();
+                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    startActivity(myIntent);
 
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
-                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });*/
                 }
             }
         }

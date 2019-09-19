@@ -8,6 +8,8 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
@@ -107,7 +110,11 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        eliminar(listContrasena.get(i));
+                                        if (Utilidades.almacenamientoExterno) {
+                                            eliminarFirebase(listContrasena.get(i));
+                                        } else if (Utilidades.almacenamientoInterno) {
+                                            eliminarSQLite(listContrasena.get(i));
+                                        }
                                     }
                                 });
                                 dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -122,7 +129,11 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                                 break;
 
                             case R.id.menu_ultimos_pass:
-                                verUltimosPass(listContrasena.get(i).getIdContrasena());
+                                if (Utilidades.almacenamientoExterno) {
+                                    verUltimosPassFirebase(listContrasena.get(i).getIdContrasena());
+                                } else if (Utilidades.almacenamientoInterno) {
+                                    verUltimosPassSQLite(listContrasena.get(i).getIdContrasena());
+                                }
                                 break;
 
                             default:
@@ -253,7 +264,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         mCtx.startActivity(myIntent);
     }
 
-    public void eliminar(final ContrasenaConstructor i) {
+    public void eliminarFirebase(final ContrasenaConstructor i) {
         user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdContrasena();
@@ -279,7 +290,21 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                 });
     }
 
-    public void verUltimosPass(String idPass) {
+    public void eliminarSQLite(ContrasenaConstructor i) {
+        String idContrasena = i.getIdContrasena();
+
+        ConexionSQLite conect = new ConexionSQLite(mCtx, UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        db.delete(UtilidadesStatic.BD_CONTRASENAS, "idContrasena=" + idContrasena, null);
+        db.close();
+
+        listContrasena.remove(i);
+        notifyDataSetChanged();
+        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
+    }
+
+    public void verUltimosPassFirebase(String idPass) {
         final ProgressDialog progress = new ProgressDialog(mCtx);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
@@ -375,6 +400,86 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                     }
                 }).show();
 
+    }
+
+    public void verUltimosPassSQLite(String idContrasena) {
+        final ProgressDialog progress = new ProgressDialog(mCtx);
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        ConexionSQLite conect = new ConexionSQLite(mCtx, UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
+
+        LinearLayout layout = new LinearLayout(mCtx);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        final TextView textView1 = new TextView(mCtx);
+        final TextView textView2 = new TextView(mCtx);
+        final TextView textView3 = new TextView(mCtx);
+        final TextView textView4 = new TextView(mCtx);
+        final TextView textView5 = new TextView(mCtx);
+        textView1.setTextSize(24);
+        textView2.setTextSize(24);
+        textView3.setTextSize(24);
+        textView4.setTextSize(24);
+        textView5.setTextSize(24);
+        textView1.setPadding(50, 5, 5, 5);
+        textView2.setPadding(50, 5, 5, 5);
+        textView3.setPadding(50, 5, 5, 5);
+        textView4.setPadding(50, 5, 5, 5);
+        textView5.setPadding(50, 5, 5, 5);
+        textView1.setText("");
+        textView2.setText("");
+        textView3.setText("");
+        textView4.setText("");
+        textView5.setText("");
+
+        if (cursor.moveToFirst()) {
+            if (cursor.getString(5) != null) {
+                String pass1 = cursor.getString(5);
+                textView1.setText(pass1);
+            } else {
+                textView1.setText("Sin historial de contraseñas");
+            }
+
+            if (cursor.getString(6) != null) {
+                String pass2 = cursor.getString(6);
+                textView2.setText(pass2);
+            }
+
+            if (cursor.getString(7) != null) {
+                String pass3 = cursor.getString(7);
+                textView3.setText(pass3);
+            }
+
+            if (cursor.getString(8) != null) {
+                String pass4 = cursor.getString(8);
+                textView4.setText(pass4);
+            }
+
+            if (cursor.getString(9) != null) {
+                String pass5 = cursor.getString(9);
+                textView5.setText(pass5);
+            }
+            progress.dismiss();
+        }
+
+
+        layout.addView(textView1);
+        layout.addView(textView2);
+        layout.addView(textView3);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+        dialog.setTitle("Últimas contraseñas usadas")
+                .setView(layout)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).show();
     }
 
     public void updateList (ArrayList<ContrasenaConstructor> newList) {
