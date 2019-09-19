@@ -53,6 +53,8 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -580,6 +582,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
         recycler.setAdapter(adapterContrasena);
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
         SQLiteDatabase db = conect.getReadableDatabase();
 
         Cursor cursor = db.rawQuery("SELECT * from " + UtilidadesStatic.BD_CONTRASENAS, null);
@@ -590,7 +594,31 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             pass.setServicio(cursor.getString(1));
             pass.setUsuario(cursor.getString(2));
             pass.setContrasena(cursor.getString(3));
-            pass.setVencimiento(Integer.parseInt(cursor.getString(4)));
+
+            String fechaCreacionS = cursor.getString(10);
+            try {
+                Date fechaCreacion = sdf.parse(fechaCreacionS);
+                long fechaCreacionL = fechaCreacion.getTime();
+                long fechaMomentoL = fechaMomento.getTime();
+
+                long diasRestantes = fechaCreacionL - fechaMomentoL;
+
+                long segundos = diasRestantes / 1000;
+                long minutos = segundos / 60;
+                long horas = minutos / 60;
+                long dias = horas / 24;
+                int diasTranscurridos = (int) dias;
+
+                if (cursor.getString(4).equals("0")) {
+                    pass.setVencimiento(0);
+                } else {
+                    int vencimiento = Integer.parseInt(cursor.getString(4));
+                    int faltante = vencimiento - diasTranscurridos;
+                    pass.setVencimiento(faltante);
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             listContrasena.add(pass);
         }

@@ -33,6 +33,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -277,6 +278,9 @@ public class AddContrasenaFragment extends Fragment {
         String usuario = etUsuario.getText().toString();
         String contrasena = etContrasena.getText().toString();
 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String fechaS = sdf.format(fechaActual);
+
         ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
@@ -305,6 +309,7 @@ public class AddContrasenaFragment extends Fragment {
                 values.put(UtilidadesStatic.BD_USUARIO, usuario);
                 values.put(UtilidadesStatic.BD_PASSWORD, contrasena);
                 values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+                values.put(UtilidadesStatic.BD_FECHA_CREACION, fechaS);
 
                 db.insert(UtilidadesStatic.BD_CONTRASENAS, null, values);
                 db.close();

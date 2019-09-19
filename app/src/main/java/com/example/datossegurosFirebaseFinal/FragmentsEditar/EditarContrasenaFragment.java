@@ -63,7 +63,7 @@ public class EditarContrasenaFragment extends Fragment {
     private FirebaseUser user;
     private ProgressDialog progress;
     private int duracionVigencia;
-    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5;
+    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaCracionS, fechaEnviarS;
     private Date fechaActual, fechaCreacion, fechaEnviar;
     private int vigenciaAnterior, vigenciaNueva;
 
@@ -324,6 +324,7 @@ public class EditarContrasenaFragment extends Fragment {
             etUsuario.setText(cursor.getString(2));
             etContrasena.setText((cursor.getString(3)));
             contrasenaVieja = cursor.getString(3);
+            fechaCracionS = cursor.getString(10);
 
             String vigencia = cursor.getString(4);
 
@@ -341,6 +342,26 @@ public class EditarContrasenaFragment extends Fragment {
                 rbOtro.setChecked(true);
                 etOtro.setVisibility(View.VISIBLE);
                 etOtro.setText(vigencia);
+            }
+
+            if (cursor.getString(5) != null) {
+                pass1 = cursor.getString(5);
+
+            }
+
+            if (cursor.getString(6) != null) {
+                pass2 = cursor.getString(6);
+
+            }
+
+            if (cursor.getString(7) != null) {
+                pass3 = cursor.getString(7);
+
+            }
+
+            if (cursor.getString(8) != null) {
+                pass4 = cursor.getString(8);
+
             }
 
             progress.dismiss();
@@ -507,6 +528,9 @@ public class EditarContrasenaFragment extends Fragment {
         contrasenaNueva = etContrasena.getText().toString();
         vigencia = "";
 
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYY_MM_DD HH:MM");
+
+
         if (servicio.isEmpty() || usuario.isEmpty() || contrasenaNueva.isEmpty()) {
             Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
         } else {
@@ -528,12 +552,23 @@ public class EditarContrasenaFragment extends Fragment {
                     progress.setCancelable(false);
                     progress.show();
 
-                    fechaEnviar = fechaActual;
+                    fechaEnviarS = fechaCracionS;
 
                     ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
+                    values.put(UtilidadesStatic.BD_SERVICIO, servicio);
+                    values.put(UtilidadesStatic.BD_USUARIO, usuario);
+                    values.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
+                    values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
+                    values.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviarS);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
+                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+
                     /*db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
