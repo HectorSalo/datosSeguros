@@ -42,4 +42,11 @@ public class UtilidadesStatic {
     public static final String INTERNO = "interno";
     public static final String EXTERNO = "externo";
 
+    public static final String BLOQUEO = "bloqueo";
+    public static final String HUELLA = "huella";
+    public static final String PATRON = "patron";
+    public static final String PIN = "pin";
+    public static final String SIN_BLOQUEO = "sinbloqueo";
+
+
 }

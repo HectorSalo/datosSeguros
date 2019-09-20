@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private AdapterTarjeta adapterTarjeta;
     private BancoAdapter adapterBanco;
     private FirebaseUser user;
-    private ProgressDialog progress;
     private FloatingActionsMenu fabGrupo;
     private com.getbase.floatingactionbutton.FloatingActionButton fabContrasena, fabCuenta, fabNota, fabTarjeta;
     private TextView sinLista;
@@ -83,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private CoordinatorLayout coordinatorLayout;
     private ConexionSQLite conect;
     private String seleccion;
+    private SharedPreferences preferences;
 
 
 
@@ -200,6 +200,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
 
+        preferences = getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+
+
         escogenciaAlmacenamiento();
 
 
@@ -250,14 +253,28 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public void seleccionarBloqueo() {
-
+        boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
+        boolean patron = preferences.getBoolean(UtilidadesStatic.PATRON, false);
+        boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
+        boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+        int escogencia;
         seleccion = "";
         final String [] opciones = getResources().getStringArray(R.array.selectBloqueo);
+
+        if (huella) {
+            escogencia = 0;
+        } else if (patron) {
+            escogencia = 1;
+        } else if (pin) {
+            escogencia = 2;
+        } else {
+            escogencia = 3;
+        }
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
 
         dialog.setTitle("Esta opción le permitirá escoger un método de bloqueo a la aplicación.")
-                .setSingleChoiceItems(R.array.selectBloqueo, 3, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(R.array.selectBloqueo, escogencia, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         seleccion = opciones[which];
@@ -267,13 +284,33 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (seleccion.equals("Huella Digital")) {
-
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putBoolean(UtilidadesStatic.HUELLA, true);
+                            editor.putBoolean(UtilidadesStatic.PATRON, false);
+                            editor.putBoolean(UtilidadesStatic.PIN, false);
+                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
+                            editor.commit();
                         } else if (seleccion.equals("Patrón")) {
-
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                            editor.putBoolean(UtilidadesStatic.PATRON, true);
+                            editor.putBoolean(UtilidadesStatic.PIN, false);
+                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
+                            editor.commit();
                         } else if (seleccion.equals("PIN")) {
-
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                            editor.putBoolean(UtilidadesStatic.PATRON, false);
+                            editor.putBoolean(UtilidadesStatic.PIN, true);
+                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
+                            editor.commit();
                         } else if (seleccion.equals("Sin Bloqueo")) {
-
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                            editor.putBoolean(UtilidadesStatic.PATRON, false);
+                            editor.putBoolean(UtilidadesStatic.PIN, false);
+                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+                            editor.commit();
                         }
                     }
                 }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
