@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
@@ -89,7 +91,11 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        eliminar(listNota.get(i));
+                                        if (Utilidades.almacenamientoExterno) {
+                                            eliminarFirebase(listNota.get(i));
+                                        } else if (Utilidades.almacenamientoInterno) {
+                                            eliminarSQLite(listNota.get(i));
+                                        }
                                     }
                                 });
                                 dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -225,7 +231,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
         mCtx.startActivity(myIntent);
     }
 
-    public void eliminar(final NotaConstructor i) {
+    public void eliminarFirebase(final NotaConstructor i) {
         user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdNota();
@@ -249,6 +255,20 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                         Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void eliminarSQLite(NotaConstructor i) {
+        String idNota = i.getIdNota();
+
+        ConexionSQLite conect = new ConexionSQLite(mCtx, UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        db.delete(UtilidadesStatic.BD_NOTAS, "idNota=" + idNota, null);
+        db.close();
+
+        listNota.remove(i);
+        notifyDataSetChanged();
+        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
     public void updateList (ArrayList<NotaConstructor> newList) {

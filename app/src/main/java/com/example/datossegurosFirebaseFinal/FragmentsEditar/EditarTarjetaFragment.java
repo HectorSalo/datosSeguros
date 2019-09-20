@@ -1,12 +1,16 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -19,6 +23,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
@@ -110,13 +115,21 @@ public class EditarTarjetaFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        cargarData();
+        if (Utilidades.almacenamientoExterno) {
+            cargarDataFirebase();
+        } else if (Utilidades.almacenamientoInterno) {
+            cargarDataSQLite();
+        }
 
         Button button = (Button) vista.findViewById(R.id.guardarTarjetaEditar);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarData();
+                if(Utilidades.almacenamientoExterno) {
+                    guardarDataFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarDataSQLite();
+                }
             }
         });
         return vista;
@@ -161,8 +174,8 @@ public class EditarTarjetaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void cargarData() {
-        progress = new ProgressDialog(getContext());
+    public void cargarDataFirebase() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -204,7 +217,41 @@ public class EditarTarjetaFragment extends Fragment {
         });
     }
 
-    public void guardarData() {
+    public void cargarDataSQLite() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        String idTarjeta = Utilidades.idTarjeta;
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_TARJETAS + " WHERE idTarjeta =" + idTarjeta, null);
+
+        if (cursor.moveToFirst()) {
+            etTitular.setText(cursor.getString(1));
+            etnumeroTarjeta.setText(cursor.getString(2));
+            etCVV.setText(cursor.getString(3));
+            etCedula.setText(cursor.getString(4));
+            String tipo = cursor.getString(5);
+
+            if (tipo.equals("Visa")) {
+                rbVisa.setChecked(true);
+            } else if (tipo.equals("Mastercard")) {
+                rbMastercard.setChecked(true);
+            } else {
+                rbOtro.setChecked(true);
+                etOtro.setText(tipo);
+            }
+
+            progress.dismiss();
+        }
+
+    }
+
+    public void guardarDataFirebase() {
         String userID = user.getUid();
         String titular = etTitular.getText().toString();
         String numeroTarjeta = etnumeroTarjeta.getText().toString();
@@ -232,7 +279,7 @@ public class EditarTarjetaFragment extends Fragment {
                             tipo = etOtro.getText().toString();
                         }
 
-                        progress = new ProgressDialog(getContext());
+                        final ProgressDialog progress = new ProgressDialog(getContext());
                         progress.setMessage("Guardando...");
                         progress.setCancelable(false);
                         progress.show();
@@ -262,6 +309,64 @@ public class EditarTarjetaFragment extends Fragment {
                                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                             }
                         });
+                    }
+                }
+            }
+        }
+    }
+
+    public void guardarDataSQLite() {
+        String idTarjeta = Utilidades.idTarjeta;
+        String titular = etTitular.getText().toString();
+        String numeroTarjeta = etnumeroTarjeta.getText().toString();
+        String cvv = etCVV.getText().toString();
+        String cedula = etCedula.getText().toString();
+        String tipo = "";
+
+        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked()) {
+                Toast.makeText(getContext(), "Debe seleccionar un tipo de tarjeta", Toast.LENGTH_SHORT).show();
+            } else {
+                if (numeroTarjeta.length() != 16) {
+                    Toast.makeText(getContext(), "La longitud del número de tarjeta debe ser 16 dígitos", Toast.LENGTH_LONG).show();
+                } else {
+                    if (cvv.length() != 3) {
+                        Toast.makeText(getContext(), "La longitud del número de CVV debe ser 3 dígitos", Toast.LENGTH_LONG).show();
+                    } else {
+                        if (rbMastercard.isChecked()) {
+                            tipo = "Mastercard";
+                        } else if (rbVisa.isChecked()) {
+                            tipo = "Visa";
+                        } else if (rbOtro.isChecked()) {
+                            tipo = etOtro.getText().toString();
+                        }
+
+                        ProgressDialog progress = new ProgressDialog(getContext());
+                        progress.setMessage("Guardando...");
+                        progress.setCancelable(false);
+                        progress.show();
+
+
+                        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                        SQLiteDatabase db = conect.getWritableDatabase();
+
+                        ContentValues values = new ContentValues();
+                        values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
+                        values.put(UtilidadesStatic.BD_NUMERO_TARJETA, numeroTarjeta);
+                        values.put(UtilidadesStatic.BD_CVV, cvv);
+                        values.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
+                        values.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
+
+                        db.update(UtilidadesStatic.BD_TARJETAS, values, "idTarjeta=" + idTarjeta, null);
+                        db.close();
+
+                        progress.dismiss();
+                        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                        Intent myIntent = new Intent(getContext(), MainActivity.class);
+                        startActivity(myIntent);
+
                     }
                 }
             }

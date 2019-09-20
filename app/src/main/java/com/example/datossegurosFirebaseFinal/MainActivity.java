@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int listaBuscar;
     private CoordinatorLayout coordinatorLayout;
     private ConexionSQLite conect;
+    private String seleccion;
 
 
 
@@ -234,6 +235,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             return true;
         } else if (id == R.id.menu_buscar) {
             return true;
+        } else if (id == R.id.menu_bloqueo) {
+            seleccionarBloqueo();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -243,6 +247,42 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public void onBackPressed() {
         cerrarSesion();
+    }
+
+    public void seleccionarBloqueo() {
+
+        seleccion = "";
+        final String [] opciones = getResources().getStringArray(R.array.selectBloqueo);
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
+
+        dialog.setTitle("Esta opción le permitirá escoger un método de bloqueo a la aplicación.")
+                .setSingleChoiceItems(R.array.selectBloqueo, 3, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        seleccion = opciones[which];
+                    }
+                })
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (seleccion.equals("Huella Digital")) {
+
+                        } else if (seleccion.equals("Patrón")) {
+
+                        } else if (seleccion.equals("PIN")) {
+
+                        } else if (seleccion.equals("Sin Bloqueo")) {
+
+                        }
+                    }
+                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        dialog.show();
     }
 
     public void seleccionAlmacenamiento () {

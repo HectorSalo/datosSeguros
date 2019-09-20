@@ -14,7 +14,7 @@ public class ConexionSQLite extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE contrasenas (idContrasena integer primary key autoincrement, servicio text, usuario text, password text, vigencia text, passviejo1 text, passviejo2 text, passviejo3 text, passviejo4 text, passviejo5 text, fechacreacion text)");
-        db.execSQL("CREATE TABLE cuentas (idCuentas integer primary key autoincrement, titularbanco text, banco text, numerocuenta text, cedulabanco text, tipocuenta text, telefono text)");
+        db.execSQL("CREATE TABLE cuentas (idCuenta integer primary key autoincrement, titularbanco text, banco text, numerocuenta text, cedulabanco text, tipocuenta text, telefono text)");
         db.execSQL("CREATE TABLE tarjetas (idTarjeta integer primary key autoincrement, titulartarjeta text, numerotarjeta text, cvv text, cedulatarjeta text, tipotarjeta text)");
         db.execSQL("CREATE TABLE notas(idNota integer primary key autoincrement, titulonotas text, contenidonotas text)");
     }

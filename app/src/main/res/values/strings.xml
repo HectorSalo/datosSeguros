@@ -128,4 +128,14 @@
     <string name="radioNube">Nube</string>
     <string name="radioDispositivo">Dispositivo</string>
 
+    <!-- Bloqueo -->
+    <string-array name="selectBloqueo">
+        <item>Huella Digital</item>
+        <item>Patrón</item>
+        <item>PIN</item>
+        <item>Sin Bloqueo</item>
+    </string-array>
+
+
+
 </resources>

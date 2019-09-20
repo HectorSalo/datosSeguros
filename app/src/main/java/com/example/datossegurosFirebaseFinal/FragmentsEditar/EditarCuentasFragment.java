@@ -1,8 +1,11 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -18,6 +21,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
@@ -105,13 +109,21 @@ public class EditarCuentasFragment extends Fragment {
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorrienteEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        cargarData();
+        if (Utilidades.almacenamientoExterno) {
+            cargarDataFirebase();
+        } else if (Utilidades.almacenamientoInterno) {
+            cargarDataSQLite();
+        }
 
         Button button = (Button) vista.findViewById(R.id.guardarCuentaEditar);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarData();
+                if (Utilidades.almacenamientoExterno) {
+                    guardarDataFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarDataSQLite();
+                }
             }
         });
 
@@ -157,8 +169,8 @@ public class EditarCuentasFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void cargarData() {
-        progress = new ProgressDialog(getContext());
+    public void cargarDataFirebase() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -203,7 +215,45 @@ public class EditarCuentasFragment extends Fragment {
         });
     }
 
-    public void guardarData () {
+    public void cargarDataSQLite() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        String idCuenta = Utilidades.idCuenta;
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_CUENTAS + " WHERE idCuenta =" + idCuenta, null);
+
+        if (cursor.moveToFirst()) {
+            etTitular.setText(cursor.getString(1));
+            etBanco.setText(cursor.getString(2));
+            etnumeroCuenta.setText(cursor.getString(3));
+            etCedula.setText(cursor.getString(4));
+            String tipo = cursor.getString(5);
+            String telefono = cursor.getString(6);
+
+            if (tipo.equals("Ahorro")) {
+                rbAhorro.setChecked(true);
+            } else if (tipo.equals("Corriente")) {
+                rbCorriente.setChecked(true);
+            }
+
+            if (telefono.equals("0")) {
+                etTelefono.setText("");
+            } else {
+                etTelefono.setText(telefono);
+            }
+
+            progress.dismiss();
+        }
+
+    }
+
+    public void guardarDataFirebase () {
         String userID = user.getUid();
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
@@ -264,6 +314,64 @@ public class EditarCuentasFragment extends Fragment {
                             Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
+                }
+            }
+        }
+    }
+
+    public void guardarDataSQLite() {
+        String idCuenta = Utilidades.idCuenta;
+        String titular = etTitular.getText().toString();
+        String banco = etBanco.getText().toString();
+        String cuentaNumero = etnumeroCuenta.getText().toString();
+        String cedula = etCedula.getText().toString();
+        String telefono = etTelefono.getText().toString();
+        String tipo = "";
+
+
+        if (rbAhorro.isChecked()) {
+            tipo = "Ahorro";
+        } else if (rbCorriente.isChecked()) {
+            tipo = "Corriente";
+        }
+
+        if (titular.isEmpty() || banco.isEmpty() || cuentaNumero.isEmpty() || cedula.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        } else {
+            if (!rbCorriente.isChecked() && !rbAhorro.isChecked()) {
+                Toast.makeText(getContext(), "Debe seleccionar un tipo de cuenta", Toast.LENGTH_SHORT).show();
+            } else {
+                if (cuentaNumero.length() != 20) {
+                    Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
+                } else {
+                    ProgressDialog progress = new ProgressDialog(getContext());
+                    progress.setMessage("Guardando...");
+                    progress.setCancelable(false);
+                    progress.show();
+
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    SQLiteDatabase db = conect.getWritableDatabase();
+
+                    ContentValues values = new ContentValues();
+                    values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
+                    values.put(UtilidadesStatic.BD_BANCO, banco);
+                    values.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
+                    values.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
+                    values.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
+
+                    if (telefono.isEmpty()) {
+                        values.put(UtilidadesStatic.BD_TELEFONO, "0");
+                    } else {
+                        values.put(UtilidadesStatic.BD_TELEFONO, telefono);
+                    }
+
+                    db.update(UtilidadesStatic.BD_CUENTAS, values, "idCuenta=" + idCuenta, null);
+                    db.close();
+
+                    progress.dismiss();
+                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                    Intent myIntent = new Intent(getContext(), MainActivity.class);
+                    startActivity(myIntent);
                 }
             }
         }

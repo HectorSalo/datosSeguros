@@ -6,6 +6,7 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
@@ -93,7 +95,11 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        eliminar(listTarjeta.get(i));
+                                        if (Utilidades.almacenamientoExterno) {
+                                            eliminarFirebase(listTarjeta.get(i));
+                                        } else if (Utilidades.almacenamientoInterno) {
+                                            eliminarSQLite(listTarjeta.get(i));
+                                        }
                                     }
                                 });
                                 dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -238,7 +244,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         mCtx.startActivity(myIntent);
     }
 
-    public void eliminar(final TarjetaConstructor i) {
+    public void eliminarFirebase(final TarjetaConstructor i) {
         user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdTarjeta();
@@ -262,6 +268,20 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                         Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public void eliminarSQLite(TarjetaConstructor i) {
+        String idTarjeta = i.getIdTarjeta();
+
+        ConexionSQLite conect = new ConexionSQLite(mCtx, UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        db.delete(UtilidadesStatic.BD_TARJETAS, "idTarjeta=" + idTarjeta, null);
+        db.close();
+
+        listTarjeta.remove(i);
+        notifyDataSetChanged();
+        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
     public void updateList (ArrayList<TarjetaConstructor> newList) {

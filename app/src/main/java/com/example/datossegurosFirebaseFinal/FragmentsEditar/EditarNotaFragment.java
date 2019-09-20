@@ -1,8 +1,11 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
 import android.app.ProgressDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -17,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
@@ -98,13 +102,21 @@ public class EditarNotaFragment extends Fragment {
         etContenido = (EditText) vista.findViewById(R.id.etContenidoEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        cargarData();
+        if (Utilidades.almacenamientoExterno) {
+            cargarDataFirebase();
+        } else if (Utilidades.almacenamientoInterno) {
+            cargarDataSQLite();
+        }
 
         Button button = (Button) vista.findViewById(R.id.guardarNotaEditar);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                guardarData();
+                if (Utilidades.almacenamientoExterno) {
+                    guardarDataFirebase();
+                } else if (Utilidades.almacenamientoInterno) {
+                    guardarDataSQLite();
+                }
             }
         });
 
@@ -150,8 +162,8 @@ public class EditarNotaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void cargarData() {
-        progress = new ProgressDialog(getContext());
+    public void cargarDataFirebase() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
@@ -180,12 +192,34 @@ public class EditarNotaFragment extends Fragment {
         });
     }
 
-    public void guardarData() {
+    public void cargarDataSQLite() {
+        final ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        String idNota = Utilidades.idNota;
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_NOTAS + " WHERE idNota =" + idNota, null);
+
+        if(cursor.moveToFirst()) {
+            etTitulo.setText(cursor.getString(1));
+            etContenido.setText(cursor.getString(2));
+
+            progress.dismiss();
+        }
+
+    }
+
+    public void guardarDataFirebase() {
         String userID = user.getUid();
         String titulo = etTitulo.getText().toString();
         String contenido = etContenido.getText().toString();
 
-        progress = new ProgressDialog(getContext());
+        final ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Guardando...");
         progress.setCancelable(false);
         progress.show();
@@ -212,5 +246,32 @@ public class EditarNotaFragment extends Fragment {
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void guardarDataSQLite() {
+        String idNota = Utilidades.idNota;
+        String titulo = etTitulo.getText().toString();
+        String contenido = etContenido.getText().toString();
+
+        ProgressDialog progress = new ProgressDialog(getContext());
+        progress.setMessage("Guardando...");
+        progress.setCancelable(false);
+        progress.show();
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(UtilidadesStatic.BD_TITULO_NOTAS, titulo);
+        values.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenido);
+
+        db.update(UtilidadesStatic.BD_NOTAS, values, "idNota=" + idNota, null);
+        db.close();
+
+        progress.dismiss();
+        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+        Intent myIntent = new Intent(getContext(), MainActivity.class);
+        startActivity(myIntent);
+
     }
 }

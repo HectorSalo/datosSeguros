@@ -12,4 +12,5 @@ public class Utilidades {
     public static boolean almacenamientoExterno = false;
     public static boolean escogerAlmacenamiento = false;
 
+
 }

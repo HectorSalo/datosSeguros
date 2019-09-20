@@ -63,7 +63,7 @@ public class EditarContrasenaFragment extends Fragment {
     private FirebaseUser user;
     private ProgressDialog progress;
     private int duracionVigencia;
-    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaCracionS, fechaEnviarS;
+    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaActualS, fechaEnviarS;
     private Date fechaActual, fechaCreacion, fechaEnviar;
     private int vigenciaAnterior, vigenciaNueva;
 
@@ -325,7 +325,6 @@ public class EditarContrasenaFragment extends Fragment {
             etContrasena.setText((cursor.getString(3)));
             contrasenaVieja = cursor.getString(3);
             vigenciaAnterior = Integer.parseInt(cursor.getString(4));
-            fechaCracionS = cursor.getString(10);
 
             String vigencia = cursor.getString(4);
 
@@ -530,7 +529,8 @@ public class EditarContrasenaFragment extends Fragment {
         vigencia = "";
         String idContrasena = Utilidades.idContrasena;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYY_MM_DD HH:MM");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        fechaActualS = sdf.format(fechaActual);
 
 
         if (servicio.isEmpty() || usuario.isEmpty() || contrasenaNueva.isEmpty()) {
@@ -554,7 +554,7 @@ public class EditarContrasenaFragment extends Fragment {
                     progress.setCancelable(false);
                     progress.show();
 
-                    fechaEnviarS = fechaCracionS;
+                    fechaEnviarS = fechaActualS;
 
                     ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
@@ -585,7 +585,7 @@ public class EditarContrasenaFragment extends Fragment {
                     progress.setCancelable(false);
                     progress.show();
 
-                    fechaEnviarS = fechaCracionS;
+                    fechaEnviarS = fechaActualS;
                     vigencia = "0";
 
                     ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);

@@ -24,5 +24,12 @@
         android:icon="@drawable/ic_buscar"
         app:actionViewClass="android.widget.SearchView"/>
 
+    <item
+        android:title="@string/acerca"
+        android:id="@+id/menu_bloqueo"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_bloqueo"
+        />
+
 
 </menu>
