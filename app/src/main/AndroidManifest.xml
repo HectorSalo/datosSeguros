@@ -9,9 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".PerfilActivity"
-            android:theme="@style/Theme.Dialog.MiPerfil"
-            android:label="@string/titleMiPerfil"></activity>
+        <activity android:name=".BloqueoActivity"></activity>
+        <activity
+            android:name=".PerfilActivity"
+            android:label="@string/titleMiPerfil"
+            android:theme="@style/Theme.Dialog.MiPerfil" />
         <activity android:name=".AcercaActivity" />
         <activity android:name=".EditarActivity" />
         <activity android:name=".RegistrarActivity" />

@@ -263,12 +263,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         if (huella) {
             escogencia = 0;
+            seleccion = opciones[0];
         } else if (patron) {
             escogencia = 1;
+            seleccion = opciones[1];
         } else if (pin) {
             escogencia = 2;
+            seleccion = opciones[2];
         } else {
             escogencia = 3;
+            seleccion = opciones[3];
         }
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
@@ -290,6 +294,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             editor.putBoolean(UtilidadesStatic.PIN, false);
                             editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
                             editor.commit();
+
+                            startActivity(new Intent(MainActivity.this, BloqueoActivity.class));
                         } else if (seleccion.equals("Patrón")) {
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);

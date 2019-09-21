@@ -90,6 +90,20 @@
 
     <!-- Acerca -->
     <string name="contacto">inversionesskysam@gmail.com</string>
+    <string name="titleMiPerfil">¿Qué desea actualizar?</string>
+    <string name="updateEmail">Actualizar Correo</string>
+    <string name="updatePass">Actualizar Contraseña</string>
+    <string name="updateAlmacenamiento">Lugar de Almacenamiento</string>
+
+    <!-- Mi Perfil -->
+    <string name="btUpdate">Actualizar</string>
+    <string name="nuevoEmail">Ingrese nueva dirección de correo</string>
+    <string name="repetirEmail">Repita la dirección de correo</string>
+    <string name="nuevoPass">Ingrese nueva Contraseña</string>
+    <string name="repetirPass">Repita la Contraseña</string>
+    <string name="radioNube">Nube</string>
+    <string name="radioDispositivo">Dispositivo</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string-array name="copiarContrasena">
         <item>Servicio</item>
         <item>Usuario</item>
@@ -110,32 +124,20 @@
         <item>Cédula</item>
         <item>Tipo</item>
     </string-array>
+
+    <!-- Bloqueo -->
     <string-array name="copiarNota">
         <item>Título</item>
         <item>Contenido</item>
     </string-array>
 
-    <!-- Mi Perfil -->
-    <string name="titleMiPerfil">¿Qué desea actualizar?</string>
-    <string name="updateEmail">Actualizar Correo</string>
-    <string name="updatePass">Actualizar Contraseña</string>
-    <string name="updateAlmacenamiento">Lugar de Almacenamiento</string>
-    <string name="btUpdate">Actualizar</string>
-    <string name="nuevoEmail">Ingrese nueva dirección de correo</string>
-    <string name="repetirEmail">Repita la dirección de correo</string>
-    <string name="nuevoPass">Ingrese nueva Contraseña</string>
-    <string name="repetirPass">Repita la Contraseña</string>
-    <string name="radioNube">Nube</string>
-    <string name="radioDispositivo">Dispositivo</string>
-
-    <!-- Bloqueo -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string-array name="selectBloqueo">
         <item>Huella Digital</item>
         <item>Patrón</item>
         <item>PIN</item>
         <item>Sin Bloqueo</item>
     </string-array>
-
 
 
 </resources>
