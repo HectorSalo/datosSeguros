@@ -1,44 +1,33 @@
 package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 
-import android.Manifest;
-import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.hardware.fingerprint.FingerprintManager;
+import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
+import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link HuellaFragment.OnFragmentInteractionListener} interface
+ * {@link SinBloqueoFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link HuellaFragment#newInstance} factory method to
+ * Use the {@link SinBloqueoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HuellaFragment extends Fragment {
+public class SinBloqueoFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
-    private ImageView imageHuella;
-    private TextView textViewHuella;
-    private FingerprintManager fingerprintManager;
-    private KeyguardManager keyguardManager;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -46,7 +35,7 @@ public class HuellaFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public HuellaFragment() {
+    public SinBloqueoFragment() {
         // Required empty public constructor
     }
 
@@ -56,11 +45,11 @@ public class HuellaFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment HuellaFragment.
+     * @return A new instance of fragment SinBloqueoFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static HuellaFragment newInstance(String param1, String param2) {
-        HuellaFragment fragment = new HuellaFragment();
+    public static SinBloqueoFragment newInstance(String param1, String param2) {
+        SinBloqueoFragment fragment = new SinBloqueoFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -81,19 +70,16 @@ public class HuellaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View vista = inflater.inflate(R.layout.fragment_huella, container, false);
 
-        imageHuella = (ImageView) vista.findViewById(R.id.imageViewHuella);
-        textViewHuella = (TextView) vista.findViewById(R.id.textViewHuella);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Intent intent = new Intent(getContext(), InicSesionActivity.class);
+                getActivity().startActivity(intent);
 
-        if (Utilidades.uso_huella == 1) {
-            desbloqueoHuella();
-        } else if (Utilidades.uso_huella == 2) {
-
-            registrarHuella();
-        }
-
-        return vista;
+            }
+        }, 1000);
+        return inflater.inflate(R.layout.fragment_sin_bloqueo, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -134,43 +120,4 @@ public class HuellaFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-    public void desbloqueoHuella() {
-        FingerprintHandler fingerprintHandler = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            textViewHuella.setText("Coloque su huella en el lector biométrico");
-
-            fingerprintHandler = new FingerprintHandler(getContext());
-            fingerprintHandler.starAuth(fingerprintManager, null);
-        }
-
-    }
-
-    public void registrarHuella() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            fingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
-            keyguardManager = (KeyguardManager) getActivity().getSystemService(Context.KEYGUARD_SERVICE);
-
-            if (fingerprintManager.isHardwareDetected()) {
-                if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED) {
-                    if (keyguardManager.isKeyguardSecure()) {
-                        textViewHuella.setText("Se usará la huella registrada en su Dispositivo. Coloque su huella en el lector biométrico");
-
-                        FingerprintHandler fingerprintHandler = new FingerprintHandler(getContext());
-                        fingerprintHandler.starAuth(fingerprintManager, null);
-                    } else {
-                        textViewHuella.setText("Debe agregar un bloqueo a su Dispositivo");
-                    }
-                } else {
-                    textViewHuella.setText("Debe autorizar el uso del lector de huellas");
-                }
-            } else {
-                textViewHuella.setText("Este dispositivo no cuenta con lector de huella");
-            }
-        } else {
-            textViewHuella.setText("Para usar esta opción debe poseer una versión de Android superior");
-        }
-    }
-
-
 }

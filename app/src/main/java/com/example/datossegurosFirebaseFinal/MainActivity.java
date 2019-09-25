@@ -288,13 +288,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (seleccion.equals("Huella Digital")) {
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(UtilidadesStatic.HUELLA, true);
-                            editor.putBoolean(UtilidadesStatic.PATRON, false);
-                            editor.putBoolean(UtilidadesStatic.PIN, false);
-                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();
-
+                            Utilidades.uso_huella = 2;
                             startActivity(new Intent(MainActivity.this, BloqueoActivity.class));
                         } else if (seleccion.equals("Patrón")) {
                             SharedPreferences.Editor editor = preferences.edit();
