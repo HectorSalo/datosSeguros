@@ -136,13 +136,8 @@ public class HuellaFragment extends Fragment {
     }
 
     public void desbloqueoHuella() {
-        FingerprintHandler fingerprintHandler = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            textViewHuella.setText("Coloque su huella en el lector biométrico");
 
-            fingerprintHandler = new FingerprintHandler(getContext());
-            fingerprintHandler.starAuth(fingerprintManager, null);
-        }
+
 
     }
 

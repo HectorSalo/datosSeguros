@@ -29,8 +29,7 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
         HuellaFragment huellaFragment = new HuellaFragment();
         SinBloqueoFragment sinBloqueoFragment = new SinBloqueoFragment();
 
-        if (huella) {
-            Utilidades.uso_huella = 1;
+        if (huella || Utilidades.uso_huella == 2) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, huellaFragment).commit();
         } else if (sinBloqueo) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, sinBloqueoFragment).commit();
