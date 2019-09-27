@@ -86,12 +86,9 @@ public class HuellaFragment extends Fragment {
         imageHuella = (ImageView) vista.findViewById(R.id.imageViewHuella);
         textViewHuella = (TextView) vista.findViewById(R.id.textViewHuella);
 
-        if (Utilidades.uso_huella == 1) {
-            desbloqueoHuella();
-        } else if (Utilidades.uso_huella == 2) {
 
             registrarHuella();
-        }
+
 
         return vista;
     }

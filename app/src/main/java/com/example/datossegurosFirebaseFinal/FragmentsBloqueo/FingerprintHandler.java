@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
+import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
@@ -57,14 +58,15 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
         mensaje.setText(s);
 
-        if (Utilidades.uso_huella == 1) {
+        if (Utilidades.conf_bloqueo == 0) {
             if (!b) {
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
-                context.startActivity(new Intent(context, InicSesionActivity.class));
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                context.startActivity(new Intent(context, InicSesionActivity.class));
             }
-        } else if (Utilidades.uso_huella == 2) {
+        } else if (Utilidades.conf_bloqueo == 1) {
+
             if (!b) {
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
@@ -76,7 +78,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                 editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
                 editor.commit();
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                context.startActivity(new Intent(context, MainActivity.class));
             }
+
         }
 
 

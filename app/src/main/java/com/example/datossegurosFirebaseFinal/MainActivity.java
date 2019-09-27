@@ -288,23 +288,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (seleccion.equals("Huella Digital")) {
-                            Utilidades.uso_huella = 2;
+                            Utilidades.conf_bloqueo = 1;
                             startActivity(new Intent(MainActivity.this, BloqueoActivity.class));
                         } else if (seleccion.equals("Patrón")) {
-                            SharedPreferences.Editor editor = preferences.edit();
+                            /*SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);
                             editor.putBoolean(UtilidadesStatic.PATRON, true);
                             editor.putBoolean(UtilidadesStatic.PIN, false);
                             editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();
+                            editor.commit();*/
+                            Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
                         } else if (seleccion.equals("PIN")) {
-                            SharedPreferences.Editor editor = preferences.edit();
+                            /*SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);
                             editor.putBoolean(UtilidadesStatic.PATRON, false);
                             editor.putBoolean(UtilidadesStatic.PIN, true);
                             editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();
+                            editor.commit();*/
+                            Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
                         } else if (seleccion.equals("Sin Bloqueo")) {
+                            Utilidades.conf_bloqueo = 4;
                             SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);
                             editor.putBoolean(UtilidadesStatic.PATRON, false);
