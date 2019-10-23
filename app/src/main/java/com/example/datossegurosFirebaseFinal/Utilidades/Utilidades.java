@@ -12,5 +12,5 @@ public class Utilidades {
     public static boolean almacenamientoExterno = false;
     public static boolean escogerAlmacenamiento = false;
 
-    public static int uso_huella = 0;
+    public static int conf_bloqueo = 0;
 }

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsBloqueo.HuellaFragment">
+    tools:context=".FragmentsBloqueo.HuellaFragment"
+    android:background="@color/colorAccent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,7 +27,8 @@
             android:gravity="center"
             android:paddingTop="10dp"
             android:text="TextView"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            android:textColor="#ffff"/>
     </LinearLayout>
 
 </FrameLayout>
