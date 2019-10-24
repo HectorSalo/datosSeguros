@@ -271,21 +271,26 @@ public class EditarTarjetaFragment extends Fragment {
         String numeroTarjeta = etnumeroTarjeta.getText().toString();
         String cvv = etCVV.getText().toString();
         String cedula = etCedula.getText().toString();
+        String banco = etBanco.getText().toString();
+        String vencimiento = etVencimiento.getText().toString();
+        String clave = etClave.getText().toString();
         String tipo = "";
 
-        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty() || banco.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos importantes vacíos", Toast.LENGTH_SHORT).show();
         } else {
-            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked()) {
+            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked() && !rbMaestro.isChecked()) {
                 Toast.makeText(getContext(), "Debe seleccionar un tipo de tarjeta", Toast.LENGTH_SHORT).show();
             } else {
-                if (numeroTarjeta.length() != 16) {
-                    Toast.makeText(getContext(), "La longitud del número de tarjeta debe ser 16 dígitos", Toast.LENGTH_LONG).show();
+                if (numeroTarjeta.length() > 24) {
+                    Toast.makeText(getContext(), "La longitud del número de tarjeta no debe ser mayor a 24 dígitos", Toast.LENGTH_LONG).show();
                 } else {
                     if (cvv.length() != 3) {
                         Toast.makeText(getContext(), "La longitud del número de CVV debe ser 3 dígitos", Toast.LENGTH_LONG).show();
                     } else {
-                        if (rbMastercard.isChecked()) {
+                        if (rbMaestro.isChecked()) {
+                            tipo = "Maestro";
+                        } else if (rbMastercard.isChecked()) {
                             tipo = "Mastercard";
                         } else if (rbVisa.isChecked()) {
                             tipo = "Visa";
@@ -305,6 +310,9 @@ public class EditarTarjetaFragment extends Fragment {
                         tarjeta.put(UtilidadesStatic.BD_CVV, cvv);
                         tarjeta.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
                         tarjeta.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
+                        tarjeta.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, vencimiento);
+                        tarjeta.put(UtilidadesStatic.BD_CLAVE_TARJETA, clave);
+                        tarjeta.put(UtilidadesStatic.BD_BANCO_TARJETA, banco);
 
                         db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS).document(Utilidades.idTarjeta).set(tarjeta).addOnSuccessListener(new OnSuccessListener<Void>() {
 
@@ -335,21 +343,26 @@ public class EditarTarjetaFragment extends Fragment {
         String numeroTarjeta = etnumeroTarjeta.getText().toString();
         String cvv = etCVV.getText().toString();
         String cedula = etCedula.getText().toString();
+        String banco = etBanco.getText().toString();
+        String vencimiento = etVencimiento.getText().toString();
+        String clave = etClave.getText().toString();
         String tipo = "";
 
-        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty() || banco.isEmpty()) {
+            Toast.makeText(getContext(), "Hay campos importantes vacíos", Toast.LENGTH_SHORT).show();
         } else {
-            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked()) {
+            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked() && !rbMaestro.isChecked()) {
                 Toast.makeText(getContext(), "Debe seleccionar un tipo de tarjeta", Toast.LENGTH_SHORT).show();
             } else {
-                if (numeroTarjeta.length() != 16) {
-                    Toast.makeText(getContext(), "La longitud del número de tarjeta debe ser 16 dígitos", Toast.LENGTH_LONG).show();
+                if (numeroTarjeta.length() > 24) {
+                    Toast.makeText(getContext(), "La longitud del número de tarjeta no debe ser mayor a 24 dígitos", Toast.LENGTH_LONG).show();
                 } else {
                     if (cvv.length() != 3) {
                         Toast.makeText(getContext(), "La longitud del número de CVV debe ser 3 dígitos", Toast.LENGTH_LONG).show();
                     } else {
-                        if (rbMastercard.isChecked()) {
+                        if (rbMaestro.isChecked()) {
+                            tipo = "Maestro";
+                        } else if (rbMastercard.isChecked()) {
                             tipo = "Mastercard";
                         } else if (rbVisa.isChecked()) {
                             tipo = "Visa";
@@ -372,6 +385,9 @@ public class EditarTarjetaFragment extends Fragment {
                         values.put(UtilidadesStatic.BD_CVV, cvv);
                         values.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
                         values.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
+                        values.put(UtilidadesStatic.BD_BANCO_TARJETA, banco);
+                        values.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, vencimiento);
+                        values.put(UtilidadesStatic.BD_CLAVE_TARJETA, clave);
 
                         db.update(UtilidadesStatic.BD_TARJETAS, values, "idTarjeta=" + idTarjeta, null);
                         db.close();
