@@ -21,13 +21,21 @@
             android:inputType="textPersonName" />
 
         <EditText
+            android:id="@+id/etBancoTarjeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/banco"
+            android:inputType="textPersonName" />
+
+        <EditText
             android:id="@+id/etTarjeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroTarjeta"
             android:inputType="number"
-            android:maxLength="16"/>
+            android:maxLength="24"/>
 
         <EditText
             android:id="@+id/etnumeroCVV"
@@ -39,6 +47,14 @@
             android:maxLength="3"/>
 
         <EditText
+            android:id="@+id/etVencimientoTarjeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/vencimiento"
+            />
+
+        <EditText
             android:id="@+id/etCedulaTarjeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -46,19 +62,35 @@
             android:hint="@string/cedula"
             android:inputType="number" />
 
+        <EditText
+            android:id="@+id/etClaveTarjeta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/clavedeTarjeta"
+            android:inputType="number"
+            android:maxLength="6"/>
+
         <TextView
             android:id="@+id/etTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:paddingTop="24dp"/>
 
         <RadioGroup
             android:id="@+id/radioTarjeta"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
+
+            <RadioButton
+                android:id="@+id/radioButtonMaestro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/tarjetaMaestro" />
 
             <RadioButton
                 android:id="@+id/radioButtonVisa"

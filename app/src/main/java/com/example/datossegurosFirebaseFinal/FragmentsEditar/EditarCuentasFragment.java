@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public class EditarCuentasFragment extends Fragment {
 
-    private EditText etTitular, etBanco, etnumeroCuenta, etCedula, etTelefono;
+    private EditText etTitular, etBanco, etnumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente;
     private ProgressDialog progress;
     private FirebaseUser user;
@@ -105,6 +105,7 @@ public class EditarCuentasFragment extends Fragment {
         etnumeroCuenta = (EditText) vista.findViewById(R.id.etnumeroCuentaEditar);
         etCedula = (EditText) vista.findViewById(R.id.etCedulaCuentaEditar);
         etTelefono = (EditText) vista.findViewById(R.id.etTelefonoEditar);
+        etCorreo = (EditText) vista.findViewById(R.id.etCorreoCuentaEditar);
         rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorroEditar);
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorrienteEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -191,8 +192,9 @@ public class EditarCuentasFragment extends Fragment {
                     etCedula.setText(doc.getString(UtilidadesStatic.BD_CEDULA_BANCO));
                     String telefono = doc.getString(UtilidadesStatic.BD_TELEFONO);
                     String tipo = doc.getString(UtilidadesStatic.BD_TIPO_CUENTA);
+                    etCorreo.setText(doc.getString(UtilidadesStatic.BD_CORREO_CUENTA));
 
-                    if (telefono.equals("0")) {
+                    if (telefono.equals("")) {
                         etTelefono.setText("");
                     } else {
                         etTelefono.setText(telefono);
@@ -235,6 +237,7 @@ public class EditarCuentasFragment extends Fragment {
             etCedula.setText(cursor.getString(4));
             String tipo = cursor.getString(5);
             String telefono = cursor.getString(6);
+            etCorreo.setText(cursor.getString(7));
 
             if (tipo.equals("Ahorro")) {
                 rbAhorro.setChecked(true);
@@ -242,7 +245,7 @@ public class EditarCuentasFragment extends Fragment {
                 rbCorriente.setChecked(true);
             }
 
-            if (telefono.equals("0")) {
+            if (telefono.equals("")) {
                 etTelefono.setText("");
             } else {
                 etTelefono.setText(telefono);
@@ -260,6 +263,7 @@ public class EditarCuentasFragment extends Fragment {
         String cuentaNumero = etnumeroCuenta.getText().toString();
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
+        String correo = etCorreo.getText().toString();
         String tipo = "";
 
 
@@ -297,6 +301,12 @@ public class EditarCuentasFragment extends Fragment {
                         cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, telefono);
                     }
 
+                    if (correo.isEmpty()) {
+                        cuentaBancaria.put(UtilidadesStatic.BD_CORREO_CUENTA, "");
+                    } else {
+                        cuentaBancaria.put(UtilidadesStatic.BD_CORREO_CUENTA, correo);
+                    }
+
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS).document(Utilidades.idCuenta).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
@@ -326,6 +336,7 @@ public class EditarCuentasFragment extends Fragment {
         String cuentaNumero = etnumeroCuenta.getText().toString();
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
+        String correo = etCorreo.getText().toString();
         String tipo = "";
 
 
@@ -363,6 +374,12 @@ public class EditarCuentasFragment extends Fragment {
                         values.put(UtilidadesStatic.BD_TELEFONO, "0");
                     } else {
                         values.put(UtilidadesStatic.BD_TELEFONO, telefono);
+                    }
+
+                    if (correo.isEmpty()) {
+                        values.put(UtilidadesStatic.BD_CORREO_CUENTA, "");
+                    } else {
+                        values.put(UtilidadesStatic.BD_CORREO_CUENTA, correo);
                     }
 
                     db.update(UtilidadesStatic.BD_CUENTAS, values, "idCuenta=" + idCuenta, null);

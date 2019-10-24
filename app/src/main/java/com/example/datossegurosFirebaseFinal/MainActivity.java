@@ -74,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private AdapterTarjeta adapterTarjeta;
     private BancoAdapter adapterBanco;
     private FirebaseUser user;
-    private FloatingActionsMenu fabGrupo;
-    private com.getbase.floatingactionbutton.FloatingActionButton fabContrasena, fabCuenta, fabNota, fabTarjeta;
+    private FloatingActionButton fabAdd;
     private TextView sinLista;
     private Date fechaMomento;
     private int listaBuscar;
@@ -99,7 +98,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         verContrasenasSQLite();
                     }
 
+                    fabAdd.setImageResource(R.drawable.ic_add_contrasena);
                     listaBuscar = 0;
+                    Utilidades.Add = 0;
                     return true;
                 case R.id.navigation_cuentas:
                     if (Utilidades.almacenamientoExterno) {
@@ -108,7 +109,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         verCuentasBancariasSQLite();
                     }
 
+                    fabAdd.setImageResource(R.drawable.ic_add_banco);
                     listaBuscar = 1;
+                    Utilidades.Add = 1;
                     return true;
                 case R.id.navigation_tarjetas:
                     if (Utilidades.almacenamientoExterno) {
@@ -116,7 +119,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     } else if (Utilidades.almacenamientoInterno) {
                         verTarjetasSQLite();
                     }
+
+                    fabAdd.setImageResource(R.drawable.ic_add_card);
                     listaBuscar = 2;
+                    Utilidades.Add = 2;
                     return true;
                 case R.id.navigation_notas:
                     if (Utilidades.almacenamientoExterno) {
@@ -124,7 +130,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     } else if (Utilidades.almacenamientoInterno) {
                         verNotasSQLite();
                     }
+
+                    fabAdd.setImageResource(R.drawable.ic_add_nota);
                     listaBuscar = 3;
+                    Utilidades.Add = 3;
                     return true;
             }
             return false;
@@ -158,49 +167,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setHasFixedSize(true);
 
-        fabGrupo = (FloatingActionsMenu) findViewById(R.id.fabGrupo);
-        fabContrasena = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabContrasena);
-        fabCuenta = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabCuenta);
-        fabTarjeta = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabTarjeta);
-        fabNota = (com.getbase.floatingactionbutton.FloatingActionButton) findViewById(R.id.fabNota);
-
-        fabContrasena.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utilidades.Add = 0;
-                startActivity(new Intent(MainActivity.this, AddActivity.class));
-                fabGrupo.collapse();
-            }
-        });
-
-        fabCuenta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utilidades.Add = 1;
-                startActivity(new Intent(MainActivity.this, AddActivity.class));
-                fabGrupo.collapse();
-            }
-        });
-
-        fabTarjeta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utilidades.Add = 2;
-                startActivity(new Intent(MainActivity.this, AddActivity.class));
-                fabGrupo.collapse();
-            }
-        });
-
-        fabNota.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Utilidades.Add = 3;
-                startActivity(new Intent(MainActivity.this, AddActivity.class));
-                fabGrupo.collapse();
-            }
-        });
-
         preferences = getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+
+        fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
+        fabAdd.setImageResource(R.drawable.ic_add_contrasena);
+        fabAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, AddActivity.class));
+            }
+        });
 
 
         escogenciaAlmacenamiento();
@@ -540,6 +516,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         bank.setCedula(doc.getString(UtilidadesStatic.BD_CEDULA_BANCO));
                         bank.setTipo(doc.getString(UtilidadesStatic.BD_TIPO_CUENTA));
                         bank.setTelefono(doc.getString(UtilidadesStatic.BD_TELEFONO));
+                        bank.setCorreo(doc.getString(UtilidadesStatic.BD_CORREO_CUENTA));
 
                         listBancos.add(bank);
 
@@ -588,6 +565,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         tarjeta.setCvv(doc.getString(UtilidadesStatic.BD_CVV));
                         tarjeta.setCedula(doc.getString(UtilidadesStatic.BD_CEDULA_TARJETA));
                         tarjeta.setTipo(doc.getString(UtilidadesStatic.BD_TIPO_TARJETA));
+                        tarjeta.setBanco(doc.getString(UtilidadesStatic.BD_BANCO_TARJETA));
+                        tarjeta.setVencimiento(doc.getString(UtilidadesStatic.BD_VENCIMIENTO_TARJETA));
+                        tarjeta.setClave(doc.getString(UtilidadesStatic.BD_CLAVE_TARJETA));
 
                         listTarjetas.add(tarjeta);
 
@@ -737,6 +717,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             bank.setCedula(cursor.getString(4));
             bank.setTipo(cursor.getString(5));
             bank.setTelefono(cursor.getString(6));
+            bank.setCorreo(cursor.getString(7));
 
             listBancos.add(bank);
         }
@@ -773,6 +754,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             card.setCvv(cursor.getString(3));
             card.setCedula(cursor.getString(4));
             card.setTipo(cursor.getString(5));
+            card.setBanco(cursor.getString(6));
+            card.setVencimiento(cursor.getString(7));
+            card.setClave(cursor.getString(8));
 
             listTarjetas.add(card);
         }

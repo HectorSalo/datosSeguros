@@ -65,6 +65,9 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         viewHolderTarjeta.numeroCVV.setText(String.valueOf(listTarjeta.get(i).getCvv()));
         viewHolderTarjeta.cedula.setText(String.valueOf(listTarjeta.get(i).getCedula()));
         viewHolderTarjeta.tipoTarjeta.setText(listTarjeta.get(i).getTipo());
+        viewHolderTarjeta.banco.setText(listTarjeta.get(i).getBanco());
+        viewHolderTarjeta.vencimiento.setText(listTarjeta.get(i).getVencimiento());
+        viewHolderTarjeta.clave.setText(listTarjeta.get(i).getClave());
 
         viewHolderTarjeta.menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +135,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
 
     public class ViewHolderTarjeta extends RecyclerView.ViewHolder {
 
-        TextView titular, numeroTarjeta, numeroCVV, cedula, tipoTarjeta, menu;
+        TextView titular, numeroTarjeta, numeroCVV, cedula, tipoTarjeta, menu, banco, vencimiento, clave;
 
         public ViewHolderTarjeta(@NonNull View itemView) {
             super(itemView);
@@ -143,6 +146,9 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
             cedula = (TextView) itemView.findViewById(R.id.tvCedulaTarjeta);
             tipoTarjeta = (TextView) itemView.findViewById(R.id.tvTipoTarjeta);
             menu = (TextView) itemView.findViewById(R.id.tvmenuTarjeta);
+            banco = (TextView) itemView.findViewById(R.id.tvBancoTarjeta);
+            vencimiento = (TextView) itemView.findViewById(R.id.tvVencimientoTarjeta);
+            clave = (TextView) itemView.findViewById(R.id.tvClaveTarjeta);
         }
     }
 
@@ -154,12 +160,15 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 String titular = i.getTitular();
+                String banco = i.getBanco();
                 String tarjeta = String.valueOf(i.getNumeroTarjeta());
                 String cvv = String.valueOf(i.getCvv());
+                String vencimiento = i.getVencimiento();
                 String cedula = String.valueOf(i.getCedula());
+                String clave = i.getClave();
                 String tipo = i.getTipo();
 
-                String [] items = {titular, tarjeta, cvv, cedula, tipo};
+                String [] items = {titular, banco, tarjeta, cvv, vencimiento, cedula, clave, tipo};
 
                 if (isChecked) {
                     selectedCopiar.add(items[which]);
@@ -199,12 +208,15 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
             @Override
             public void onClick(DialogInterface dialog, int which, boolean isChecked) {
                 String titular = i.getTitular();
+                String banco = i.getBanco();
                 String tarjeta = String.valueOf(i.getNumeroTarjeta());
                 String cvv = String.valueOf(i.getCvv());
+                String vencimiento = i.getVencimiento();
                 String cedula = String.valueOf(i.getCedula());
+                String clave = i.getClave();
                 String tipo = i.getTipo();
 
-                String [] items = {titular, tarjeta, cvv, cedula, tipo};
+                String [] items = {titular, banco, tarjeta, cvv, vencimiento, cedula, clave, tipo};
 
                 if (isChecked) {
                     selectedCompartir.add(items[which]);
