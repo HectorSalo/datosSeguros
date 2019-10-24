@@ -23,11 +23,13 @@
     <string name="cedula">Cedula:</string>
     <string name="tipodeCuenta">Tipo:</string>
     <string name="telefono">Telefono:</string>
+    <string name="correoCuenta">Correo:</string>
 
     <!-- Cardview tarjeta -->
     <string name="numeroTarjeta">Tarjeta N°:</string>
     <string name="numeroCVV">CVV N°:</string>
     <string name="tipodeTarjeta">Tipo Tarjeta:</string>
+    <string name="clavedeTarjeta">Clave:</string>
 
     <!-- Add Constraseña -->
     <string name="caducidad">Caducidad de la contraseña:</string>
@@ -44,6 +46,7 @@
     <string name="cuentaCorriente">Corriente</string>
 
     <!-- Add Tarjeta -->
+    <string name="tarjetaMaestro">Maestro</string>
     <string name="tarjetaVisa">Visa</string>
     <string name="tarjetaMaster">Mastercard</string>
     <string name="otroTarjeta">Ingrese tipo de Tarjeta</string>
@@ -116,12 +119,16 @@
         <item>Cédula</item>
         <item>Tipo</item>
         <item>Telefono</item>
+        <item>Correo</item>
     </string-array>
     <string-array name="copiarTarjeta">
         <item>Titular</item>
+        <item>Banco</item>
         <item>N° Tarjeta</item>
         <item>CVV</item>
+        <item>Vencimiento</item>
         <item>Cédula</item>
+        <item>Clave</item>
         <item>Tipo</item>
     </string-array>
 

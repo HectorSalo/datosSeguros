@@ -66,6 +66,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
         viewHolderBanco.cedula.setText(String.valueOf(listBanco.get(i).getCedula()));
         viewHolderBanco.tipo.setText(listBanco.get(i).getTipo());
         viewHolderBanco.telefono.setText(String.valueOf(listBanco.get(i).getTelefono()));
+        viewHolderBanco.correo.setText(listBanco.get(i).getCorreo());
 
         viewHolderBanco.menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,7 +134,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
 
     public class ViewHolderBanco extends RecyclerView.ViewHolder {
 
-        TextView titular, banco, numeroCuenta, cedula, tipo, telefono, menu;
+        TextView titular, banco, numeroCuenta, cedula, tipo, telefono, menu, correo;
 
         public ViewHolderBanco(@NonNull View itemView) {
             super(itemView);
@@ -144,6 +145,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
             cedula = (TextView) itemView.findViewById(R.id.tvCedula);
             tipo = (TextView) itemView.findViewById(R.id.tvTipo);
             telefono = (TextView) itemView.findViewById(R.id.tvTelefono);
+            correo = (TextView) itemView.findViewById(R.id.tvCorreoCuenta);
             menu = (TextView) itemView.findViewById(R.id.tvmenuBanco);
 
         }
@@ -162,8 +164,9 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
                 String cedula = String.valueOf(i.getCedula());
                 String tipo = i.getTipo();
                 String telefono = String.valueOf(i.getTelefono());
+                String correo = i.getCorreo();
 
-                String [] items = {titular, banco, cuenta, cedula, tipo, telefono};
+                String [] items = {titular, banco, cuenta, cedula, tipo, telefono, correo};
 
                 if (isChecked) {
                     selectedCopiar.add(items[which]);
@@ -208,8 +211,9 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
                 String cedula = String.valueOf(i.getCedula());
                 String tipo = i.getTipo();
                 String telefono = String.valueOf(i.getTelefono());
+                String correo = i.getCorreo();
 
-                String [] items = {titular, banco, cuenta, cedula, tipo, telefono};
+                String [] items = {titular, banco, cuenta, cedula, tipo, telefono, correo};
 
                 if (isChecked) {
                     selectedCompartir.add(items[which]);

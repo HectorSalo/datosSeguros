@@ -21,9 +21,13 @@ public class UtilidadesStatic {
     public static final String BD_CEDULA_BANCO = "cedulabanco";
     public static final String BD_TIPO_CUENTA = "tipocuenta";
     public static final String BD_TELEFONO = "telefono";
+    public static final String BD_CORREO_CUENTA = "correocuenta";
     public static final String BD_TARJETAS = "tarjetas";
     public static final String BD_TITULAR_TARJETA = "titulartarjeta";
+    public static final String BD_BANCO_TARJETA = "bancotarjeta";
     public static final String BD_NUMERO_TARJETA = "numerotarjeta";
+    public static final String BD_VENCIMIENTO_TARJETA = "vencimientotarjeta";
+    public static final String BD_CLAVE_TARJETA = "clavetarjeta";
     public static final String BD_CVV = "cvv";
     public static final String BD_CEDULA_TARJETA = "cedulatarjeta";
     public static final String BD_TIPO_TARJETA = "tipotarjeta";
@@ -34,7 +38,7 @@ public class UtilidadesStatic {
     public static final String CHANNEL_ID = "NOTIFICACION";
     public static final int NOTIFICACION_ID = 0;
 
-    public static final int VERSION_SQLITE = 3;
+    public static final int VERSION_SQLITE = 5;
 
     public static final String ALMACENAMIENTO = "almacenamientos";
     public static final String ALMACENAMIENTO_DOC = "almacenamientoDoc";

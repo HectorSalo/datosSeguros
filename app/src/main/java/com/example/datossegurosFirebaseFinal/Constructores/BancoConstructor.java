@@ -2,18 +2,19 @@ package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class BancoConstructor {
 
-    private String titular, banco, tipo, numeroCuenta, cedula, telefono, idCuenta;
+    private String titular, banco, tipo, numeroCuenta, cedula, telefono, idCuenta, correo;
 
 
     public BancoConstructor() {}
 
-    public BancoConstructor (String titular, String banco, String tipo, String numeroCuenta, String cedula, String telefono) {
+    public BancoConstructor (String titular, String banco, String tipo, String numeroCuenta, String cedula, String telefono, String correo) {
         this.titular = titular;
         this.banco = banco;
         this.tipo = tipo;
         this.numeroCuenta = numeroCuenta;
         this.cedula = cedula;
         this.telefono = telefono;
+        this.correo = correo;
     }
 
     public String getIdCuenta() {
@@ -44,6 +45,10 @@ public class BancoConstructor {
         return telefono;
     }
 
+    public String getCorreo() {
+        return correo;
+    }
+
     public void setTitular(String titular) {
         this.titular = titular;
     }
@@ -70,5 +75,9 @@ public class BancoConstructor {
 
     public void setIdCuenta(String idCuenta) {
         this.idCuenta = idCuenta;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 }

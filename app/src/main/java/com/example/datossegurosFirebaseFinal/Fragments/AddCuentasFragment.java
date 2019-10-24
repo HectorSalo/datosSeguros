@@ -45,7 +45,7 @@ import java.util.Map;
  */
 public class AddCuentasFragment extends Fragment {
 
-    private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono;
+    private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente;
     private FirebaseUser user;
     private ProgressDialog progress;
@@ -101,6 +101,7 @@ public class AddCuentasFragment extends Fragment {
         etNumeroCuenta = (EditText) vista.findViewById(R.id.etnumeroCuenta);
         etCedula = (EditText) vista.findViewById(R.id.etCedulaCuenta);
         etTelefono = (EditText) vista.findViewById(R.id.etTelefono);
+        etCorreo = (EditText) vista.findViewById(R.id.etCorreoCuenta);
         rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorro);
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -166,6 +167,7 @@ public class AddCuentasFragment extends Fragment {
         String cuentaNumero = etNumeroCuenta.getText().toString();
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
+        String correo = etCorreo.getText().toString();
         String tipo = "";
 
 
@@ -198,9 +200,15 @@ public class AddCuentasFragment extends Fragment {
                     cuentaBancaria.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
 
                     if (telefono.isEmpty()) {
-                        cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, "0");
+                        cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, "");
                     } else {
                         cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, telefono);
+                    }
+
+                    if (correo.isEmpty()) {
+                        cuentaBancaria.put(UtilidadesStatic.BD_CORREO_CUENTA,"");
+                    } else {
+                        cuentaBancaria.put(UtilidadesStatic.BD_CORREO_CUENTA, correo);
                     }
 
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS).add(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
@@ -232,6 +240,7 @@ public class AddCuentasFragment extends Fragment {
         String cuentaNumero = etNumeroCuenta.getText().toString();
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
+        String correo = etCorreo.getText().toString();
         String tipo = "";
 
         if (rbAhorro.isChecked()) {
@@ -265,9 +274,15 @@ public class AddCuentasFragment extends Fragment {
                     values.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
 
                     if (telefono.isEmpty()) {
-                        values.put(UtilidadesStatic.BD_TELEFONO, "0");
+                        values.put(UtilidadesStatic.BD_TELEFONO, "");
                     } else {
                         values.put(UtilidadesStatic.BD_TELEFONO, telefono);
+                    }
+
+                    if (correo.isEmpty()) {
+                        values.put(UtilidadesStatic.BD_CORREO_CUENTA, "");
+                    } else {
+                        values.put(UtilidadesStatic.BD_CORREO_CUENTA, correo);
                     }
 
                     db.insert(UtilidadesStatic.BD_CUENTAS, null, values);

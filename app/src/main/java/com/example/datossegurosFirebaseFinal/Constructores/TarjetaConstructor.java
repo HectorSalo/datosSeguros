@@ -1,17 +1,20 @@
 package com.example.datossegurosFirebaseFinal.Constructores;
 
 public class TarjetaConstructor {
-    private String titular, tipo,numeroTarjeta, cedula, cvv, idTarjeta;
+    private String titular, tipo, numeroTarjeta, cedula, cvv, idTarjeta, banco, vencimiento, clave;
 
 
     public TarjetaConstructor() {}
 
-    public TarjetaConstructor (String titular, String numeroTarjeta, String cvv, String cedula, String tipo) {
+    public TarjetaConstructor (String titular, String numeroTarjeta, String cvv, String cedula, String tipo, String banco, String vencimiento, String clave) {
         this.titular = titular;
         this.numeroTarjeta = numeroTarjeta;
         this.cvv = cvv;
         this.cedula = cedula;
         this.tipo = tipo;
+        this.banco = banco;
+        this.clave = clave;
+        this.vencimiento = vencimiento;
     }
 
     public String getIdTarjeta() {
@@ -38,6 +41,18 @@ public class TarjetaConstructor {
         return cvv;
     }
 
+    public String getBanco() {
+        return banco;
+    }
+
+    public String getVencimiento() {
+        return vencimiento;
+    }
+
+    public String getClave() {
+        return clave;
+    }
+
     public void setTitular(String titular) {
         this.titular = titular;
     }
@@ -60,5 +75,17 @@ public class TarjetaConstructor {
 
     public void setIdTarjeta(String idTarjeta) {
         this.idTarjeta = idTarjeta;
+    }
+
+    public void setBanco(String banco) {
+        this.banco = banco;
+    }
+
+    public void setVencimiento(String vencimiento) {
+        this.vencimiento = vencimiento;
+    }
+
+    public void setClave(String clave) {
+        this.clave = clave;
     }
 }

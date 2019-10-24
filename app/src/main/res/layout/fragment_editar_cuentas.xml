@@ -64,6 +64,16 @@
             android:textColor="#fff"
             android:textColorHint="#fff"/>
 
+        <EditText
+            android:id="@+id/etCorreoCuentaEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/correoCuenta"
+            android:inputType="textEmailAddress"
+            android:textColor="#fff"
+            android:textColorHint="#fff" />
+
         <TextView
             android:id="@+id/etTipoEditar"
             android:layout_width="wrap_content"

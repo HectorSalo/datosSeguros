@@ -23,6 +23,16 @@
             android:textColorHint="#fff"/>
 
         <EditText
+            android:id="@+id/etBancoTarjetaEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/banco"
+            android:inputType="textPersonName"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
+
+        <EditText
             android:id="@+id/etTarjetaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,6 +55,15 @@
             android:textColorHint="#fff"/>
 
         <EditText
+            android:id="@+id/etVencimientoEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/vencimiento"
+            android:textColor="#fff"
+            android:textColorHint="#fff"/>
+
+        <EditText
             android:id="@+id/etCedulaTarjetaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -53,6 +72,17 @@
             android:inputType="number"
             android:textColor="#fff"
             android:textColorHint="#fff"/>
+
+        <EditText
+            android:id="@+id/etClaveTarjetaEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/clavedeTarjeta"
+            android:inputType="number"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:maxLength="6"/>
 
         <TextView
             android:id="@+id/etTipoEditar"
@@ -69,6 +99,15 @@
             android:id="@+id/radioTarjetaEditar"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
+
+            <RadioButton
+                android:id="@+id/radioButtonMaestroEditar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:buttonTint="#fff"
+                android:text="@string/tarjetaMaestro"
+                android:textColor="#fff" />
 
             <RadioButton
                 android:id="@+id/radioButtonVisaEditar"

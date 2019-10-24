@@ -52,9 +52,9 @@ import java.util.Map;
  */
 public class EditarTarjetaFragment extends Fragment {
 
-    private EditText etTitular, etnumeroTarjeta, etCVV, etCedula, etOtro;
+    private EditText etTitular, etnumeroTarjeta, etCVV, etCedula, etOtro, etBanco, etVencimiento, etClave;
     private RadioGroup radioEditar;
-    private RadioButton rbMastercard, rbVisa, rbOtro;
+    private RadioButton rbMastercard, rbVisa, rbOtro, rbMaestro;
     private FirebaseUser user;
     private ProgressDialog progress;
 
@@ -108,9 +108,13 @@ public class EditarTarjetaFragment extends Fragment {
         etCedula = (EditText) vista.findViewById(R.id.etCedulaTarjetaEditar);
         etCVV = (EditText) vista.findViewById(R.id.etnumeroCVVEditar);
         etOtro = (EditText) vista.findViewById(R.id.editTextOtroTarjetaEditar);
+        etBanco = (EditText) vista.findViewById(R.id.etBancoTarjetaEditar);
+        etVencimiento = (EditText) vista.findViewById(R.id.etVencimientoEditar);
+        etClave = (EditText) vista.findViewById(R.id.etClaveTarjetaEditar);
         rbMastercard = (RadioButton) vista.findViewById(R.id.radioButtonMasterEditar);
         rbVisa = (RadioButton) vista.findViewById(R.id.radioButtonVisaEditar);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjetaEditar);
+        rbMaestro = (RadioButton) vista.findViewById(R.id.radioButtonMaestroEditar);
         radioEditar = (RadioGroup) vista.findViewById(R.id.radioTarjetaEditar);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -194,10 +198,15 @@ public class EditarTarjetaFragment extends Fragment {
                     etnumeroTarjeta.setText(doc.getString(UtilidadesStatic.BD_NUMERO_TARJETA));
                     etCVV.setText(doc.getString(UtilidadesStatic.BD_CVV));
                     etCedula.setText(doc.getString(UtilidadesStatic.BD_CEDULA_TARJETA));
+                    etBanco.setText(doc.getString(UtilidadesStatic.BD_BANCO_TARJETA));
+                    etVencimiento.setText(doc.getString(UtilidadesStatic.BD_VENCIMIENTO_TARJETA));
+                    etClave.setText(doc.getString(UtilidadesStatic.BD_CLAVE_TARJETA));
 
                     String tipo = doc.getString(UtilidadesStatic.BD_TIPO_TARJETA);
 
-                    if (tipo.equals("Visa")) {
+                    if (tipo.equals("Maestro")) {
+                        rbMaestro.setChecked(true);
+                    } else if (tipo.equals("Visa")) {
                         rbVisa.setChecked(true);
                     } else if (tipo.equals("Mastercard")) {
                         rbMastercard.setChecked(true);
@@ -236,8 +245,13 @@ public class EditarTarjetaFragment extends Fragment {
             etCVV.setText(cursor.getString(3));
             etCedula.setText(cursor.getString(4));
             String tipo = cursor.getString(5);
+            etBanco.setText(cursor.getString(6));
+            etVencimiento.setText(cursor.getString(7));
+            etClave.setText(cursor.getString(8));
 
-            if (tipo.equals("Visa")) {
+            if (tipo.equals("Maestro")) {
+                rbMaestro.setChecked(true);
+            } else if (tipo.equals("Visa")) {
                 rbVisa.setChecked(true);
             } else if (tipo.equals("Mastercard")) {
                 rbMastercard.setChecked(true);

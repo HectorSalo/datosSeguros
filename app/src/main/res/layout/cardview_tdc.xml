@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/titular"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
 
                 <TextView
@@ -42,7 +42,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
+                    android:textColor="#fff"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView18"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:text="@string/banco"
+                    android:textSize="18sp"
+                    android:textColor="#fff"/>
+
+                <TextView
+                    android:id="@+id/tvBancoTarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -57,7 +80,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/numeroTarjeta"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
 
                 <TextView
@@ -65,7 +88,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -80,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/numeroCVV"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
 
                 <TextView
@@ -88,7 +111,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
+                    android:textColor="#fff"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView19"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:text="@string/vencimiento"
+                    android:textSize="18sp"
+                    android:textColor="#fff"/>
+
+                <TextView
+                    android:id="@+id/tvVencimientoTarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -103,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/cedula"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
 
                 <TextView
@@ -111,7 +157,30 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
+                    android:textColor="#fff"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView20"
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:text="@string/clavedeTarjeta"
+                    android:textSize="18sp"
+                    android:textColor="#fff"/>
+
+                <TextView
+                    android:id="@+id/tvClaveTarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -126,7 +195,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="16dp"
                     android:text="@string/tipodeCuenta"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
 
                 <TextView
@@ -134,7 +203,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -148,7 +217,7 @@
             android:gravity="center"
             android:paddingEnd="16dp"
             android:text="&#8942;"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textColor="#fff"/>
     </androidx.cardview.widget.CardView>
 
