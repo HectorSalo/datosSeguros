@@ -1,8 +1,10 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -48,7 +51,6 @@ public class AddTarjetaFragment extends Fragment {
 
     private EditText etTitular, etTarjeta, etCVV, etCedula, etOtroTarjeta, etBanco, etVencimiento, etClave;
     private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro;
-    private RadioGroup radioTarjeta;
     private FirebaseUser user;
     private ProgressDialog progress;
 
@@ -109,7 +111,7 @@ public class AddTarjetaFragment extends Fragment {
         rbMastercard = (RadioButton)vista.findViewById(R.id.radioButtonMaster);
         rbVisa = (RadioButton) vista.findViewById(R.id.radioButtonVisa);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjeta);
-        radioTarjeta = (RadioGroup) vista.findViewById(R.id.radioTarjeta);
+        RadioGroup radioTarjeta = (RadioGroup) vista.findViewById(R.id.radioTarjeta);
         user = FirebaseAuth.getInstance().getCurrentUser();
 
         radioTarjeta.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -132,6 +134,13 @@ public class AddTarjetaFragment extends Fragment {
                         etOtroTarjeta.setVisibility(View.VISIBLE);
                         break;
                 }
+            }
+        });
+
+        etVencimiento.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                escogerVencimiento();
             }
         });
 
@@ -341,5 +350,34 @@ public class AddTarjetaFragment extends Fragment {
                 }
             }
         }
+    }
+
+    public void escogerVencimiento() {
+        LayoutInflater inflater = getLayoutInflater();
+        View vista = inflater.inflate(R.layout.vencimiento_tarjeta_picker, null);
+        final NumberPicker monthPicker = (NumberPicker) vista.findViewById(R.id.mesPicker);
+        final NumberPicker anualPicker = (NumberPicker) vista.findViewById(R.id.anualPicker);
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+
+        monthPicker.setMinValue(1);
+        monthPicker.setMaxValue(12);
+        anualPicker.setMinValue(2019);
+        anualPicker.setMaxValue(2030);
+
+        dialog.setTitle("Escoja mes y año")
+                .setView(vista)
+                .setPositiveButton("Seleccionar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        etVencimiento.setText(monthPicker.getValue() + "/" + anualPicker.getValue());
+                    }
+                })
+                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+        dialog.show();
     }
 }

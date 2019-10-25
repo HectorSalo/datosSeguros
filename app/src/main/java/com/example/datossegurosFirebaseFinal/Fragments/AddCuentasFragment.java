@@ -15,9 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -49,6 +51,8 @@ public class AddCuentasFragment extends Fragment {
     private RadioButton rbAhorro, rbCorriente;
     private FirebaseUser user;
     private ProgressDialog progress;
+    private String spinnerSeleccion;
+    private Spinner spinnerDocumento;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -104,7 +108,15 @@ public class AddCuentasFragment extends Fragment {
         etCorreo = (EditText) vista.findViewById(R.id.etCorreoCuenta);
         rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorro);
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
+        spinnerDocumento = (Spinner) vista.findViewById(R.id.spinnerTipoDocumento);
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+        String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
+        ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(getContext(), R.layout.spinner_opciones, spDocumentos);
+        spinnerDocumento.setAdapter(adapterDocumentos);
+
+
 
         Button buttonGuardar = (Button) vista.findViewById(R.id.guardarCuenta);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
@@ -112,8 +124,10 @@ public class AddCuentasFragment extends Fragment {
             public void onClick(View v) {
                 if (Utilidades.almacenamientoExterno) {
                     guardarCuentaFirebase();
+
                 } else if (Utilidades.almacenamientoInterno) {
                     guardarCuentaSQLite();
+
                 }
             }
         });
@@ -168,6 +182,7 @@ public class AddCuentasFragment extends Fragment {
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
         String correo = etCorreo.getText().toString();
+        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
 
@@ -197,6 +212,7 @@ public class AddCuentasFragment extends Fragment {
                     cuentaBancaria.put(UtilidadesStatic.BD_BANCO, banco);
                     cuentaBancaria.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
                     cuentaBancaria.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
+                    cuentaBancaria.put(UtilidadesStatic.BD_TIPO_DOCUMENTO, spinnerSeleccion);
                     cuentaBancaria.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
 
                     if (telefono.isEmpty()) {
@@ -241,6 +257,7 @@ public class AddCuentasFragment extends Fragment {
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
         String correo = etCorreo.getText().toString();
+        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
         if (rbAhorro.isChecked()) {
@@ -272,6 +289,7 @@ public class AddCuentasFragment extends Fragment {
                     values.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
                     values.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
                     values.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
+                    values.put(UtilidadesStatic.BD_TIPO_DOCUMENTO, spinnerSeleccion);
 
                     if (telefono.isEmpty()) {
                         values.put(UtilidadesStatic.BD_TELEFONO, "");

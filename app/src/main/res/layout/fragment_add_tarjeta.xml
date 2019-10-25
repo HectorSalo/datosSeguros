@@ -6,6 +6,10 @@
     tools:context=".Fragments.AddTarjetaFragment"
     android:background="#9E9E9E">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +18,7 @@
 
         <EditText
             android:id="@+id/etTitularTarjeta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/titular"
@@ -22,7 +26,7 @@
 
         <EditText
             android:id="@+id/etBancoTarjeta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/banco"
@@ -30,33 +34,33 @@
 
         <EditText
             android:id="@+id/etTarjeta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroTarjeta"
             android:inputType="number"
-            android:maxLength="24"/>
+            android:maxLength="24" />
 
         <EditText
             android:id="@+id/etnumeroCVV"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCVV"
             android:inputType="number"
-            android:maxLength="3"/>
+            android:maxLength="3" />
 
         <EditText
             android:id="@+id/etVencimientoTarjeta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/vencimiento"
-            />
+            android:focusable="false"/>
 
         <EditText
             android:id="@+id/etCedulaTarjeta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/cedula"
@@ -64,12 +68,12 @@
 
         <EditText
             android:id="@+id/etClaveTarjeta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/clavedeTarjeta"
             android:inputType="number"
-            android:maxLength="6"/>
+            android:maxLength="6" />
 
         <TextView
             android:id="@+id/etTipo"
@@ -83,7 +87,8 @@
         <RadioGroup
             android:id="@+id/radioTarjeta"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            >
 
             <RadioButton
                 android:id="@+id/radioButtonMaestro"
@@ -128,9 +133,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="32dp"
             android:text="@string/buttonGuardar" />
 
     </LinearLayout>
+
+    </ScrollView>
 
 </FrameLayout>

@@ -6,6 +6,9 @@
     tools:context=".FragmentsEditar.EditarCuentasFragment"
     android:background="#455A64">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,59 +17,71 @@
 
         <EditText
             android:id="@+id/etTitularEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/titular"
             android:inputType="textPersonName"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
         <EditText
             android:id="@+id/etBancoEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/banco"
             android:inputType="textPersonName"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
         <EditText
             android:id="@+id/etnumeroCuentaEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCuenta"
             android:inputType="number"
             android:maxLength="20"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
-        <EditText
-            android:id="@+id/etCedulaCuentaEditar"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/cedula"
-            android:inputType="number"
-            android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinnerTipoDocumentoEditar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"></Spinner>
+
+            <EditText
+                android:id="@+id/etCedulaCuentaEditar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/documentoNumero"
+                android:inputType="number"
+                android:textColor="#fff"
+                android:textColorHint="#fff" />
+        </LinearLayout>
+
 
         <EditText
             android:id="@+id/etTelefonoEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/telefono"
             android:inputType="number"
             android:maxLength="11"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
         <EditText
             android:id="@+id/etCorreoCuentaEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/correoCuenta"
@@ -115,8 +130,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:text="@string/buttonGuardar" />
     </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

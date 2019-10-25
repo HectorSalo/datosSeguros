@@ -78,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private TextView sinLista;
     private Date fechaMomento;
     private int listaBuscar;
-    private CoordinatorLayout coordinatorLayout;
     private ConexionSQLite conect;
     private String seleccion;
     private SharedPreferences preferences;
@@ -149,8 +148,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-
         Calendar almanaque = Calendar.getInstance();
         int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
         int mesActual = almanaque.get(Calendar.MONTH);
@@ -168,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setHasFixedSize(true);
 
         preferences = getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        Utilidades.Add = 0;
 
         fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
         fabAdd.setImageResource(R.drawable.ic_add_contrasena);
@@ -253,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
 
-        dialog.setTitle("Esta opción le permitirá escoger un método de bloqueo a la aplicación.")
+        dialog.setTitle("Escoger bloqueo de la aplicación.")
                 .setSingleChoiceItems(R.array.selectBloqueo, escogencia, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -284,12 +282,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
                         } else if (seleccion.equals("Sin Bloqueo")) {
                             Utilidades.conf_bloqueo = 4;
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
-                            editor.putBoolean(UtilidadesStatic.PATRON, false);
-                            editor.putBoolean(UtilidadesStatic.PIN, false);
-                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
-                            editor.commit();
+                            configurarSinBloqueo();
                         }
                     }
                 }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -517,6 +510,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         bank.setTipo(doc.getString(UtilidadesStatic.BD_TIPO_CUENTA));
                         bank.setTelefono(doc.getString(UtilidadesStatic.BD_TELEFONO));
                         bank.setCorreo(doc.getString(UtilidadesStatic.BD_CORREO_CUENTA));
+                        bank.setTipoDocumento(doc.getString(UtilidadesStatic.BD_TIPO_DOCUMENTO));
 
                         listBancos.add(bank);
 
@@ -813,6 +807,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 FirebaseAuth.getInstance().signOut();
+                configurarSinBloqueo();
                 startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
             }
         });
@@ -901,6 +896,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
         return false;
+    }
+
+    public void configurarSinBloqueo() {
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(UtilidadesStatic.HUELLA, false);
+        editor.putBoolean(UtilidadesStatic.PATRON, false);
+        editor.putBoolean(UtilidadesStatic.PIN, false);
+        editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+        editor.commit();
     }
 
 

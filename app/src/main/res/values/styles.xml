@@ -16,4 +16,10 @@
         <item name="colorPrimary">@color/colorPrimary</item>
     </style>
 
+    <style name="CampoTextoBlanco" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">#fff</item>
+        <item name="colorControlActivated">#fff</item>
+        <item name="android:textColorHighlight">#fff</item>
+    </style>
+
 </resources>

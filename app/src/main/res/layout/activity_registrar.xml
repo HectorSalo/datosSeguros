@@ -12,73 +12,112 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="96dp"
+        android:layout_marginTop="64dp"
         android:layout_marginEnd="8dp"
         android:fontFamily="@font/aref_ruqaa"
         android:text="@string/bienvenido"
+        android:textColor="#ffff"
         android:textSize="48sp"
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="#ffff"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/etRegistrarUsuario"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutEmailRegistrar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="@string/usuarioCorreo"
-        android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:textColorHint="#ffff"/>
+        android:theme="@style/CampoTextoBlanco"
+        android:textColorHint="#fff"
+        >
 
-    <EditText
-        android:id="@+id/etRegistrarContrasena"
-        android:layout_width="0dp"
+
+        <EditText
+            android:id="@+id/etRegistrarUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/usuarioCorreo"
+            android:inputType="textEmailAddress"
+            android:textColor="#fff"
+
+             />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutPassRegistrar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="@string/contrasena"
-        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etRegistrarUsuario"
-        android:textColorHint="#ffff"/>
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutEmailRegistrar"
+        android:theme="@style/CampoTextoBlanco"
+        android:textColorHint="#fff"
+        app:passwordToggleEnabled="true"
+        >
 
-    <EditText
-        android:id="@+id/etRegistrarContrasenaRepetir"
-        android:layout_width="0dp"
+        <EditText
+            android:id="@+id/etRegistrarContrasena"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/contrasena"
+            android:inputType="textPassword"
+            android:textColor="#fff"
+
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/inputLayoutPassRepetirRegistrar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:ems="10"
-        android:hint="@string/repetirContrasena"
-        android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etRegistrarContrasena"
-        android:textColorHint="#ffff"/>
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutPassRegistrar"
+        android:theme="@style/CampoTextoBlanco"
+        android:textColorHint="#fff"
+        app:passwordToggleEnabled="true"
+        >
+
+        <EditText
+            android:id="@+id/etRegistrarContrasenaRepetir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/repetirContrasena"
+            android:inputType="textPassword"
+            android:textColor="#fff"
+
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <Button
         android:id="@+id/buttonRegistrar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/registrar"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/etRegistrarContrasenaRepetir" />
+        app:layout_constraintTop_toBottomOf="@+id/inputLayoutPassRepetirRegistrar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

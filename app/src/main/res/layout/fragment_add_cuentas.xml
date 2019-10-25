@@ -6,6 +6,9 @@
     tools:context=".Fragments.AddCuentasFragment"
     android:background="#9E9E9E">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +17,7 @@
 
         <EditText
             android:id="@+id/etTitular"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/titular"
@@ -22,7 +25,7 @@
 
         <EditText
             android:id="@+id/etBanco"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/banco"
@@ -30,38 +33,48 @@
 
         <EditText
             android:id="@+id/etnumeroCuenta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/numeroCuenta"
             android:inputType="number"
-            android:maxLength="20"/>
+            android:maxLength="20" />
 
-        <EditText
-            android:id="@+id/etCedulaCuenta"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/cedula"
-            android:inputType="number" />
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinnerTipoDocumento"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"></Spinner>
+
+            <EditText
+                android:id="@+id/etCedulaCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/documentoNumero"
+                android:inputType="number" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/etTelefono"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/telefono"
             android:inputType="number"
-            android:maxLength="11"/>
+            android:maxLength="11" />
 
         <EditText
             android:id="@+id/etCorreoCuenta"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/correoCuenta"
-            android:inputType="textEmailAddress"
-            />
+            android:inputType="textEmailAddress" />
 
         <TextView
             android:id="@+id/etTipo"
@@ -98,8 +111,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="32dp"
             android:text="@string/buttonGuardar" />
     </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

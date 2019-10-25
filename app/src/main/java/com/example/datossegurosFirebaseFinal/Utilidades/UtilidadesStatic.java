@@ -19,6 +19,7 @@ public class UtilidadesStatic {
     public static final String BD_BANCO = "banco";
     public static final String BD_NUMERO_CUENTA = "numerocuenta";
     public static final String BD_CEDULA_BANCO = "cedulabanco";
+    public static final String BD_TIPO_DOCUMENTO = "tipodocumentobanco";
     public static final String BD_TIPO_CUENTA = "tipocuenta";
     public static final String BD_TELEFONO = "telefono";
     public static final String BD_CORREO_CUENTA = "correocuenta";
@@ -38,7 +39,7 @@ public class UtilidadesStatic {
     public static final String CHANNEL_ID = "NOTIFICACION";
     public static final int NOTIFICACION_ID = 0;
 
-    public static final int VERSION_SQLITE = 5;
+    public static final int VERSION_SQLITE = 6;
 
     public static final String ALMACENAMIENTO = "almacenamientos";
     public static final String ALMACENAMIENTO_DOC = "almacenamientoDoc";

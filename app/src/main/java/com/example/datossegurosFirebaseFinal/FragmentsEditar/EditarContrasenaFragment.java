@@ -58,7 +58,6 @@ import java.util.Map;
 public class EditarContrasenaFragment extends Fragment {
 
     private EditText etServicio, etUsuario, etContrasena, etOtro;
-    private RadioGroup radioEditar;
     private RadioButton rb30, rb60, rb90, rb120, rbIndeterminado, rbOtro;
     private FirebaseUser user;
     private ProgressDialog progress;
@@ -117,7 +116,7 @@ public class EditarContrasenaFragment extends Fragment {
         etUsuario = (EditText) vista.findViewById(R.id.etUsuarioEditar);
         etContrasena = (EditText) vista.findViewById(R.id.etContrasenaEditar);
         etOtro = (EditText) vista.findViewById(R.id.etIngreseOtroEditar);
-        radioEditar = (RadioGroup) vista.findViewById(R.id.radioDiasEditar);
+        RadioGroup radioEditar = (RadioGroup) vista.findViewById(R.id.radioDiasEditar);
         rb30 = (RadioButton) vista.findViewById(R.id.radioButton30Editar);
         rb60 = (RadioButton) vista.findViewById(R.id.radioButton60Editar);
         rb90 = (RadioButton) vista.findViewById(R.id.radioButton90Editar);

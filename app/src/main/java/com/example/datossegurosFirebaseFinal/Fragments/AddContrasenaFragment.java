@@ -51,7 +51,6 @@ public class AddContrasenaFragment extends Fragment {
 
     private EditText etServicio, etUsuario, etContrasena, etOtroDias;
     private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
-    private RadioGroup radioGroup;
     private int duracionVigencia;
     private FirebaseUser user;
     private ProgressDialog progress;
@@ -108,7 +107,7 @@ public class AddContrasenaFragment extends Fragment {
         etUsuario = (EditText) vista.findViewById(R.id.etUsuario);
         etContrasena = (EditText) vista.findViewById(R.id.etContrasena);
         etOtroDias = (EditText) vista.findViewById(R.id.etIngreseOtro);
-        radioGroup = (RadioGroup) vista.findViewById(R.id.radioDias);
+        RadioGroup radioGroup = (RadioGroup) vista.findViewById(R.id.radioDias);
         rbdias30 = (RadioButton) vista.findViewById(R.id.radioButton30);
         rbdias60 = (RadioButton) vista.findViewById(R.id.radioButton60);
         rbdias90 = (RadioButton) vista.findViewById(R.id.radioButton90);

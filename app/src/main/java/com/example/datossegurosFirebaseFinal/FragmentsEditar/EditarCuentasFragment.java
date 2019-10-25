@@ -16,9 +16,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -54,6 +56,8 @@ public class EditarCuentasFragment extends Fragment {
     private RadioButton rbAhorro, rbCorriente;
     private ProgressDialog progress;
     private FirebaseUser user;
+    private String spinnerSeleccion;
+    private Spinner spinnerDocumento;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -108,7 +112,13 @@ public class EditarCuentasFragment extends Fragment {
         etCorreo = (EditText) vista.findViewById(R.id.etCorreoCuentaEditar);
         rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorroEditar);
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorrienteEditar);
+        spinnerDocumento = (Spinner) vista.findViewById(R.id.spinnerTipoDocumentoEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+        String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
+        ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(getContext(), R.layout.spinner_editar, spDocumentos);
+        spinnerDocumento.setAdapter(adapterDocumentos);
 
         if (Utilidades.almacenamientoExterno) {
             cargarDataFirebase();
@@ -193,6 +203,18 @@ public class EditarCuentasFragment extends Fragment {
                     String telefono = doc.getString(UtilidadesStatic.BD_TELEFONO);
                     String tipo = doc.getString(UtilidadesStatic.BD_TIPO_CUENTA);
                     etCorreo.setText(doc.getString(UtilidadesStatic.BD_CORREO_CUENTA));
+                    String tipoDocumento = doc.getString(UtilidadesStatic.BD_TIPO_DOCUMENTO);
+
+                    if (tipoDocumento == null) {
+                        spinnerDocumento.setSelection(0);
+                    } else if (tipoDocumento.equals("Cédula")) {
+                        spinnerDocumento.setSelection(0);
+                    } else if (tipoDocumento.equals("RIF")) {
+                        spinnerDocumento.setSelection(1);
+                    } else if (tipoDocumento.equals("Pasaporte")) {
+                        spinnerDocumento.setSelection(2);
+                    }
+
 
                     if (telefono.equals("")) {
                         etTelefono.setText("");
@@ -238,6 +260,15 @@ public class EditarCuentasFragment extends Fragment {
             String tipo = cursor.getString(5);
             String telefono = cursor.getString(6);
             etCorreo.setText(cursor.getString(7));
+            String tipoDocumento = cursor.getString(8);
+
+            if (tipoDocumento.equals("Cédula")) {
+                spinnerDocumento.setSelection(0);
+            } else if (tipoDocumento.equals("RIF")) {
+                spinnerDocumento.setSelection(1);
+            } else if (tipoDocumento.equals("Pasaporte")) {
+                spinnerDocumento.setSelection(2);
+            }
 
             if (tipo.equals("Ahorro")) {
                 rbAhorro.setChecked(true);
@@ -264,6 +295,7 @@ public class EditarCuentasFragment extends Fragment {
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
         String correo = etCorreo.getText().toString();
+        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
 
@@ -294,6 +326,7 @@ public class EditarCuentasFragment extends Fragment {
                     cuentaBancaria.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
                     cuentaBancaria.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
                     cuentaBancaria.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
+                    cuentaBancaria.put(UtilidadesStatic.BD_TIPO_DOCUMENTO, spinnerSeleccion);
 
                     if (telefono.isEmpty()) {
                         cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, "0");
@@ -337,6 +370,7 @@ public class EditarCuentasFragment extends Fragment {
         String cedula = etCedula.getText().toString();
         String telefono = etTelefono.getText().toString();
         String correo = etCorreo.getText().toString();
+        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
 
@@ -369,6 +403,7 @@ public class EditarCuentasFragment extends Fragment {
                     values.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
                     values.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
                     values.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
+                    values.put(UtilidadesStatic.BD_TIPO_DOCUMENTO, spinnerSeleccion);
 
                     if (telefono.isEmpty()) {
                         values.put(UtilidadesStatic.BD_TELEFONO, "0");

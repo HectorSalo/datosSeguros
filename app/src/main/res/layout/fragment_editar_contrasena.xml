@@ -6,6 +6,9 @@
     tools:context=".FragmentsEditar.EditarContrasenaFragment"
     android:background="#455A64">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,33 +17,33 @@
 
         <EditText
             android:id="@+id/etServicioEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/servicio"
             android:inputType="textPersonName"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
         <EditText
             android:id="@+id/etUsuarioEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/usuario"
             android:inputType="textPersonName"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
         <EditText
             android:id="@+id/etContrasenaEditar"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/contrasena"
             android:inputType="textPersonName"
             android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            android:textColorHint="#fff" />
 
         <TextView
             android:id="@+id/textView2"
@@ -131,9 +134,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:text="@string/buttonGuardar" />
 
     </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>
