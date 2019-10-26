@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.example.datossegurosFirebaseFinal.BloqueoActivity;
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
@@ -70,15 +71,10 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
             if (!b) {
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
-                SharedPreferences preferences = context.getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(UtilidadesStatic.HUELLA, true);
-                editor.putBoolean(UtilidadesStatic.PATRON, false);
-                editor.putBoolean(UtilidadesStatic.PIN, false);
-                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                editor.commit();
+
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-                context.startActivity(new Intent(context, MainActivity.class));
+                context.startActivity(new Intent(context, BloqueoActivity.class));
+                Utilidades.conf_bloqueo = 4;
             }
 
         }

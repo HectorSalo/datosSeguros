@@ -228,7 +228,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void seleccionarBloqueo() {
         boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
-        boolean patron = preferences.getBoolean(UtilidadesStatic.PATRON, false);
         boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
         boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
         int escogencia;
@@ -238,15 +237,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (huella) {
             escogencia = 0;
             seleccion = opciones[0];
-        } else if (patron) {
+        } else if (pin) {
             escogencia = 1;
             seleccion = opciones[1];
-        } else if (pin) {
+        } else {
             escogencia = 2;
             seleccion = opciones[2];
-        } else {
-            escogencia = 3;
-            seleccion = opciones[3];
         }
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
@@ -264,14 +260,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         if (seleccion.equals("Huella Digital")) {
                             Utilidades.conf_bloqueo = 1;
                             startActivity(new Intent(MainActivity.this, BloqueoActivity.class));
-                        } else if (seleccion.equals("Patrón")) {
-                            /*SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
-                            editor.putBoolean(UtilidadesStatic.PATRON, true);
-                            editor.putBoolean(UtilidadesStatic.PIN, false);
-                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();*/
-                            Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
                         } else if (seleccion.equals("PIN")) {
                             /*SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);
@@ -901,7 +889,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void configurarSinBloqueo() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(UtilidadesStatic.HUELLA, false);
-        editor.putBoolean(UtilidadesStatic.PATRON, false);
         editor.putBoolean(UtilidadesStatic.PIN, false);
         editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
         editor.commit();

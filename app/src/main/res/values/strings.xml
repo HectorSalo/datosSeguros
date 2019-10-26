@@ -142,7 +142,6 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string-array name="selectBloqueo">
         <item>Huella Digital</item>
-        <item>Patrón</item>
         <item>PIN</item>
         <item>Sin Bloqueo</item>
     </string-array>

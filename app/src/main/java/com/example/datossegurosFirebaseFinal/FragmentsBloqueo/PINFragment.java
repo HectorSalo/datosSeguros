@@ -1,6 +1,8 @@
-package com.example.datossegurosFirebaseFinal;
+package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,7 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.TextView;
+
+import com.example.datossegurosFirebaseFinal.MainActivity;
+import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 
 
 /**
@@ -25,6 +32,9 @@ import android.widget.Toast;
 public class PINFragment extends Fragment {
 
     private EditText etPin, etPinRepetir;
+    private TextView textViewtitle;
+
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -75,12 +85,19 @@ public class PINFragment extends Fragment {
 
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPIN);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
+        textViewtitle = (TextView) vista.findViewById(R.id.titlePIN);
+
+        if (Utilidades.conf_bloqueo == 4) {
+            textViewtitle.setText("Ingrese PIN de respaldo");
+        }
 
         Button button = (Button) vista.findViewById(R.id.buttonRegistrarPIN);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validarPinRespaldo();
+                if (Utilidades.conf_bloqueo == 4) {
+                    validarPinRespaldo();
+                }
             }
         });
 
@@ -107,6 +124,7 @@ public class PINFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        startActivity(new Intent(getContext(), MainActivity.class));
         super.onDetach();
         mListener = null;
     }
@@ -125,6 +143,7 @@ public class PINFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
 
     public void validarPinRespaldo() {
         String pin = etPin.getText().toString();
@@ -159,7 +178,13 @@ public class PINFragment extends Fragment {
 
         if (pin1 && pin2) {
             if (pin.equals(pinRepetir)) {
-                //almacenarPinRespaldo();
+                SharedPreferences preferences = getContext().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(UtilidadesStatic.HUELLA, true);
+                editor.putBoolean(UtilidadesStatic.PIN, false);
+                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
+                editor.commit();
+                startActivity(new Intent(getContext(), MainActivity.class));
             }
         }
     }

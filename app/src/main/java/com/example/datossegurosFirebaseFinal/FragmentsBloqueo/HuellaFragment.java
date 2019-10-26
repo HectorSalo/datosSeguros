@@ -132,11 +132,6 @@ public class HuellaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void desbloqueoHuella() {
-
-
-
-    }
 
     public void registrarHuella() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
