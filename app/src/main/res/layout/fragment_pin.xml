@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".PINFragment">
+    tools:context=".FragmentsBloqueo.PINFragment"
+    android:background="@color/colorAccent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,14 +14,15 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <!-- TODO: Update blank fragment layout -->
+
         <TextView
             android:id="@+id/titlePIN"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:text="@string/ingresePIN"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:textColor="#fff"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/inputLayoutPIN"
@@ -32,6 +34,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/titlePIN"
+            android:theme="@style/CampoTextoBlanco"
+            android:textColorHint="#fff"
             app:passwordToggleEnabled="true">
 
             <EditText
@@ -55,6 +59,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/inputLayoutPIN"
+            android:theme="@style/CampoTextoBlanco"
+            android:textColorHint="#fff"
             app:passwordToggleEnabled="true">
 
             <EditText

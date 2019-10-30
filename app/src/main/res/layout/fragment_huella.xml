@@ -8,6 +8,7 @@
     android:background="@color/colorAccent">
 
     <LinearLayout
+        android:id="@+id/linearHuella"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -27,8 +28,92 @@
             android:gravity="center"
             android:paddingTop="10dp"
             android:text="TextView"
-            android:textSize="24sp"
-            android:textColor="#ffff"/>
+            android:textColor="#ffff"
+            android:textSize="24sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearPIN"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+
+        <TextView
+            android:id="@+id/titlePINRespaldo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/ingresePINRespaldo"
+            android:textColor="#fff"
+            android:textSize="40sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutPINRespaldo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titlePIN"
+            android:theme="@style/CampoTextoBlanco"
+            android:textColorHint="#fff"
+            app:passwordToggleEnabled="true">
+
+            <EditText
+                android:id="@+id/etRegistrarPINRespaldo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/pin"
+                android:inputType="numberPassword"
+                android:maxLength="4" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutRepetirPINRespaldo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutPIN"
+            android:theme="@style/CampoTextoBlanco"
+            android:textColorHint="#fff"
+            app:passwordToggleEnabled="true">
+
+            <EditText
+                android:id="@+id/etRegistrarPINRepetirRespaldo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/repitaPIN"
+                android:inputType="numberPassword"
+                android:maxLength="4" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <Button
+            android:id="@+id/buttonRegistrarPINRespaldo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/buttonAceptar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inputLayoutRepetirPIN" />
     </LinearLayout>
 
 </FrameLayout>

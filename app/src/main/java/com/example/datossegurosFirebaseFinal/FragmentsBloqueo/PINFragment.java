@@ -1,6 +1,8 @@
-package com.example.datossegurosFirebaseFinal;
+package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -11,7 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.datossegurosFirebaseFinal.BloqueoActivity;
+import com.example.datossegurosFirebaseFinal.MainActivity;
+import com.example.datossegurosFirebaseFinal.R;
+import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 
 
 /**
@@ -25,6 +34,8 @@ import android.widget.Toast;
 public class PINFragment extends Fragment {
 
     private EditText etPin, etPinRepetir;
+    private TextView tvPinTitle;
+    private String pinGuardado;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -72,15 +83,32 @@ public class PINFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_pin, container, false);
-
+        tvPinTitle = (TextView) vista.findViewById(R.id.titlePIN);
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPIN);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
+
+        SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        final boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
+        final boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
+        boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+        pinGuardado = preferences.getString(UtilidadesStatic.PIN_RESPALDO, "0000");
+
+        if (huella || pin) {
+            tvPinTitle.setText("Ingrese PIN almacenado");
+            etPinRepetir.setVisibility(View.GONE);
+        }
 
         Button button = (Button) vista.findViewById(R.id.buttonRegistrarPIN);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validarPinRespaldo();
+
+                if (huella || pin) {
+                    validarPinRespaldo();
+                } else {
+                    validarPinNuevo();
+                }
+
             }
         });
 
@@ -128,6 +156,48 @@ public class PINFragment extends Fragment {
 
     public void validarPinRespaldo() {
         String pin = etPin.getText().toString();
+
+        if (pin.equals(pinGuardado)) {
+            if (Utilidades.conf_bloqueo == UtilidadesStatic.HUELLA_INT) {
+                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                editor.putBoolean(UtilidadesStatic.PIN, false);
+                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+                editor.putString(UtilidadesStatic.PIN_RESPALDO, "0000");
+                editor.commit();
+                startActivity(new Intent(getContext(), BloqueoActivity.class));
+
+            } else if (Utilidades.conf_bloqueo == UtilidadesStatic.PIN_INT) {
+                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                editor.putBoolean(UtilidadesStatic.PIN, false);
+                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+                editor.putString(UtilidadesStatic.PIN_RESPALDO, "0000");
+                editor.commit();
+                startActivity(new Intent(getContext(), BloqueoActivity.class));
+
+            } else if (Utilidades.conf_bloqueo == UtilidadesStatic.SIN_BLOQUEO_INT) {
+                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                editor.putBoolean(UtilidadesStatic.PIN, false);
+                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+                editor.putString(UtilidadesStatic.PIN_RESPALDO, "0000");
+                editor.commit();
+                startActivity(new Intent(getContext(), MainActivity.class));
+            } else if (Utilidades.conf_bloqueo == 1000) {
+                startActivity(new Intent(getContext(), MainActivity.class));
+            }
+
+        } else {
+            Toast.makeText(getContext(), "El PIN no coincide con el almacenado", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public void validarPinNuevo() {
+        String pin = etPin.getText().toString();
         String pinRepetir = etPinRepetir.getText().toString();
 
         boolean pin1;
@@ -159,7 +229,14 @@ public class PINFragment extends Fragment {
 
         if (pin1 && pin2) {
             if (pin.equals(pinRepetir)) {
-                //almacenarPinRespaldo();
+                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(UtilidadesStatic.HUELLA, false);
+                editor.putBoolean(UtilidadesStatic.PIN, true);
+                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
+                editor.putString(UtilidadesStatic.PIN_RESPALDO, pin);
+                editor.commit();
+                startActivity(new Intent(getContext(), MainActivity.class));
             }
         }
     }

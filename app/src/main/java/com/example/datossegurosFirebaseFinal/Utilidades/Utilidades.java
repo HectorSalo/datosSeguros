@@ -12,5 +12,5 @@ public class Utilidades {
     public static boolean almacenamientoExterno = false;
     public static boolean escogerAlmacenamiento = false;
 
-    public static int conf_bloqueo = 0;
+    public static int conf_bloqueo = 1000;
 }

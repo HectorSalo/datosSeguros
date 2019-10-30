@@ -1,8 +1,11 @@
 package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
@@ -15,11 +18,15 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
+import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,10 +42,9 @@ public class HuellaFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private ImageView imageHuella;
     private TextView textViewHuella;
-    private FingerprintManager fingerprintManager;
-    private KeyguardManager keyguardManager;
+    private EditText etPin, etPinRepetir;
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -83,12 +89,33 @@ public class HuellaFragment extends Fragment {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_huella, container, false);
 
-        imageHuella = (ImageView) vista.findViewById(R.id.imageViewHuella);
         textViewHuella = (TextView) vista.findViewById(R.id.textViewHuella);
+        etPin = (EditText) vista.findViewById(R.id.etRegistrarPINRespaldo);
+        etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetirRespaldo);
+        Button registrarPin = (Button) vista.findViewById(R.id.buttonRegistrarPINRespaldo);
 
+        registrarPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pinS = etPin.getText().toString();
+                String pinSRepetir = etPinRepetir.getText().toString();
 
-            registrarHuella();
+                if (pinS.isEmpty()) {
+                    etPin.setError("No puede estar vacío");
+                } else {
+                    if (pinS.equals(pinSRepetir)) {
+                        guardarPIN(pinS);
+                        startActivity(new Intent(getContext(), MainActivity.class));
+                    } else {
+                        etPin.setError("Deben coincidir el PIN");
+                        etPinRepetir.setError("Deben coincidir el PIN");
+                    }
+                }
 
+            }
+        });
+
+        registrarHuella();
 
         return vista;
     }
@@ -132,16 +159,11 @@ public class HuellaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void desbloqueoHuella() {
-
-
-
-    }
 
     public void registrarHuella() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            fingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
-            keyguardManager = (KeyguardManager) getActivity().getSystemService(Context.KEYGUARD_SERVICE);
+            FingerprintManager fingerprintManager = (FingerprintManager) getActivity().getSystemService(Context.FINGERPRINT_SERVICE);
+            KeyguardManager keyguardManager = (KeyguardManager) getActivity().getSystemService(Context.KEYGUARD_SERVICE);
 
             if (fingerprintManager.isHardwareDetected()) {
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED) {
@@ -151,7 +173,7 @@ public class HuellaFragment extends Fragment {
                         FingerprintHandler fingerprintHandler = new FingerprintHandler(getContext());
                         fingerprintHandler.starAuth(fingerprintManager, null);
                     } else {
-                        textViewHuella.setText("Debe agregar un bloqueo a su Dispositivo");
+                        textViewHuella.setText("Debe agregar un tipo de bloqueo a su Dispositivo");
                     }
                 } else {
                     textViewHuella.setText("Debe autorizar el uso del lector de huellas");
@@ -162,6 +184,16 @@ public class HuellaFragment extends Fragment {
         } else {
             textViewHuella.setText("Para usar esta opción debe poseer una versión de Android superior");
         }
+    }
+
+    public void guardarPIN(String pin) {
+        SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(UtilidadesStatic.HUELLA, true);
+        editor.putBoolean(UtilidadesStatic.PIN, false);
+        editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
+        editor.putString(UtilidadesStatic.PIN_RESPALDO, pin);
+        editor.commit();
     }
 
 

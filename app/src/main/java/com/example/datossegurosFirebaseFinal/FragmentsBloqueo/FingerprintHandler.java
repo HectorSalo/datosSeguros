@@ -7,12 +7,17 @@ import android.content.SharedPreferences;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.example.datossegurosFirebaseFinal.BloqueoActivity;
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
@@ -54,35 +59,24 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     private void update (String s, boolean b) {
         TextView mensaje = (TextView) ((Activity)context).findViewById(R.id.textViewHuella);
-        ImageView image = (ImageView) ((Activity)context).findViewById(R.id.imageViewHuella);
+        LinearLayout linearHuella = (LinearLayout) ((Activity) context).findViewById(R.id.linearHuella);
+        LinearLayout linearPin = (LinearLayout) ((Activity) context).findViewById(R.id.linearPIN);
 
-        mensaje.setText(s);
-
-        if (Utilidades.conf_bloqueo == 0) {
+        if (Utilidades.conf_bloqueo == 1000) {
+            context.startActivity(new Intent(context, MainActivity.class));
+        } else {
             if (!b) {
+                mensaje.setText(s);
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
-                mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-                context.startActivity(new Intent(context, InicSesionActivity.class));
-            }
-        } else if (Utilidades.conf_bloqueo == 1) {
+                linearPin.setVisibility(View.VISIBLE);
+                linearHuella.setVisibility(View.GONE);
 
-            if (!b) {
-                mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
-            } else {
-                SharedPreferences preferences = context.getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(UtilidadesStatic.HUELLA, true);
-                editor.putBoolean(UtilidadesStatic.PATRON, false);
-                editor.putBoolean(UtilidadesStatic.PIN, false);
-                editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                editor.commit();
-                mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
-                context.startActivity(new Intent(context, MainActivity.class));
             }
-
         }
 
-
     }
+
+
+
 }

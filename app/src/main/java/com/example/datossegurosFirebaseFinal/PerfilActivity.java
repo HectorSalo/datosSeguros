@@ -5,8 +5,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,8 +38,9 @@ import java.util.Map;
 public class PerfilActivity extends AppCompatActivity {
 
     private EditText etEmail, etRepetirEmail, etPass, etRepetirPass;
-    private RadioButton rbEmail, rbPass, rbNube, rbDispositivo, rbAlmacenamiento;
+    private RadioButton rbEmail, rbPass, rbNube, rbDispositivo, rbAlmacenamiento, rbHuella, rbPIN, rbSinBloqueo;
     private ProgressDialog progress;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,23 +53,44 @@ public class PerfilActivity extends AppCompatActivity {
         etRepetirPass = (EditText) findViewById(R.id.editTextRepetirUpdatePass);
         final RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroupUpdate);
         final RadioGroup radioGroupAlmacenamiento = (RadioGroup) findViewById(R.id.radioGroupAlmacenamiento);
+        final RadioGroup radioGroupBloqueo = (RadioGroup) findViewById(R.id.radioGruopBloqueo);
         rbEmail = (RadioButton) findViewById(R.id.radioButtonUpdateEmail);
         rbAlmacenamiento = (RadioButton) findViewById(R.id.radioButtonUpdateAlmacenamiento);
         rbPass = (RadioButton) findViewById(R.id.radioButtonUpdatePass);
         rbNube = (RadioButton) findViewById(R.id.radioButtonNube);
         rbDispositivo = (RadioButton) findViewById(R.id.radioButtonDispositivo);
+        rbHuella = (RadioButton) findViewById(R.id.radioButtonHuella);
+        rbPIN = (RadioButton) findViewById(R.id.radioButtonPIN);
+        rbSinBloqueo = (RadioButton) findViewById(R.id.radioButtonSinBloqueo);
         final LinearLayout layoutEmail = (LinearLayout) findViewById(R.id.layoutEmail);
         final LinearLayout layoutPass = (LinearLayout) findViewById(R.id.layoutPass);
 
-        rbEmail.setChecked(true);
+        preferences = getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        final boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
+        boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
+        final boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+
+        if (huella) {
+            rbHuella.setChecked(true);
+        } else if (pin) {
+            rbPIN.setChecked(true);
+        } else if (sinBloqueo) {
+            rbSinBloqueo.setChecked(true);
+        }
+
+
         if (Utilidades.almacenamientoInterno) {
             rbDispositivo.setChecked(true);
         } else if (Utilidades.almacenamientoExterno) {
             rbNube.setChecked(true);
         }
+
+        rbEmail.setChecked(true);
         layoutPass.setVisibility(View.GONE);
         layoutEmail.setVisibility(View.VISIBLE);
         radioGroupAlmacenamiento.setVisibility(View.GONE);
+        radioGroupBloqueo.setVisibility(View.GONE);
+
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -75,18 +99,28 @@ public class PerfilActivity extends AppCompatActivity {
                         layoutEmail.setVisibility(View.VISIBLE);
                         layoutPass.setVisibility(View.GONE);
                         radioGroupAlmacenamiento.setVisibility(View.GONE);
+                        radioGroupBloqueo.setVisibility(View.GONE);
                         break;
 
                     case R.id.radioButtonUpdatePass:
                         layoutEmail.setVisibility(View.GONE);
                         layoutPass.setVisibility(View.VISIBLE);
                         radioGroupAlmacenamiento.setVisibility(View.GONE);
+                        radioGroupBloqueo.setVisibility(View.GONE);
                         break;
 
                     case R.id.radioButtonUpdateAlmacenamiento:
                         layoutEmail.setVisibility(View.GONE);
                         layoutPass.setVisibility(View.GONE);
                         radioGroupAlmacenamiento.setVisibility(View.VISIBLE);
+                        radioGroupBloqueo.setVisibility(View.GONE);
+                        break;
+
+                    case R.id.radioButtonUpdateBloqueo:
+                        layoutEmail.setVisibility(View.GONE);
+                        layoutPass.setVisibility(View.GONE);
+                        radioGroupAlmacenamiento.setVisibility(View.GONE);
+                        radioGroupBloqueo.setVisibility(View.VISIBLE);
                         break;
 
                 }
@@ -103,6 +137,19 @@ public class PerfilActivity extends AppCompatActivity {
                     validarPass();
                 } else if (rbAlmacenamiento.isChecked()) {
                     actualizarAlmacenamiento();
+                } else if (rbHuella.isChecked()) {
+                    Utilidades.conf_bloqueo = UtilidadesStatic.HUELLA_INT;
+                    startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
+                } else if (rbPIN.isChecked()) {
+                    Utilidades.conf_bloqueo = UtilidadesStatic.PIN_INT;
+                    startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
+                } else if (rbSinBloqueo.isChecked()) {
+                    if (sinBloqueo) {
+                        finish();
+                    } else {
+                        Utilidades.conf_bloqueo = UtilidadesStatic.SIN_BLOQUEO_INT;
+                        startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
+                    }
                 }
             }
         });

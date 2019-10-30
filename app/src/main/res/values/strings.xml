@@ -107,6 +107,10 @@
     <string name="repetirPass">Repita la Contraseña</string>
     <string name="radioNube">Nube</string>
     <string name="radioDispositivo">Dispositivo</string>
+    <string name="updateBloqueo">Bloqueo de Aplicación</string>
+    <string name="radioHuella">Huella</string>
+    <string name="radioPIN">PIN</string>
+    <string name="radiosinbloqueo">Sin Bloqueo</string>
     <string name="hello_blank_fragment">Bienvenido</string>
     <string-array name="copiarContrasena">
         <item>Servicio</item>
@@ -139,15 +143,9 @@
         <item>Contenido</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string-array name="selectBloqueo">
-        <item>Huella Digital</item>
-        <item>Patrón</item>
-        <item>PIN</item>
-        <item>Sin Bloqueo</item>
-    </string-array>
 
-    <string name="ingresePIN">Ingrese PIN</string>
+    <string name="ingresePIN">Ingrese PIN Nuevo</string>
+    <string name="ingresePINRespaldo">Ingrese PIN de Respaldo</string>
     <string name="pin">PIN:</string>
     <string name="repitaPIN">Repita PIN:</string>
     <string name="buttonAceptar">Aceptar</string>

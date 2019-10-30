@@ -212,9 +212,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             return true;
         } else if (id == R.id.menu_buscar) {
             return true;
-        } else if (id == R.id.menu_bloqueo) {
-            seleccionarBloqueo();
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -227,8 +224,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public void seleccionarBloqueo() {
-        boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
-        boolean patron = preferences.getBoolean(UtilidadesStatic.PATRON, false);
+        /*boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
         boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
         boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
         int escogencia;
@@ -238,9 +234,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         if (huella) {
             escogencia = 0;
             seleccion = opciones[0];
-        } else if (patron) {
-            escogencia = 1;
-            seleccion = opciones[1];
         } else if (pin) {
             escogencia = 2;
             seleccion = opciones[2];
@@ -265,20 +258,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             Utilidades.conf_bloqueo = 1;
                             startActivity(new Intent(MainActivity.this, BloqueoActivity.class));
                         } else if (seleccion.equals("Patrón")) {
-                            /*SharedPreferences.Editor editor = preferences.edit();
+                            *//*SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);
                             editor.putBoolean(UtilidadesStatic.PATRON, true);
                             editor.putBoolean(UtilidadesStatic.PIN, false);
                             editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();*/
+                            editor.commit();*//*
                             Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
                         } else if (seleccion.equals("PIN")) {
-                            /*SharedPreferences.Editor editor = preferences.edit();
+                            *//*SharedPreferences.Editor editor = preferences.edit();
                             editor.putBoolean(UtilidadesStatic.HUELLA, false);
                             editor.putBoolean(UtilidadesStatic.PATRON, false);
                             editor.putBoolean(UtilidadesStatic.PIN, true);
                             editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();*/
+                            editor.commit();*//*
                             Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
                         } else if (seleccion.equals("Sin Bloqueo")) {
                             Utilidades.conf_bloqueo = 4;
@@ -291,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             }
         });
-        dialog.show();
+        dialog.show();*/
     }
 
     public void seleccionAlmacenamiento () {
@@ -871,7 +864,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 for (TarjetaConstructor name : listTarjetas) {
 
-                    if (name.getTitular().toLowerCase().contains(userInput)) {
+                    if (name.getTitular().toLowerCase().contains(userInput) || name.getBanco().toLowerCase().contains(userInput)) {
 
                         newList.add(name);
                     }
@@ -901,9 +894,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void configurarSinBloqueo() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(UtilidadesStatic.HUELLA, false);
-        editor.putBoolean(UtilidadesStatic.PATRON, false);
         editor.putBoolean(UtilidadesStatic.PIN, false);
         editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+        editor.putString(UtilidadesStatic.PIN_RESPALDO, "0000");
         editor.commit();
     }
 
