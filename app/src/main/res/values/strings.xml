@@ -149,5 +149,6 @@
     <string name="pin">PIN:</string>
     <string name="repitaPIN">Repita PIN:</string>
     <string name="buttonAceptar">Aceptar</string>
+    <string name="pinRespaldo">Acceder con PIN</string>
 
 </resources>

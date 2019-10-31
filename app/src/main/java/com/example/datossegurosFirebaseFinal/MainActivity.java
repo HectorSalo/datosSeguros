@@ -891,6 +891,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return false;
     }
 
+
+
     public void configurarSinBloqueo() {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(UtilidadesStatic.HUELLA, false);

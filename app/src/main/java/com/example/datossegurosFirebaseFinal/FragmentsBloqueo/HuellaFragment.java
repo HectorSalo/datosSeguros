@@ -21,12 +21,16 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.BloqueoActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -42,9 +46,9 @@ public class HuellaFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private TextView textViewHuella;
+    private TextView textViewHuella, tvAccederPin;
     private EditText etPin, etPinRepetir;
-
+    private String pinGuardado;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -90,26 +94,38 @@ public class HuellaFragment extends Fragment {
         View vista = inflater.inflate(R.layout.fragment_huella, container, false);
 
         textViewHuella = (TextView) vista.findViewById(R.id.textViewHuella);
+        tvAccederPin = vista.findViewById(R.id.tvAccederPin);
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPINRespaldo);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetirRespaldo);
+        final LinearLayout linearHuella = vista.findViewById(R.id.linearHuella);
+        final LinearLayout linearPin = vista.findViewById(R.id.linearPIN);
+        final TextInputLayout tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPINRespaldo);
         Button registrarPin = (Button) vista.findViewById(R.id.buttonRegistrarPINRespaldo);
+
+        SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        pinGuardado = preferences.getString(UtilidadesStatic.PIN_RESPALDO, "0000");
+
+        if (Utilidades.conf_bloqueo != 1000) {
+            tvAccederPin.setVisibility(View.GONE);
+        }
+
+        tvAccederPin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                linearPin.setVisibility(View.VISIBLE);
+                linearHuella.setVisibility(View.GONE);
+                tvAccederPin.setVisibility(View.GONE);
+                tlPinRepetir.setVisibility(View.GONE);
+            }
+        });
 
         registrarPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pinS = etPin.getText().toString();
-                String pinSRepetir = etPinRepetir.getText().toString();
-
-                if (pinS.isEmpty()) {
-                    etPin.setError("No puede estar vacío");
+                if (Utilidades.conf_bloqueo != 1000) {
+                    validarPinRespaldo();
                 } else {
-                    if (pinS.equals(pinSRepetir)) {
-                        guardarPIN(pinS);
-                        startActivity(new Intent(getContext(), MainActivity.class));
-                    } else {
-                        etPin.setError("Deben coincidir el PIN");
-                        etPinRepetir.setError("Deben coincidir el PIN");
-                    }
+                    accederPin();
                 }
 
             }
@@ -140,8 +156,9 @@ public class HuellaFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        super.onDetach();
-        mListener = null;
+            super.onDetach();
+            mListener = null;
+
     }
 
     /**
@@ -183,6 +200,33 @@ public class HuellaFragment extends Fragment {
             }
         } else {
             textViewHuella.setText("Para usar esta opción debe poseer una versión de Android superior");
+        }
+    }
+
+    public void validarPinRespaldo() {
+        String pinS = etPin.getText().toString();
+        String pinSRepetir = etPinRepetir.getText().toString();
+
+        if (pinS.isEmpty()) {
+            etPin.setError("No puede estar vacío");
+        } else {
+            if (pinS.equals(pinSRepetir)) {
+                guardarPIN(pinS);
+                startActivity(new Intent(getContext(), MainActivity.class));
+            } else {
+                etPin.setError("Deben coincidir el PIN");
+                etPinRepetir.setError("Deben coincidir el PIN");
+            }
+        }
+    }
+
+    public void accederPin() {
+        String pinS = etPin.getText().toString();
+
+        if (pinS.equals(pinGuardado)) {
+            startActivity(new Intent(getContext(), MainActivity.class));
+        } else {
+            Toast.makeText(getContext(), "El PIN no coincide con el almacenado", Toast.LENGTH_LONG).show();
         }
     }
 

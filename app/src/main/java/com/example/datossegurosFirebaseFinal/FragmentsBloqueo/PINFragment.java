@@ -21,6 +21,7 @@ import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.google.android.material.textfield.TextInputLayout;
 
 
 /**
@@ -36,6 +37,7 @@ public class PINFragment extends Fragment {
     private EditText etPin, etPinRepetir;
     private TextView tvPinTitle;
     private String pinGuardado;
+    private TextInputLayout tlPinRepetir;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -86,6 +88,7 @@ public class PINFragment extends Fragment {
         tvPinTitle = (TextView) vista.findViewById(R.id.titlePIN);
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPIN);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
+        tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPIN);
 
         SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
         final boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
@@ -95,7 +98,7 @@ public class PINFragment extends Fragment {
 
         if (huella || pin) {
             tvPinTitle.setText("Ingrese PIN almacenado");
-            etPinRepetir.setVisibility(View.GONE);
+            tlPinRepetir.setVisibility(View.GONE);
         }
 
         Button button = (Button) vista.findViewById(R.id.buttonRegistrarPIN);

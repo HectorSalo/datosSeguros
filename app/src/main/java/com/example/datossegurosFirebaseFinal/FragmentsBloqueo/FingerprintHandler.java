@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -62,21 +63,20 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         LinearLayout linearHuella = ((Activity) context).findViewById(R.id.linearHuella);
         LinearLayout linearPin = ((Activity) context).findViewById(R.id.linearPIN);
 
-        if (Utilidades.conf_bloqueo == 1000) {
-            context.startActivity(new Intent(context, MainActivity.class));
-        } else {
             if (!b) {
                 mensaje.setText(s);
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
-                linearPin.setVisibility(View.VISIBLE);
-                linearHuella.setVisibility(View.GONE);
+                if (Utilidades.conf_bloqueo == 1000) {
+                    context.startActivity(new Intent(context, MainActivity.class));
+                } else {
+                    linearPin.setVisibility(View.VISIBLE);
+                    linearHuella.setVisibility(View.GONE);
+                }
 
             }
-        }
+
 
     }
-
-
 
 }
