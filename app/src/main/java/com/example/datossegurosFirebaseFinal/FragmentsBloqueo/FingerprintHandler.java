@@ -58,9 +58,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
     }
 
     private void update (String s, boolean b) {
-        TextView mensaje = (TextView) ((Activity)context).findViewById(R.id.textViewHuella);
-        LinearLayout linearHuella = (LinearLayout) ((Activity) context).findViewById(R.id.linearHuella);
-        LinearLayout linearPin = (LinearLayout) ((Activity) context).findViewById(R.id.linearPIN);
+        TextView mensaje = ((Activity)context).findViewById(R.id.textViewHuella);
+        LinearLayout linearHuella = ((Activity) context).findViewById(R.id.linearHuella);
+        LinearLayout linearPin = ((Activity) context).findViewById(R.id.linearPIN);
 
         if (Utilidades.conf_bloqueo == 1000) {
             context.startActivity(new Intent(context, MainActivity.class));
