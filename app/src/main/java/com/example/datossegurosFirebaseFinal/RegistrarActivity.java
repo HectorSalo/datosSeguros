@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class RegistrarActivity extends AppCompatActivity {
     private EditText usuario, contrasena, repetirContrasena;
-    private ProgressDialog progress;
+    private ProgressBar progressBarRegistrar;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
 
@@ -35,6 +36,7 @@ public class RegistrarActivity extends AppCompatActivity {
         contrasena = (EditText) findViewById(R.id.etRegistrarContrasena);
         repetirContrasena = (EditText) findViewById(R.id.etRegistrarContrasenaRepetir);
         mAuth = FirebaseAuth.getInstance();
+        progressBarRegistrar = findViewById(R.id.progressBarRegistrar);
 
         final Button registrar = (Button) findViewById(R.id.buttonRegistrar);
         registrar.setOnClickListener(new View.OnClickListener() {
@@ -102,10 +104,7 @@ public class RegistrarActivity extends AppCompatActivity {
         }
 
         if (passwordValido && emailValido) {
-            progress = new ProgressDialog(this);
-            progress.setMessage("Iniciando sesión...");
-            progress.setCancelable(false);
-            progress.show();
+            progressBarRegistrar.setVisibility(View.VISIBLE);
             mAuth.createUserWithEmailAndPassword(usuarioS, contrasenaS)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -113,11 +112,11 @@ public class RegistrarActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.d("msg", "createUserWithEmail:success");
                                 user = mAuth.getCurrentUser();
-                                progress.dismiss();
+                                progressBarRegistrar.setVisibility(View.GONE);
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
-                                progress.dismiss();
+                                progressBarRegistrar.setVisibility(View.GONE);
                                 Log.w("msg", "createUserWithEmail:failure", task.getException());
                                 Toast.makeText(RegistrarActivity.this, "Error al Registrar\nPor favor, intente nuevamente",
                                         Toast.LENGTH_LONG).show();

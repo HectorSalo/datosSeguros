@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.CancellationSignal;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.datossegurosFirebaseFinal.BloqueoActivity;
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
@@ -60,18 +63,43 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
 
     private void update (String s, boolean b) {
         TextView mensaje = ((Activity)context).findViewById(R.id.textViewHuella);
-        LinearLayout linearHuella = ((Activity) context).findViewById(R.id.linearHuella);
-        LinearLayout linearPin = ((Activity) context).findViewById(R.id.linearPIN);
+        final LinearLayout linearHuella = ((Activity) context).findViewById(R.id.linearHuella);
+        final LinearLayout linearPin = ((Activity) context).findViewById(R.id.linearPIN);
+        LottieAnimationView lottieAnimationView = ((Activity) context).findViewById(R.id.lottieAnimationView);
 
             if (!b) {
+                lottieAnimationView.setAnimation("huellaerror.json");
+                lottieAnimationView.playAnimation();
                 mensaje.setText(s);
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
                 if (Utilidades.conf_bloqueo == 1000) {
-                    context.startActivity(new Intent(context, MainActivity.class));
+                    lottieAnimationView.setAnimation("huellaactivo.json");
+                    lottieAnimationView.playAnimation();
+                    mensaje.setText(s);
+                    mensaje.setTextColor(Color.parseColor("#FFFFFF"));
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            context.startActivity(new Intent(context, MainActivity.class));
+                        }
+                    }, 1500);
+
                 } else {
-                    linearPin.setVisibility(View.VISIBLE);
-                    linearHuella.setVisibility(View.GONE);
+                    lottieAnimationView.setAnimation("huellaactivo.json");
+                    lottieAnimationView.playAnimation();
+                    mensaje.setText(s);
+                    mensaje.setTextColor(Color.parseColor("#FFFFFF"));
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            linearPin.setVisibility(View.VISIBLE);
+                            linearHuella.setVisibility(View.GONE);
+                        }
+                    }, 1500);
+
                 }
 
             }

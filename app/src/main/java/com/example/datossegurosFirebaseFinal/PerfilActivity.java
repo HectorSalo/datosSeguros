@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -39,7 +40,7 @@ public class PerfilActivity extends AppCompatActivity {
 
     private EditText etEmail, etRepetirEmail, etPass, etRepetirPass;
     private RadioButton rbEmail, rbPass, rbNube, rbDispositivo, rbAlmacenamiento, rbHuella, rbPIN, rbSinBloqueo;
-    private ProgressDialog progress;
+    private ProgressBar progressBarPerfil;
     private SharedPreferences preferences;
 
     @Override
@@ -62,6 +63,7 @@ public class PerfilActivity extends AppCompatActivity {
         rbHuella = (RadioButton) findViewById(R.id.radioButtonHuella);
         rbPIN = (RadioButton) findViewById(R.id.radioButtonPIN);
         rbSinBloqueo = (RadioButton) findViewById(R.id.radioButtonSinBloqueo);
+        progressBarPerfil = findViewById(R.id.progressBarPerfil);
         final LinearLayout layoutEmail = (LinearLayout) findViewById(R.id.layoutEmail);
         final LinearLayout layoutPass = (LinearLayout) findViewById(R.id.layoutPass);
 
@@ -204,10 +206,7 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     public void actualizarEmail(String email) {
-        progress = new ProgressDialog(this);
-        progress.setMessage("Actualizando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarPerfil.setVisibility(View.VISIBLE);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -219,10 +218,10 @@ public class PerfilActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.d("msg", "User email address updated.");
                                 finish();
-                                progress.dismiss();
+                                progressBarPerfil.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error al actualizar. Intene nuevamente", Toast.LENGTH_SHORT).show();
-                                progress.dismiss();
+                                progressBarPerfil.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -230,10 +229,7 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     public void actualizarPass(String pass) {
-        progress = new ProgressDialog(this);
-        progress.setMessage("Actualizando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarPerfil.setVisibility(View.VISIBLE);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -245,10 +241,10 @@ public class PerfilActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.d("msg", "User password updated.");
                                 finish();
-                                progress.dismiss();
+                                progressBarPerfil.setVisibility(View.GONE);
                             } else {
                                 Toast.makeText(getApplicationContext(), "Error al actualizar. Intene nuevamente", Toast.LENGTH_SHORT).show();
-                                progress.dismiss();
+                                progressBarPerfil.setVisibility(View.GONE);
                             }
                         }
                     });
@@ -256,10 +252,7 @@ public class PerfilActivity extends AppCompatActivity {
     }
 
     public void actualizarAlmacenamiento() {
-        progress = new ProgressDialog(this);
-        progress.setMessage("Actualizando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarPerfil.setVisibility(View.VISIBLE);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -284,7 +277,7 @@ public class PerfilActivity extends AppCompatActivity {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("msg", "Succes");
-                progress.dismiss();
+                progressBarPerfil.setVisibility(View.GONE);
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -292,7 +285,7 @@ public class PerfilActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception e) {
                 Log.w("msg", "Error adding document", e);
                 Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                progress.dismiss();
+                progressBarPerfil.setVisibility(View.GONE);
             }
         });
     }

@@ -9,10 +9,10 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
         <EditText
@@ -27,6 +27,7 @@
             android:id="@+id/etBanco"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTitular"
             android:ems="10"
             android:hint="@string/banco"
             android:inputType="textPersonName" />
@@ -35,15 +36,27 @@
             android:id="@+id/etnumeroCuenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etBanco"
             android:ems="10"
             android:hint="@string/numeroCuenta"
             android:inputType="number"
             android:maxLength="20" />
 
+            <ProgressBar
+                android:id="@+id/progressBarAddCuenta"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@id/etnumeroCuenta"
+                android:indeterminateTint="@color/colorPrimaryDark"
+                android:visibility="gone" />
+
         <LinearLayout
+            android:id="@+id/layoutDocumento"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_below="@id/etnumeroCuenta">
 
             <Spinner
                 android:id="@+id/spinnerTipoDocumento"
@@ -63,6 +76,7 @@
             android:id="@+id/etTelefono"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/layoutDocumento"
             android:ems="10"
             android:hint="@string/telefono"
             android:inputType="number"
@@ -72,6 +86,7 @@
             android:id="@+id/etCorreoCuenta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTelefono"
             android:ems="10"
             android:hint="@string/correoCuenta"
             android:inputType="textEmailAddress" />
@@ -80,14 +95,17 @@
             android:id="@+id/etTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etCorreoCuenta"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:paddingTop="24dp"/>
 
         <RadioGroup
+            android:id="@+id/radioTipoCuenta"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/etTipo"
             android:orientation="horizontal">
 
             <RadioButton
@@ -110,10 +128,13 @@
             android:id="@+id/guardarCuenta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/radioTipoCuenta"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
             android:text="@string/buttonGuardar" />
-    </LinearLayout>
+
+
+        </RelativeLayout>
     </ScrollView>
 
 </FrameLayout>

@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentsEditar.EditarContrasenaFragment"
-    android:background="#455A64">
+    android:background="@color/colorBackgroundEditar">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/etServicioEditar"
@@ -29,6 +28,7 @@
             android:id="@+id/etUsuarioEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etServicioEditar"
             android:ems="10"
             android:hint="@string/usuario"
             android:inputType="textPersonName"
@@ -39,18 +39,29 @@
             android:id="@+id/etContrasenaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etUsuarioEditar"
             android:ems="10"
             android:hint="@string/contrasena"
             android:inputType="textPersonName"
             android:textColor="#fff"
             android:textColorHint="#fff" />
 
+            <ProgressBar
+                android:id="@+id/progressBarEditarContrasena"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@id/etContrasenaEditar"
+                android:indeterminateTint="@color/colorPrimaryDark"
+                android:visibility="gone" />
+
         <TextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etContrasenaEditar"
             android:text="@string/caducidad"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:paddingTop="24dp"
             android:textColor="#fff"
             android:textColorHint="#fff"/>
@@ -58,7 +69,8 @@
         <RadioGroup
             android:id="@+id/radioDiasEditar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_below="@id/textView2">
 
             <RadioButton
                 android:id="@+id/radioButton30Editar"
@@ -122,6 +134,7 @@
             android:id="@+id/etIngreseOtroEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/radioDiasEditar"
             android:ems="10"
             android:hint="@string/ingreseTiempo"
             android:inputType="number"
@@ -133,11 +146,13 @@
             android:id="@+id/editarContrasena"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/etIngreseOtroEditar"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:text="@string/buttonGuardar" />
 
-    </LinearLayout>
+
+        </RelativeLayout>
     </ScrollView>
 
 </FrameLayout>

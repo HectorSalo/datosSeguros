@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -51,7 +52,7 @@ public class EditarNotaFragment extends Fragment {
 
     private EditText etTitulo, etContenido;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarEditar;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -101,6 +102,7 @@ public class EditarNotaFragment extends Fragment {
         etTitulo = (EditText) vista.findViewById(R.id.etTituloEditar);
         etContenido = (EditText) vista.findViewById(R.id.etContenidoEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        progressBarEditar = vista.findViewById(R.id.progressBarEditarNota);
 
         if (Utilidades.almacenamientoExterno) {
             cargarDataFirebase();
@@ -163,10 +165,7 @@ public class EditarNotaFragment extends Fragment {
     }
 
     public void cargarDataFirebase() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         String idNota = Utilidades.idNota;
 
@@ -181,10 +180,10 @@ public class EditarNotaFragment extends Fragment {
                     etTitulo.setText(doc.getString(UtilidadesStatic.BD_TITULO_NOTAS));
                     etContenido.setText(doc.getString(UtilidadesStatic.BD_CONTENIDO_NOTAS));
 
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
 
                 } else {
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
 
                 }
@@ -193,10 +192,6 @@ public class EditarNotaFragment extends Fragment {
     }
 
     public void cargarDataSQLite() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
 
         String idNota = Utilidades.idNota;
 
@@ -209,7 +204,6 @@ public class EditarNotaFragment extends Fragment {
             etTitulo.setText(cursor.getString(1));
             etContenido.setText(cursor.getString(2));
 
-            progress.dismiss();
         }
 
     }
@@ -219,10 +213,7 @@ public class EditarNotaFragment extends Fragment {
         String titulo = etTitulo.getText().toString();
         String contenido = etContenido.getText().toString();
 
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Guardando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarEditar.setVisibility(View.VISIBLE);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
@@ -232,7 +223,7 @@ public class EditarNotaFragment extends Fragment {
         db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS).document(Utilidades.idNota).set(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
 
             public void onSuccess(Void aVoid) {
-                progress.dismiss();
+                progressBarEditar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                 Intent myIntent = new Intent(getContext(), MainActivity.class);
                 startActivity(myIntent);
@@ -242,7 +233,7 @@ public class EditarNotaFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w("msg", "Error adding document", e);
-                progress.dismiss();
+                progressBarEditar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });
@@ -252,11 +243,6 @@ public class EditarNotaFragment extends Fragment {
         String idNota = Utilidades.idNota;
         String titulo = etTitulo.getText().toString();
         String contenido = etContenido.getText().toString();
-
-        ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Guardando...");
-        progress.setCancelable(false);
-        progress.show();
 
         ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
@@ -268,7 +254,6 @@ public class EditarNotaFragment extends Fragment {
         db.update(UtilidadesStatic.BD_NOTAS, values, "idNota=" + idNota, null);
         db.close();
 
-        progress.dismiss();
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
         Intent myIntent = new Intent(getContext(), MainActivity.class);
         startActivity(myIntent);

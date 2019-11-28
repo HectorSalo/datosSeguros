@@ -25,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.datossegurosFirebaseFinal.BloqueoActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
@@ -185,7 +186,7 @@ public class HuellaFragment extends Fragment {
             if (fingerprintManager.isHardwareDetected()) {
                 if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED) {
                     if (keyguardManager.isKeyguardSecure()) {
-                        textViewHuella.setText("Se usará la huella registrada en su Dispositivo. Coloque su huella en el lector biométrico");
+                        textViewHuella.setText("Se usará la huella registrada en su Dispositivo.");
 
                         FingerprintHandler fingerprintHandler = new FingerprintHandler(getContext());
                         fingerprintHandler.starAuth(fingerprintManager, null);

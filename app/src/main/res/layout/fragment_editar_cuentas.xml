@@ -4,16 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentsEditar.EditarCuentasFragment"
-    android:background="#455A64">
+    android:background="@color/colorBackgroundEditar">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/etTitularEditar"
@@ -29,6 +28,7 @@
             android:id="@+id/etBancoEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTitularEditar"
             android:ems="10"
             android:hint="@string/banco"
             android:inputType="textPersonName"
@@ -39,6 +39,7 @@
             android:id="@+id/etnumeroCuentaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etBancoEditar"
             android:ems="10"
             android:hint="@string/numeroCuenta"
             android:inputType="number"
@@ -46,9 +47,20 @@
             android:textColor="#fff"
             android:textColorHint="#fff" />
 
+            <ProgressBar
+                android:id="@+id/progressBarEditarCuenta"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@id/etnumeroCuentaEditar"
+                android:indeterminateTint="@color/colorPrimaryDark"
+                android:visibility="gone" />
+
         <LinearLayout
+            android:id="@+id/layoutEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etnumeroCuentaEditar"
             android:orientation="horizontal">
 
             <Spinner
@@ -72,6 +84,7 @@
             android:id="@+id/etTelefonoEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/layoutEditar"
             android:ems="10"
             android:hint="@string/telefono"
             android:inputType="number"
@@ -83,6 +96,7 @@
             android:id="@+id/etCorreoCuentaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTelefonoEditar"
             android:ems="10"
             android:hint="@string/correoCuenta"
             android:inputType="textEmailAddress"
@@ -93,16 +107,19 @@
             android:id="@+id/etTipoEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etCorreoCuentaEditar"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:paddingTop="24dp"
             android:textColor="#fff"
             android:textColorHint="#fff"/>
 
         <RadioGroup
+            android:id="@+id/radioEditar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/etTipoEditar"
             android:orientation="horizontal">
 
             <RadioButton
@@ -129,10 +146,11 @@
             android:id="@+id/guardarCuentaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/radioEditar"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:text="@string/buttonGuardar" />
-    </LinearLayout>
+        </RelativeLayout>
     </ScrollView>
 
 </FrameLayout>

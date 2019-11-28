@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentsEditar.EditarTarjetaFragment"
-    android:background="#455A64">
+    android:background="@color/colorBackgroundEditar">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
 
         <EditText
@@ -29,6 +28,7 @@
             android:id="@+id/etBancoTarjetaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTitularTarjetaEditar"
             android:ems="10"
             android:hint="@string/banco"
             android:inputType="textPersonName"
@@ -39,6 +39,7 @@
             android:id="@+id/etTarjetaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etBancoTarjetaEditar"
             android:ems="10"
             android:hint="@string/numeroTarjeta"
             android:inputType="number"
@@ -46,10 +47,20 @@
             android:textColor="#fff"
             android:textColorHint="#fff" />
 
+        <ProgressBar
+            android:id="@+id/progressBarEditarTarjeta"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@id/etTarjetaEditar"
+            android:indeterminateTint="@color/colorPrimaryDark"
+            android:visibility="gone" />
+
         <EditText
             android:id="@+id/etnumeroCVVEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTarjetaEditar"
             android:ems="10"
             android:hint="@string/numeroCVV"
             android:inputType="number"
@@ -61,6 +72,7 @@
             android:id="@+id/etVencimientoEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etnumeroCVVEditar"
             android:ems="10"
             android:hint="@string/vencimiento"
             android:textColor="#fff"
@@ -71,6 +83,7 @@
             android:id="@+id/etCedulaTarjetaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etVencimientoEditar"
             android:ems="10"
             android:hint="@string/cedula"
             android:inputType="number"
@@ -81,6 +94,7 @@
             android:id="@+id/etClaveTarjetaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etCedulaTarjetaEditar"
             android:ems="10"
             android:hint="@string/clavedeTarjeta"
             android:inputType="number"
@@ -92,9 +106,10 @@
             android:id="@+id/etTipoEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etClaveTarjetaEditar"
             android:ems="10"
             android:text="@string/tipodeCuenta"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:paddingTop="24dp"
             android:textColor="#fff"
             android:textColorHint="#fff"/>
@@ -102,7 +117,8 @@
         <RadioGroup
             android:id="@+id/radioTarjetaEditar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="match_parent"
+            android:layout_below="@id/etTipoEditar">
 
             <RadioButton
                 android:id="@+id/radioButtonMaestroEditar"
@@ -145,6 +161,7 @@
             android:id="@+id/editTextOtroTarjetaEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/radioTarjetaEditar"
             android:ems="10"
             android:inputType="textPersonName"
             android:hint="@string/otroTarjeta"
@@ -156,11 +173,12 @@
             android:id="@+id/guardarTarjetaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/editTextOtroTarjetaEditar"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:text="@string/buttonGuardar" />
 
-    </LinearLayout>
+    </RelativeLayout>
     </ScrollView>
 
 </FrameLayout>

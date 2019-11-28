@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -52,7 +53,7 @@ public class AddTarjetaFragment extends Fragment {
     private EditText etTitular, etTarjeta, etCVV, etCedula, etOtroTarjeta, etBanco, etVencimiento, etClave;
     private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarAdd;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -113,6 +114,7 @@ public class AddTarjetaFragment extends Fragment {
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjeta);
         RadioGroup radioTarjeta = (RadioGroup) vista.findViewById(R.id.radioTarjeta);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        progressBarAdd = vista.findViewById(R.id.progressBarAddTarjeta);
 
         radioTarjeta.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -232,10 +234,7 @@ public class AddTarjetaFragment extends Fragment {
                         }
 
 
-                        progress = new ProgressDialog(getContext());
-                        progress.setMessage("Guardando...");
-                        progress.setCancelable(false);
-                        progress.show();
+                        progressBarAdd.setVisibility(View.VISIBLE);
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         Map<String, Object> tarjeta = new HashMap<>();
@@ -261,7 +260,7 @@ public class AddTarjetaFragment extends Fragment {
                         db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
-                                progress.dismiss();
+                                progressBarAdd.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
                                 Intent myIntent = new Intent(getContext(), MainActivity.class);
                                 startActivity(myIntent);
@@ -271,7 +270,7 @@ public class AddTarjetaFragment extends Fragment {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w("msg", "Error adding document", e);
-                                progress.dismiss();
+                                progressBarAdd.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -315,11 +314,6 @@ public class AddTarjetaFragment extends Fragment {
                         } else if (rbOtro.isChecked()) {
                             tipo = etOtroTarjeta.getText().toString();
                         }
-
-                        final ProgressDialog progress = new ProgressDialog(getContext());
-                        progress.setMessage("Guardando...");
-                        progress.setCancelable(false);
-                        progress.show();
 
                         ContentValues values = new ContentValues();
                         values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);

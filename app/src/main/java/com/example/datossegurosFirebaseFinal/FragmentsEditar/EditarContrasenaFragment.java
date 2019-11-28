@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -60,7 +61,7 @@ public class EditarContrasenaFragment extends Fragment {
     private EditText etServicio, etUsuario, etContrasena, etOtro;
     private RadioButton rb30, rb60, rb90, rb120, rbIndeterminado, rbOtro;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarEditar;
     private int duracionVigencia;
     private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaActualS, fechaEnviarS;
     private Date fechaActual, fechaCreacion, fechaEnviar;
@@ -124,6 +125,7 @@ public class EditarContrasenaFragment extends Fragment {
         rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminadoEditar);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        progressBarEditar = vista.findViewById(R.id.progressBarEditarContrasena);
 
         Calendar almanaque = Calendar.getInstance();
         int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
@@ -234,10 +236,7 @@ public class EditarContrasenaFragment extends Fragment {
     }
 
     public void cargarDataFirebase() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         String idContrasena = Utilidades.idContrasena;
 
@@ -295,10 +294,10 @@ public class EditarContrasenaFragment extends Fragment {
 
                     }
 
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
 
                 } else {
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
 
                 }
@@ -307,10 +306,7 @@ public class EditarContrasenaFragment extends Fragment {
     }
 
     public void cargarDataSQLite() {
-        ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarEditar.setVisibility(View.VISIBLE);
         String idContrasena = Utilidades.idContrasena;
 
         ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
@@ -363,7 +359,7 @@ public class EditarContrasenaFragment extends Fragment {
 
             }
 
-            progress.dismiss();
+            progressBarEditar.setVisibility(View.GONE);
             db.close();
 
         }
@@ -392,10 +388,7 @@ public class EditarContrasenaFragment extends Fragment {
 
                     }
 
-                    final ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
+                    progressBarEditar.setVisibility(View.VISIBLE);
 
                     fechaEnviar = fechaActual;
 
@@ -417,7 +410,7 @@ public class EditarContrasenaFragment extends Fragment {
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             startActivity(myIntent);
@@ -427,16 +420,13 @@ public class EditarContrasenaFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
 
                 } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
-                    final ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
+                    progressBarEditar.setVisibility(View.VISIBLE);
 
                     fechaEnviar = fechaActual;
                     vigencia = "0";
@@ -460,7 +450,7 @@ public class EditarContrasenaFragment extends Fragment {
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             startActivity(myIntent);
@@ -470,7 +460,7 @@ public class EditarContrasenaFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -487,10 +477,7 @@ public class EditarContrasenaFragment extends Fragment {
                     });
                     dialog.show();
                 } else {
-                    final ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
+                    progressBarEditar.setVisibility(View.VISIBLE);
 
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -502,7 +489,7 @@ public class EditarContrasenaFragment extends Fragment {
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             startActivity(myIntent);
@@ -512,7 +499,7 @@ public class EditarContrasenaFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -548,11 +535,6 @@ public class EditarContrasenaFragment extends Fragment {
 
                     }
 
-                    final ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
-
                     fechaEnviarS = fechaActualS;
 
                     ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
@@ -573,16 +555,11 @@ public class EditarContrasenaFragment extends Fragment {
                     db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
                     db.close();
 
-                    progress.dismiss();
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(myIntent);
 
                 } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
-                    final ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
 
                     fechaEnviarS = fechaActualS;
                     vigencia = "0";
@@ -605,7 +582,6 @@ public class EditarContrasenaFragment extends Fragment {
                     db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
                     db.close();
 
-                    progress.dismiss();
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(myIntent);
@@ -623,11 +599,6 @@ public class EditarContrasenaFragment extends Fragment {
                     });
                     dialog.show();
                 } else {
-                    final ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
-
                     ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
@@ -638,7 +609,6 @@ public class EditarContrasenaFragment extends Fragment {
                     db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
                     db.close();
 
-                    progress.dismiss();
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(myIntent);

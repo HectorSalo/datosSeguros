@@ -10,10 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
 
         <EditText
@@ -28,6 +27,7 @@
             android:id="@+id/etBancoTarjeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTitularTarjeta"
             android:ems="10"
             android:hint="@string/banco"
             android:inputType="textPersonName" />
@@ -36,15 +36,26 @@
             android:id="@+id/etTarjeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etBancoTarjeta"
             android:ems="10"
             android:hint="@string/numeroTarjeta"
             android:inputType="number"
             android:maxLength="24" />
 
+            <ProgressBar
+                android:id="@+id/progressBarAddTarjeta"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_below="@id/etTarjeta"
+                android:indeterminateTint="@color/colorPrimaryDark"
+                android:visibility="gone" />
+
         <EditText
             android:id="@+id/etnumeroCVV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTarjeta"
             android:ems="10"
             android:hint="@string/numeroCVV"
             android:inputType="number"
@@ -54,6 +65,7 @@
             android:id="@+id/etVencimientoTarjeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etnumeroCVV"
             android:ems="10"
             android:hint="@string/vencimiento"
             android:focusable="false"/>
@@ -62,6 +74,7 @@
             android:id="@+id/etCedulaTarjeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etVencimientoTarjeta"
             android:ems="10"
             android:hint="@string/cedula"
             android:inputType="number" />
@@ -70,6 +83,7 @@
             android:id="@+id/etClaveTarjeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etCedulaTarjeta"
             android:ems="10"
             android:hint="@string/clavedeTarjeta"
             android:inputType="number"
@@ -79,6 +93,7 @@
             android:id="@+id/etTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etClaveTarjeta"
             android:ems="10"
             android:text="@string/tipodeCuenta"
             android:textSize="18sp"
@@ -88,6 +103,7 @@
             android:id="@+id/radioTarjeta"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/etTipo"
             >
 
             <RadioButton
@@ -123,6 +139,7 @@
             android:id="@+id/editTextOtroTarjeta"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/radioTarjeta"
             android:ems="10"
             android:inputType="textPersonName"
             android:hint="@string/otroTarjeta"
@@ -132,11 +149,14 @@
             android:id="@+id/guardarTarjeta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/editTextOtroTarjeta"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
             android:text="@string/buttonGuardar" />
 
-    </LinearLayout>
+
+
+        </RelativeLayout>
 
     </ScrollView>
 

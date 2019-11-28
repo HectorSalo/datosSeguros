@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -53,7 +54,7 @@ public class AddContrasenaFragment extends Fragment {
     private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
     private int duracionVigencia;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarAdd;
     private Date fechaActual;
 
 
@@ -114,6 +115,7 @@ public class AddContrasenaFragment extends Fragment {
         rbdias120 = (RadioButton) vista.findViewById(R.id.radioButton120);
         rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminado);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);
+        progressBarAdd = vista.findViewById(R.id.progressBarAddContrasena);
 
         Calendar almanaque = Calendar.getInstance();
         int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
@@ -226,10 +228,7 @@ public class AddContrasenaFragment extends Fragment {
             if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
                 Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
             } else {
-                progress = new ProgressDialog(getContext());
-                progress.setMessage("Guardando...");
-                progress.setCancelable(false);
-                progress.show();
+                progressBarAdd.setVisibility(View.VISIBLE);
 
                 String vigencia = "";
                 if (rbIndeterminado.isChecked()) {
@@ -253,7 +252,7 @@ public class AddContrasenaFragment extends Fragment {
                 db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        progress.dismiss();
+                        progressBarAdd.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
                         Intent myIntent = new Intent(getContext(), MainActivity.class);
                         startActivity(myIntent);
@@ -263,7 +262,7 @@ public class AddContrasenaFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("msg", "Error adding document", e);
-                        progress.dismiss();
+                        progressBarAdd.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -289,10 +288,6 @@ public class AddContrasenaFragment extends Fragment {
             if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
                 Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
             } else {
-                progress = new ProgressDialog(getContext());
-                progress.setMessage("Guardando...");
-                progress.setCancelable(false);
-                progress.show();
 
                 String vigencia = "";
                 if (rbIndeterminado.isChecked()) {

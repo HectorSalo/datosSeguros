@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +33,7 @@ public class InicSesionActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarInicSesion;
     private EditText usuario, contrasena;
     private GoogleSignInClient mGoogleSignInClient;
 
@@ -47,6 +48,7 @@ public class InicSesionActivity extends AppCompatActivity {
         TextView registrate = (TextView) findViewById(R.id.tvRegistrate);
         TextView cuentaGoogle = (TextView) findViewById(R.id.tvcuentaGoogle);
         TextView olvidoPass = (TextView) findViewById(R.id.tvOlvidoPass);
+        progressBarInicSesion = findViewById(R.id.progressBarInicSesion);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -150,10 +152,7 @@ public class InicSesionActivity extends AppCompatActivity {
         }
 
         if (passwordValido && emailValido) {
-            progress = new ProgressDialog(this);
-            progress.setMessage("Iniciando sesión...");
-            progress.setCancelable(false);
-            progress.show();
+            progressBarInicSesion.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -161,11 +160,11 @@ public class InicSesionActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 Log.d("msg", "signInWithEmail:success");
                                 user = mAuth.getCurrentUser();
-                                progress.dismiss();
+                                progressBarInicSesion.setVisibility(View.GONE);
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
-                                progress.dismiss();
+                                progressBarInicSesion.setVisibility(View.GONE);
                                 Log.w("msg", "signInWithEmail:failure", task.getException());
                                 Toast.makeText(InicSesionActivity.this, "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                         Toast.LENGTH_LONG).show();
@@ -197,10 +196,7 @@ public class InicSesionActivity extends AppCompatActivity {
     }
 
     public void autenticarFirebaseGoogle (GoogleSignInAccount acct) {
-        progress = new ProgressDialog(this);
-        progress.setMessage("Iniciando sesión...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarInicSesion.setVisibility(View.VISIBLE);
         Log.d("msg", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -212,13 +208,13 @@ public class InicSesionActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("msg", "signInWithCredential:success");
                             user = mAuth.getCurrentUser();
-                            progress.dismiss();
+                            progressBarInicSesion.setVisibility(View.GONE);
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("msg", "signInWithCredential:failure", task.getException());
-                            progress.dismiss();
+                            progressBarInicSesion.setVisibility(View.GONE);
                             Toast.makeText(InicSesionActivity.this, "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                     Toast.LENGTH_LONG).show();
                         }

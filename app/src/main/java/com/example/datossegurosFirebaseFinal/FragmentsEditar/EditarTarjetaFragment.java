@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.NumberPicker;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -58,6 +59,7 @@ public class EditarTarjetaFragment extends Fragment {
     private EditText etTitular, etnumeroTarjeta, etCVV, etCedula, etOtro, etBanco, etVencimiento, etClave;
     private RadioButton rbMastercard, rbVisa, rbOtro, rbMaestro;
     private FirebaseUser user;
+    private ProgressBar progressBarEditar;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -117,6 +119,7 @@ public class EditarTarjetaFragment extends Fragment {
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjetaEditar);
         rbMaestro = (RadioButton) vista.findViewById(R.id.radioButtonMaestroEditar);
         RadioGroup radioEditar = (RadioGroup) vista.findViewById(R.id.radioTarjetaEditar);
+        progressBarEditar = vista.findViewById(R.id.progressBarEditarTarjeta);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -210,10 +213,7 @@ public class EditarTarjetaFragment extends Fragment {
     }
 
     public void cargarDataFirebase() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         String idTarjeta = Utilidades.idTarjeta;
 
@@ -246,10 +246,10 @@ public class EditarTarjetaFragment extends Fragment {
                         etOtro.setText(tipo);
                     }
 
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
 
                 } else {
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
 
                 }
@@ -258,10 +258,6 @@ public class EditarTarjetaFragment extends Fragment {
     }
 
     public void cargarDataSQLite() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
 
         String idTarjeta = Utilidades.idTarjeta;
 
@@ -291,7 +287,6 @@ public class EditarTarjetaFragment extends Fragment {
                 etOtro.setText(tipo);
             }
 
-            progress.dismiss();
         }
 
     }
@@ -328,11 +323,7 @@ public class EditarTarjetaFragment extends Fragment {
                         } else if (rbOtro.isChecked()) {
                             tipo = etOtro.getText().toString();
                         }
-
-                        final ProgressDialog progress = new ProgressDialog(getContext());
-                        progress.setMessage("Guardando...");
-                        progress.setCancelable(false);
-                        progress.show();
+                        progressBarEditar.setVisibility(View.VISIBLE);
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         Map<String, Object> tarjeta = new HashMap<>();
@@ -348,7 +339,7 @@ public class EditarTarjetaFragment extends Fragment {
                         db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS).document(Utilidades.idTarjeta).set(tarjeta).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                             public void onSuccess(Void aVoid) {
-                                progress.dismiss();
+                                progressBarEditar.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                                 Intent myIntent = new Intent(getContext(), MainActivity.class);
                                 startActivity(myIntent);
@@ -358,7 +349,7 @@ public class EditarTarjetaFragment extends Fragment {
                             @Override
                             public void onFailure(@NonNull Exception e) {
                                 Log.w("msg", "Error adding document", e);
-                                progress.dismiss();
+                                progressBarEditar.setVisibility(View.GONE);
                                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -401,12 +392,6 @@ public class EditarTarjetaFragment extends Fragment {
                             tipo = etOtro.getText().toString();
                         }
 
-                        ProgressDialog progress = new ProgressDialog(getContext());
-                        progress.setMessage("Guardando...");
-                        progress.setCancelable(false);
-                        progress.show();
-
-
                         ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
                         SQLiteDatabase db = conect.getWritableDatabase();
 
@@ -423,7 +408,6 @@ public class EditarTarjetaFragment extends Fragment {
                         db.update(UtilidadesStatic.BD_TARJETAS, values, "idTarjeta=" + idTarjeta, null);
                         db.close();
 
-                        progress.dismiss();
                         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                         Intent myIntent = new Intent(getContext(), MainActivity.class);
                         startActivity(myIntent);

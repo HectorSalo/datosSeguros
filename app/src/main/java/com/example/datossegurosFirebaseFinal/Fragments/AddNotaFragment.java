@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -46,7 +47,7 @@ public class AddNotaFragment extends Fragment {
 
     private EditText titulo, contenido;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarAdd;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -99,6 +100,7 @@ public class AddNotaFragment extends Fragment {
         titulo = (EditText) vista.findViewById(R.id.etTitulo);
         contenido = (EditText) vista.findViewById(R.id.etContenido);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        progressBarAdd = vista.findViewById(R.id.progressBarAddNota);
 
         Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
@@ -158,10 +160,7 @@ public class AddNotaFragment extends Fragment {
         String tituloS = titulo.getText().toString();
         String contenidoS = contenido.getText().toString();
 
-        progress = new ProgressDialog(getContext());
-        progress.setMessage("Guardando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarAdd.setVisibility(View.VISIBLE);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
@@ -171,7 +170,7 @@ public class AddNotaFragment extends Fragment {
         db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                progress.dismiss();
+                progressBarAdd.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
                 Intent myIntent = new Intent(getContext(), MainActivity.class);
                 startActivity(myIntent);
@@ -181,7 +180,7 @@ public class AddNotaFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w("msg", "Error adding document", e);
-                progress.dismiss();
+                progressBarAdd.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });
@@ -193,11 +192,6 @@ public class AddNotaFragment extends Fragment {
 
         ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
-
-        progress = new ProgressDialog(getContext());
-        progress.setMessage("Guardando...");
-        progress.setCancelable(false);
-        progress.show();
 
         ContentValues values = new ContentValues();
         values.put(UtilidadesStatic.BD_TITULO_NOTAS, tituloS);

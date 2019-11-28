@@ -4,15 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentsEditar.EditarNotaFragment"
-    android:background="#455A64">
+    android:background="@color/colorBackgroundEditar">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
 
         <EditText
@@ -25,10 +24,20 @@
             android:textColor="#fff"
             android:textColorHint="#fff"/>
 
+        <ProgressBar
+            android:id="@+id/progressBarEditarNota"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@id/etTituloEditar"
+            android:indeterminateTint="@color/colorPrimaryDark"
+            android:visibility="gone" />
+
         <EditText
             android:id="@+id/etContenidoEditar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/etTituloEditar"
             android:paddingTop="24dp"
             android:ems="10"
             android:hint="@string/contenidoNota"
@@ -40,12 +49,13 @@
             android:id="@+id/guardarNotaEditar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/etContenidoEditar"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="48dp"
             android:text="@string/buttonGuardar" />
 
 
-    </LinearLayout>
+    </RelativeLayout>
     </ScrollView>
 
 </FrameLayout>

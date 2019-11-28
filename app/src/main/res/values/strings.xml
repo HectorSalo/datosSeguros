@@ -8,6 +8,10 @@
     <string name="sin_lista">No tiene información almacenada</string>
     <string name="perfil">Actualizar Perfil</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
+    <string name="exportar_importar">Exportar/Importar Datos</string>
+    <string name="eliminar_cuenta">Eliminar Cuenta</string>
+    <string name="tema">Cambiar Tema</string>
+
 
 
     <!-- Cardview contraseña -->
@@ -88,8 +92,6 @@
     <string name="acerca">Información de App</string>
     <string name="desarrollado">Desarrollado por</string>
     <string name="skysam">Inversiones SkySam, C.A.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="atencion_cliente">Atención al usuario:</string>
 
     <!-- Acerca -->
@@ -150,5 +152,10 @@
     <string name="repitaPIN">Repita PIN:</string>
     <string name="buttonAceptar">Aceptar</string>
     <string name="pinRespaldo">Acceder con PIN</string>
+
+
+    <string name="explicacion_importar_exportar">Sólo puede importar/exportar los datos almacenados en el Dispositivo.</string>
+    <string name="explicacion_eliminar_cuenta">Se eliminarán todos los datos asociados a su cuenta (en la Nube y Dispositivo). Esta acción no se puede deshacer. \n¿Continuar?</string>
+    <string name="explicacion_escoger_almacenamiento">Puede guardar algunos datos en la nube y otros en su dispositivo, de acuerdo a su preferencia. Para intercambiar el lugar, ingrese a Actualizar Mi Perfil. \nEscoja con cuál desea inciar</string>
 
 </resources>

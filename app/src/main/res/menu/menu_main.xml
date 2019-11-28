@@ -8,8 +8,23 @@
         />
 
     <item
+        android:title="@string/exportar_importar"
+        android:id="@+id/menu_exportar_importar"
+        />
+
+    <item
+        android:title="@string/tema"
+        android:id="@+id/menu_tema"
+        />
+
+    <item
         android:title="@string/cerrarSesion"
         android:id="@+id/menu_cerrar_sesion"
+        />
+
+    <item
+        android:title="@string/eliminar_cuenta"
+        android:id="@+id/menu_eliminar_cuenta"
         />
 
     <item

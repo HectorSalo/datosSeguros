@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -50,7 +51,7 @@ public class AddCuentasFragment extends Fragment {
     private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente;
     private FirebaseUser user;
-    private ProgressDialog progress;
+    private ProgressBar progressBarAdd;
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
 
@@ -110,6 +111,7 @@ public class AddCuentasFragment extends Fragment {
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
         spinnerDocumento = (Spinner) vista.findViewById(R.id.spinnerTipoDocumento);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        progressBarAdd = vista.findViewById(R.id.progressBarAddCuenta);
 
 
         String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
@@ -201,10 +203,7 @@ public class AddCuentasFragment extends Fragment {
                 if (cuentaNumero.length() != 20) {
                     Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
                 } else {
-                    progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
+                    progressBarAdd.setVisibility(View.VISIBLE);
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> cuentaBancaria = new HashMap<>();
@@ -230,7 +229,7 @@ public class AddCuentasFragment extends Fragment {
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS).add(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-                            progress.dismiss();
+                            progressBarAdd.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             startActivity(myIntent);
@@ -240,7 +239,7 @@ public class AddCuentasFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
+                            progressBarAdd.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -278,10 +277,6 @@ public class AddCuentasFragment extends Fragment {
                 if (cuentaNumero.length() != 20) {
                     Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
                 } else {
-                    progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
 
                     ContentValues values = new ContentValues();
                     values.put(UtilidadesStatic.BD_TITULAR_BANCO, titular);

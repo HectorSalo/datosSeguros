@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -54,7 +55,7 @@ public class EditarCuentasFragment extends Fragment {
 
     private EditText etTitular, etBanco, etnumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente;
-    private ProgressDialog progress;
+    private ProgressBar progressBarEditar;
     private FirebaseUser user;
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
@@ -114,6 +115,7 @@ public class EditarCuentasFragment extends Fragment {
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorrienteEditar);
         spinnerDocumento = (Spinner) vista.findViewById(R.id.spinnerTipoDocumentoEditar);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        progressBarEditar = vista.findViewById(R.id.progressBarEditarCuenta);
 
 
         String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
@@ -181,10 +183,7 @@ public class EditarCuentasFragment extends Fragment {
     }
 
     public void cargarDataFirebase() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         String idCuenta = Utilidades.idCuenta;
 
@@ -228,10 +227,10 @@ public class EditarCuentasFragment extends Fragment {
                         rbCorriente.setChecked(true);
                     }
 
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
 
                 } else {
-                    progress.dismiss();
+                    progressBarEditar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
 
                 }
@@ -240,10 +239,6 @@ public class EditarCuentasFragment extends Fragment {
     }
 
     public void cargarDataSQLite() {
-        final ProgressDialog progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
 
         String idCuenta = Utilidades.idCuenta;
 
@@ -282,7 +277,6 @@ public class EditarCuentasFragment extends Fragment {
                 etTelefono.setText(telefono);
             }
 
-            progress.dismiss();
         }
 
     }
@@ -314,10 +308,7 @@ public class EditarCuentasFragment extends Fragment {
                 if (cuentaNumero.length() != 20) {
                     Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
                 } else {
-                    progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
+                    progressBarEditar.setVisibility(View.VISIBLE);
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> cuentaBancaria = new HashMap<>();
@@ -343,7 +334,7 @@ public class EditarCuentasFragment extends Fragment {
                     db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS).document(Utilidades.idCuenta).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                             Intent myIntent = new Intent(getContext(), MainActivity.class);
                             startActivity(myIntent);
@@ -353,7 +344,7 @@ public class EditarCuentasFragment extends Fragment {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             Log.w("msg", "Error adding document", e);
-                            progress.dismiss();
+                            progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -389,11 +380,6 @@ public class EditarCuentasFragment extends Fragment {
                 if (cuentaNumero.length() != 20) {
                     Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
                 } else {
-                    ProgressDialog progress = new ProgressDialog(getContext());
-                    progress.setMessage("Guardando...");
-                    progress.setCancelable(false);
-                    progress.show();
-
                     ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
@@ -420,7 +406,6 @@ public class EditarCuentasFragment extends Fragment {
                     db.update(UtilidadesStatic.BD_CUENTAS, values, "idCuenta=" + idCuenta, null);
                     db.close();
 
-                    progress.dismiss();
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                     Intent myIntent = new Intent(getContext(), MainActivity.class);
                     startActivity(myIntent);

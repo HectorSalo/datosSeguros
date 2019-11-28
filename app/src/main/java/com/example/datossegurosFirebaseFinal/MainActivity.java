@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -79,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private Date fechaMomento;
     private int listaBuscar;
     private ConexionSQLite conect;
-    private String seleccion;
+    private ProgressBar progressBarCargar;
     private SharedPreferences preferences;
 
 
@@ -156,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         fechaMomento = almanaque.getTime();
 
         sinLista = (TextView) findViewById(R.id.tvSinLista);
+        progressBarCargar = findViewById(R.id.progressBarCargar);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         conect = new ConexionSQLite(getApplicationContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
@@ -207,6 +210,51 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         } else if (id == R.id.menu_perfil) {
             startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
             return  true;
+        } else if (id == R.id.menu_exportar_importar) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("¿Qué desea hacer?")
+                    .setMessage(R.string.explicacion_importar_exportar)
+                    .setPositiveButton("Importar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNegativeButton("Exportar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+            return true;
+        } else if (id == R.id.menu_tema) {
+            return true;
+        } else if (id == R.id.menu_eliminar_cuenta) {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
+            dialog.setTitle("¡Advertencia!")
+                    .setMessage(R.string.explicacion_eliminar_cuenta)
+                    .setIcon(R.drawable.ic_advertencia)
+                    .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    })
+                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+            return true;
         } else if (id == R.id.menu_cerrar_sesion) {
             cerrarSesion();
             return true;
@@ -223,82 +271,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         cerrarSesion();
     }
 
-    public void seleccionarBloqueo() {
-        /*boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
-        boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
-        boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
-        int escogencia;
-        seleccion = "";
-        final String [] opciones = getResources().getStringArray(R.array.selectBloqueo);
-
-        if (huella) {
-            escogencia = 0;
-            seleccion = opciones[0];
-        } else if (pin) {
-            escogencia = 2;
-            seleccion = opciones[2];
-        } else {
-            escogencia = 3;
-            seleccion = opciones[3];
-        }
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
-
-        dialog.setTitle("Escoger bloqueo de la aplicación.")
-                .setSingleChoiceItems(R.array.selectBloqueo, escogencia, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        seleccion = opciones[which];
-                    }
-                })
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (seleccion.equals("Huella Digital")) {
-                            Utilidades.conf_bloqueo = 1;
-                            startActivity(new Intent(MainActivity.this, BloqueoActivity.class));
-                        } else if (seleccion.equals("Patrón")) {
-                            *//*SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
-                            editor.putBoolean(UtilidadesStatic.PATRON, true);
-                            editor.putBoolean(UtilidadesStatic.PIN, false);
-                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();*//*
-                            Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
-                        } else if (seleccion.equals("PIN")) {
-                            *//*SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(UtilidadesStatic.HUELLA, false);
-                            editor.putBoolean(UtilidadesStatic.PATRON, false);
-                            editor.putBoolean(UtilidadesStatic.PIN, true);
-                            editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-                            editor.commit();*//*
-                            Toast.makeText(getApplicationContext(), "Aun no esta listo Genesy... Esperate!!!", Toast.LENGTH_LONG).show();
-                        } else if (seleccion.equals("Sin Bloqueo")) {
-                            Utilidades.conf_bloqueo = 4;
-                            configurarSinBloqueo();
-                        }
-                    }
-                }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-        dialog.show();*/
-    }
-
     public void seleccionAlmacenamiento () {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Escoja lugar de almacenamiento")
-                .setMessage("Puede guardar algunos datos en la nube y otros en su dispositivo, de acuerdo a su preferencia. Para intercambiar el lugar, ingrese a Actualizar Mi Perfil. Escoja con cuál desea inciar")
+                .setMessage(R.string.explicacion_escoger_almacenamiento)
                 .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final ProgressDialog progress = new ProgressDialog(MainActivity.this);
-                        progress.setMessage("Cargando...");
-                        progress.setCancelable(false);
-                        progress.show();
+                        progressBarCargar.setVisibility(View.VISIBLE);
                         String userID = user.getUid();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -311,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             @Override
                             public void onSuccess(Void aVoid) {
                                 Log.d("msg", "Succes");
-                                progress.dismiss();
+                                progressBarCargar.setVisibility(View.GONE);
                                 recreate();
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -319,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             public void onFailure(@NonNull Exception e) {
                                 Log.w("msg", "Error adding document", e);
                                 Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                                progress.dismiss();
+                                progressBarCargar.setVisibility(View.GONE);
                                 seleccionAlmacenamiento();
                             }
                         });
@@ -328,10 +309,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                final ProgressDialog progress = new ProgressDialog(MainActivity.this);
-                progress.setMessage("Cargando...");
-                progress.setCancelable(false);
-                progress.show();
+                progressBarCargar.setVisibility(View.VISIBLE);
                 String userID = user.getUid();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -344,14 +322,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("msg", "Succes");
-                        progress.dismiss();
+                        progressBarCargar.setVisibility(View.GONE);
                         recreate();
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("msg", "Error adding document", e);
-                        progress.dismiss();
+                        progressBarCargar.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                         seleccionAlmacenamiento();
                     }
@@ -364,10 +342,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     public void escogenciaAlmacenamiento() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
         CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO);
@@ -386,14 +361,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     }
 
                     validarEscogencia();
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d ("msg", "Failed", e);
-                progress.dismiss();
+                progressBarCargar.setVisibility(View.GONE);
             }
         });
     }
@@ -409,10 +384,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     private void verContrasenaFirebase() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         listContrasena = new ArrayList<>();
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
@@ -463,9 +435,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     } else {
                         sinLista.setVisibility(View.GONE);
                     }
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                 } else {
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -476,10 +448,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     private void verCuentasBancariasFirebase() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         listBancos = new ArrayList<>();
         adapterBanco = new BancoAdapter(listBancos, this);
@@ -514,10 +483,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     } else {
                         sinLista.setVisibility(View.GONE);
                     }
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
 
                 } else {
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -527,10 +496,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     private void verTarjetasFirebase() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         listTarjetas = new ArrayList<>();
         adapterTarjeta = new AdapterTarjeta(listTarjetas, this);
@@ -565,9 +531,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     } else {
                         sinLista.setVisibility(View.GONE);
                     }
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                 } else {
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -577,10 +543,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     private void verNotasFirebase() {
-        final ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         listNota = new ArrayList<>();
         adapterNota = new NotaAdapter(listNota, this);
@@ -609,10 +572,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     } else {
                         sinLista.setVisibility(View.GONE);
                     }
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
 
                 } else {
-                    progress.dismiss();
+                    progressBarCargar.setVisibility(View.GONE);
                     Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -620,10 +583,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     public void verContrasenasSQLite() {
-        ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
 
         listContrasena = new ArrayList<>();
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
@@ -673,19 +633,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterContrasena.updateList(listContrasena);
         if (listContrasena.isEmpty()) {
             sinLista.setVisibility(View.VISIBLE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         } else {
             sinLista.setVisibility(View.GONE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         }
 
     }
 
     public void verCuentasBancariasSQLite() {
-        ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
 
         listBancos = new ArrayList<>();
         adapterBanco = new BancoAdapter(listBancos, this);
@@ -712,18 +669,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterBanco.updateList(listBancos);
         if (listBancos.isEmpty()) {
             sinLista.setVisibility(View.VISIBLE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         } else {
             sinLista.setVisibility(View.GONE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         }
     }
 
     public void verTarjetasSQLite() {
-        ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
 
         listTarjetas = new ArrayList<>();
         adapterTarjeta = new AdapterTarjeta(listTarjetas, this);
@@ -751,18 +705,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterTarjeta.updateList(listTarjetas);
         if (listTarjetas.isEmpty()) {
             sinLista.setVisibility(View.VISIBLE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         } else {
             sinLista.setVisibility(View.GONE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         }
     }
 
     public void verNotasSQLite() {
-        ProgressDialog progress = new ProgressDialog(this);
-        progress.setMessage("Cargando...");
-        progress.setCancelable(false);
-        progress.show();
+        progressBarCargar.setVisibility(View.VISIBLE);
 
         listNota = new ArrayList<>();
         adapterNota = new NotaAdapter(listNota, this);
@@ -784,10 +735,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterNota.updateList(listNota);
         if (listNota.isEmpty()) {
             sinLista.setVisibility(View.VISIBLE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         } else {
             sinLista.setVisibility(View.GONE);
-            progress.dismiss();
+            progressBarCargar.setVisibility(View.GONE);
         }
     }
 
