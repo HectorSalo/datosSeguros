@@ -4,6 +4,8 @@
     <string name="title_cuentas">Cuentas Bancarias</string>
     <string name="title_tarjetas">Tarjetas Bancarias</string>
     <string name="title_notas">Notas</string>
+    <string name="title_tema">Temas</string>
+    <string name="title_activity_add">Agregar Datos</string>
     <string name="buttonGuardar">Guardar</string>
     <string name="sin_lista">No tiene información almacenada</string>
     <string name="perfil">Actualizar Perfil</string>
@@ -11,7 +13,6 @@
     <string name="exportar_importar">Exportar/Importar Datos</string>
     <string name="eliminar_cuenta">Eliminar Cuenta</string>
     <string name="tema">Cambiar Tema</string>
-
 
 
     <!-- Cardview contraseña -->
@@ -158,4 +159,9 @@
     <string name="explicacion_eliminar_cuenta">Se eliminarán todos los datos asociados a su cuenta (en la Nube y Dispositivo). Esta acción no se puede deshacer. \n¿Continuar?</string>
     <string name="explicacion_escoger_almacenamiento">Puede guardar algunos datos en la nube y otros en su dispositivo, de acuerdo a su preferencia. Para intercambiar el lugar, ingrese a Actualizar Mi Perfil. \nEscoja con cuál desea inciar</string>
 
+    <!-- Tema -->
+    <string name="button_amarillo">Amarillo</string>
+    <string name="button_rojo">Rojo</string>
+    <string name="button_marron">Marrón</string>
+    <string name="button_lila">Lila</string>
 </resources>

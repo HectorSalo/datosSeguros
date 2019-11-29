@@ -2,6 +2,7 @@ package com.example.datossegurosFirebaseFinal;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +23,8 @@ import com.example.datossegurosFirebaseFinal.Fragments.AddNotaFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddTarjetaFragment;
 import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
 
+import io.grpc.internal.SharedResourceHolder;
+
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
         AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {
 
@@ -29,10 +33,31 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
     private AddCuentasFragment addCuentasFragment;
     private AddTarjetaFragment addTarjetaFragment;
     private AddNotaFragment addNotaFragment;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                setTheme(R.style.AppTheme);
+                break;
+            case "Rojo":
+                setTheme(R.style.AppThemeRojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
+
+
         setContentView(R.layout.activity_add);
 
         spinnerOpciones = (Spinner) findViewById(R.id.spinnerOpciones);

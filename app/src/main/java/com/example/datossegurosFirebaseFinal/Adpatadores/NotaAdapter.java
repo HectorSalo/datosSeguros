@@ -6,8 +6,10 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -58,6 +61,23 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderNota viewHolderNota, final int i) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
+                break;
+            case "Rojo":
+                viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
 
         viewHolderNota.titulo.setText(listNota.get(i).getTitulo());
         viewHolderNota.contenido.setText(listNota.get(i).getContenido());
@@ -129,6 +149,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     public class ViewHolderNota extends RecyclerView.ViewHolder {
 
         TextView titulo, contenido, menu;
+        CardView cardView;
 
         public ViewHolderNota(@NonNull View itemView) {
             super(itemView);
@@ -136,6 +157,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
             titulo = (TextView) itemView.findViewById(R.id.tvTituloNota);
             contenido = (TextView) itemView.findViewById(R.id.tvcontenidoNota);
             menu = (TextView) itemView.findViewById(R.id.tvmenuNota);
+            cardView = itemView.findViewById(R.id.cardviewNota);
         }
     }
 

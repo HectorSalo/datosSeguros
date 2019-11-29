@@ -3,6 +3,7 @@
     package="com.example.datossegurosFirebaseFinal">
 
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,6 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".TemasActivity"
+            android:theme="@style/Theme.Dialog.MiPerfil"
+            android:label="@string/title_tema"></activity>
         <activity android:name=".BloqueoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,17 +24,17 @@
         <activity
             android:name=".PerfilActivity"
             android:label="@string/titleMiPerfil"
-            android:theme="@style/Theme.Dialog.MiPerfil" />
+            android:theme="@style/Theme.Dialog.MiPerfil"/>
         <activity android:name=".AcercaActivity" />
         <activity android:name=".EditarActivity" />
         <activity android:name=".RegistrarActivity" />
-        <activity android:name=".InicSesionActivity">
-
-        </activity>
-        <activity android:name=".AddActivity" />
+        <activity android:name=".InicSesionActivity"></activity>
+        <activity android:name=".AddActivity"
+            android:label="@string/title_activity_add"/>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name" />
+            android:label="@string/app_name"
+            />
 
         <meta-data
             android:name="preloaded_fonts"

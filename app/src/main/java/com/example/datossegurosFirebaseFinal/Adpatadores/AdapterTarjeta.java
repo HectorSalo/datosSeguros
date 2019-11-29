@@ -6,8 +6,10 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -59,6 +62,23 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, final int i) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
+                break;
+            case "Rojo":
+                viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
 
         viewHolderTarjeta.titular.setText(listTarjeta.get(i).getTitular());
         viewHolderTarjeta.numeroTarjeta.setText(String.valueOf(listTarjeta.get(i).getNumeroTarjeta()));
@@ -136,6 +156,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     public class ViewHolderTarjeta extends RecyclerView.ViewHolder {
 
         TextView titular, numeroTarjeta, numeroCVV, cedula, tipoTarjeta, menu, banco, vencimiento, clave;
+        CardView cardView;
 
         public ViewHolderTarjeta(@NonNull View itemView) {
             super(itemView);
@@ -149,6 +170,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
             banco = (TextView) itemView.findViewById(R.id.tvBancoTarjeta);
             vencimiento = (TextView) itemView.findViewById(R.id.tvVencimientoTarjeta);
             clave = (TextView) itemView.findViewById(R.id.tvClaveTarjeta);
+            cardView = itemView.findViewById(R.id.cardviewTarjeta);
         }
     }
 

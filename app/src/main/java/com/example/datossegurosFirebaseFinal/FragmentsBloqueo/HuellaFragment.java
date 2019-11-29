@@ -15,6 +15,7 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +104,7 @@ public class HuellaFragment extends Fragment {
         final TextInputLayout tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPINRespaldo);
         Button registrarPin = (Button) vista.findViewById(R.id.buttonRegistrarPINRespaldo);
 
-        SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         pinGuardado = preferences.getString(UtilidadesStatic.PIN_RESPALDO, "0000");
 
         if (Utilidades.conf_bloqueo != 1000) {
@@ -232,7 +233,7 @@ public class HuellaFragment extends Fragment {
     }
 
     public void guardarPIN(String pin) {
-        SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(UtilidadesStatic.HUELLA, true);
         editor.putBoolean(UtilidadesStatic.PIN, false);

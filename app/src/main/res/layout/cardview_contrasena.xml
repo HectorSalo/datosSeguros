@@ -6,6 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardviewListas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -21,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@drawable/fondo_contrasena"
+
             >
 
             <LinearLayout
@@ -68,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -92,7 +93,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
 
@@ -116,7 +117,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="start"
                     android:text="TextView"
-                    android:textSize="18dp"
+                    android:textSize="18sp"
                     android:textColor="#fff"/>
             </LinearLayout>
         </LinearLayout>
@@ -129,7 +130,7 @@
             android:gravity="center"
             android:paddingEnd="16dp"
             android:text="&#8942;"
-            android:textSize="18dp"
+            android:textSize="18sp"
             android:textColor="#fff"/>
     </androidx.cardview.widget.CardView>
 

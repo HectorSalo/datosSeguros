@@ -8,9 +8,11 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -23,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -67,6 +70,23 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
 
     @Override
     public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
+                break;
+            case "Rojo":
+                viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
 
         viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
         viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
@@ -156,6 +176,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     public class ViewHolderContrasena extends RecyclerView.ViewHolder {
 
         TextView servicio, usuario, contrasena, vencimiento, menu;
+        CardView cardView;
 
         public ViewHolderContrasena(@NonNull View itemView) {
             super(itemView);
@@ -165,6 +186,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
             contrasena = (TextView) itemView.findViewById(R.id.tvContrasena);
             vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
             menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
+            cardView = itemView.findViewById(R.id.cardviewListas);
         }
     }
 

@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.example.datossegurosFirebaseFinal.FragmentsEditar.EditarContrasenaFragment;
 import com.example.datossegurosFirebaseFinal.FragmentsEditar.EditarCuentasFragment;
@@ -19,6 +21,25 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                setTheme(R.style.AppTheme);
+                break;
+            case "Rojo":
+                setTheme(R.style.AppThemeRojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
+
         setContentView(R.layout.activity_editar);
 
         EditarContrasenaFragment editarContrasenaFragment = new EditarContrasenaFragment();

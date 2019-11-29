@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".InicSesionActivity"
-    android:background="@color/colorPrimary">
+    android:id="@+id/constraintInicio"
+    >
 
     <TextView
         android:id="@+id/textView"

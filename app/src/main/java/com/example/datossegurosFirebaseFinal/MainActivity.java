@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -82,7 +86,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int listaBuscar;
     private ConexionSQLite conect;
     private ProgressBar progressBarCargar;
-    private SharedPreferences preferences;
+    private SharedPreferences sharedPreferences;
+    private ConstraintLayout constraintLayout;
 
 
 
@@ -144,6 +149,24 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                setTheme(R.style.AppTheme);
+                break;
+            case "Rojo":
+                setTheme(R.style.AppThemeRojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
+
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -159,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         sinLista = (TextView) findViewById(R.id.tvSinLista);
         progressBarCargar = findViewById(R.id.progressBarCargar);
+        constraintLayout = findViewById(R.id.containerMain);
 
         user = FirebaseAuth.getInstance().getCurrentUser();
         conect = new ConexionSQLite(getApplicationContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
@@ -167,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setHasFixedSize(true);
 
-        preferences = getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
         Utilidades.Add = 0;
 
         fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
@@ -178,6 +201,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 startActivity(new Intent(MainActivity.this, AddActivity.class));
             }
         });
+
+        switch (tema){
+            case "Amarillo":
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
+                fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDark)));
+                progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDark)), PorterDuff.Mode.SRC_IN);
+                break;
+            case "Rojo":
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentRojo));
+                fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)));
+                progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)), PorterDuff.Mode.SRC_IN);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
 
 
         escogenciaAlmacenamiento();
@@ -235,6 +275,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     .show();
             return true;
         } else if (id == R.id.menu_tema) {
+            startActivity(new Intent(this, TemasActivity.class));
             return true;
         } else if (id == R.id.menu_eliminar_cuenta) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
@@ -845,7 +886,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     public void configurarSinBloqueo() {
-        SharedPreferences.Editor editor = preferences.edit();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putBoolean(UtilidadesStatic.HUELLA, false);
         editor.putBoolean(UtilidadesStatic.PIN, false);
         editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, true);

@@ -6,8 +6,10 @@ import android.content.Context;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
@@ -59,6 +62,23 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderBanco viewHolderBanco, final int i) {
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
+                break;
+            case "Rojo":
+                viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
+                break;
+            case "Marron":
+                break;
+            case "Lila":
+                break;
+        }
 
         viewHolderBanco.titular.setText(listBanco.get(i).getTitular());
         viewHolderBanco.banco.setText(listBanco.get(i).getBanco());
@@ -136,6 +156,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     public class ViewHolderBanco extends RecyclerView.ViewHolder {
 
         TextView titular, banco, numeroCuenta, cedula, tipo, telefono, menu, correo, tipoDocumento;
+        CardView cardView;
 
         public ViewHolderBanco(@NonNull View itemView) {
             super(itemView);
@@ -149,6 +170,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
             correo = (TextView) itemView.findViewById(R.id.tvCorreoCuenta);
             menu = (TextView) itemView.findViewById(R.id.tvmenuBanco);
             tipoDocumento = (TextView) itemView.findViewById(R.id.tvTipoDocumento);
+            cardView = itemView.findViewById(R.id.cardviewCuenta);
 
         }
     }

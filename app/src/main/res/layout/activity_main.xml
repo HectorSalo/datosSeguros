@@ -8,11 +8,11 @@
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container"
+        android:id="@+id/containerMain"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity"
-        android:background="@color/colorAccent">
+        >
 
 
         <androidx.recyclerview.widget.RecyclerView
@@ -49,7 +49,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="56dp"
-        android:backgroundTint="@color/colorPrimaryDark"
         >
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
@@ -72,7 +71,6 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         android:layout_gravity="center"
-        android:indeterminateTint="@color/colorPrimaryDark"
         android:visibility="visible" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +39,7 @@ public class PINFragment extends Fragment {
     private TextView tvPinTitle;
     private String pinGuardado;
     private TextInputLayout tlPinRepetir;
+    private SharedPreferences preferences;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -90,7 +92,7 @@ public class PINFragment extends Fragment {
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
         tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPIN);
 
-        SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         final boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
         final boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
         boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
@@ -162,7 +164,6 @@ public class PINFragment extends Fragment {
 
         if (pin.equals(pinGuardado)) {
             if (Utilidades.conf_bloqueo == UtilidadesStatic.HUELLA_INT) {
-                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(UtilidadesStatic.HUELLA, false);
                 editor.putBoolean(UtilidadesStatic.PIN, false);
@@ -172,7 +173,6 @@ public class PINFragment extends Fragment {
                 startActivity(new Intent(getContext(), BloqueoActivity.class));
 
             } else if (Utilidades.conf_bloqueo == UtilidadesStatic.PIN_INT) {
-                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(UtilidadesStatic.HUELLA, false);
                 editor.putBoolean(UtilidadesStatic.PIN, false);
@@ -182,7 +182,6 @@ public class PINFragment extends Fragment {
                 startActivity(new Intent(getContext(), BloqueoActivity.class));
 
             } else if (Utilidades.conf_bloqueo == UtilidadesStatic.SIN_BLOQUEO_INT) {
-                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(UtilidadesStatic.HUELLA, false);
                 editor.putBoolean(UtilidadesStatic.PIN, false);
@@ -232,7 +231,6 @@ public class PINFragment extends Fragment {
 
         if (pin1 && pin2) {
             if (pin.equals(pinRepetir)) {
-                SharedPreferences preferences = getActivity().getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = preferences.edit();
                 editor.putBoolean(UtilidadesStatic.HUELLA, false);
                 editor.putBoolean(UtilidadesStatic.PIN, true);

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 import com.example.datossegurosFirebaseFinal.FragmentsBloqueo.HuellaFragment;
 import com.example.datossegurosFirebaseFinal.FragmentsBloqueo.PINFragment;
@@ -21,9 +22,8 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bloqueo);
 
-        SharedPreferences preferences = getSharedPreferences(UtilidadesStatic.BLOQUEO, Context.MODE_PRIVATE);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
-        boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
         boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
 
         HuellaFragment huellaFragment = new HuellaFragment();
