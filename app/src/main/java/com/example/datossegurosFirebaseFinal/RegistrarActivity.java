@@ -52,6 +52,7 @@ public class RegistrarActivity extends AppCompatActivity {
                 setTheme(R.style.AppThemeMarron);
                 break;
             case "Lila":
+                setTheme(R.style.AppThemeLila);
                 break;
         }
 
@@ -78,6 +79,8 @@ public class RegistrarActivity extends AppCompatActivity {
                 progressBarRegistrar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)), PorterDuff.Mode.SRC_IN);
                 break;
             case "Lila":
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentLila));
+                progressBarRegistrar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkLila)), PorterDuff.Mode.SRC_IN);
                 break;
         }
 

@@ -55,6 +55,7 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
                 setTheme(R.style.AppThemeMarron);
                 break;
             case "Lila":
+                setTheme(R.style.AppThemeLila);
                 break;
         }
 

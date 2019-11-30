@@ -36,6 +36,7 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
                 setTheme(R.style.AppThemeMarron);
                 break;
             case "Lila":
+                setTheme(R.style.AppThemeLila);
                 break;
         }
         setContentView(R.layout.activity_bloqueo);

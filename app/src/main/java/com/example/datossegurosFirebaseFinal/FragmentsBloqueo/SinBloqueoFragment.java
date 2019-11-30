@@ -99,6 +99,8 @@ public class SinBloqueoFragment extends Fragment {
                 textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkMarron));
                 break;
             case "Lila":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentLila));
+                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkLila));
                 break;
         }
 

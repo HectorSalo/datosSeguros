@@ -78,6 +78,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
                 viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
             case "Lila":
+                viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_listas_lila);
                 break;
         }
 

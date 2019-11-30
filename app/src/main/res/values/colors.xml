@@ -14,6 +14,10 @@
     <color name="colorPrimaryDarkMarron">#AD6D3F</color>
     <color name="colorAccentMarron">#3e2723</color>
 
+    <color name="colorPrimaryLila">#ba68c8</color>
+    <color name="colorPrimaryDarkLila">#8e24aa</color>
+    <color name="colorAccentLila">#3B0250</color>
+
     <color name="colorRed">#b71c1c</color>
     <color name="colorBackgroundEditar">#455A64</color>
 

@@ -38,6 +38,7 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
                 setTheme(R.style.AppThemeMarron);
                 break;
             case "Lila":
+                setTheme(R.style.AppThemeLila);
                 break;
         }
 

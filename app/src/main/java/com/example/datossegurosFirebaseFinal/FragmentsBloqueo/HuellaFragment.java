@@ -121,6 +121,7 @@ public class HuellaFragment extends Fragment {
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
                 break;
             case "Lila":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentLila));
                 break;
         }
 
