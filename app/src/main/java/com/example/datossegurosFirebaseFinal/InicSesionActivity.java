@@ -60,6 +60,7 @@ public class InicSesionActivity extends AppCompatActivity {
                 setTheme(R.style.AppThemeRojo);
                 break;
             case "Marron":
+                setTheme(R.style.AppThemeMarron);
                 break;
             case "Lila":
                 break;
@@ -84,6 +85,7 @@ public class InicSesionActivity extends AppCompatActivity {
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryRojo));
                 break;
             case "Marron":
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryMarron));
                 break;
             case "Lila":
                 break;

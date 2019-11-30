@@ -4,10 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentsBloqueo.SinBloqueoFragment"
-    android:background="@color/colorAccent">
+    android:id="@+id/fragmentSinBloqueo">
 
-    <!-- TODO: Update blank fragment layout -->
+
     <TextView
+        android:id="@+id/tvBienvenido"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center|center_horizontal|center_vertical"
@@ -15,6 +16,6 @@
         android:gravity="center"
         android:text="@string/hello_blank_fragment"
         android:textSize="42sp"
-        android:textColor="@color/colorPrimaryDark"/>
+        />
 
 </FrameLayout>

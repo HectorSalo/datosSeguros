@@ -9,6 +9,11 @@
     <color name="colorPrimaryDarkRojo">#c0f44336</color>
     <color name="colorAccentRojo">#212121</color>
 
+
+    <color name="colorPrimaryMarron">#FFCC80</color>
+    <color name="colorPrimaryDarkMarron">#AD6D3F</color>
+    <color name="colorAccentMarron">#3e2723</color>
+
     <color name="colorRed">#b71c1c</color>
     <color name="colorBackgroundEditar">#455A64</color>
 

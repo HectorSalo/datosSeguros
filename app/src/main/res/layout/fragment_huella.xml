@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FragmentsBloqueo.HuellaFragment"
-    android:background="@color/colorAccent">
+    android:background="@color/colorAccent"
+    android:id="@+id/fragmentHuella">
 
 
     <LinearLayout

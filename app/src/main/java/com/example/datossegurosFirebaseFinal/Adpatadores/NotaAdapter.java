@@ -74,6 +74,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                 viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
             case "Marron":
+                viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
             case "Lila":
                 break;

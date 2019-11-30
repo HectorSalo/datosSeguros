@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -103,9 +104,25 @@ public class HuellaFragment extends Fragment {
         final LinearLayout linearPin = vista.findViewById(R.id.linearPIN);
         final TextInputLayout tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPINRespaldo);
         Button registrarPin = (Button) vista.findViewById(R.id.buttonRegistrarPINRespaldo);
+        FrameLayout frameLayout = vista.findViewById(R.id.fragmentHuella);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         pinGuardado = preferences.getString(UtilidadesStatic.PIN_RESPALDO, "0000");
+        String tema = preferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                break;
+            case "Rojo":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentRojo));
+                break;
+            case "Marron":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
+                break;
+            case "Lila":
+                break;
+        }
 
         if (Utilidades.conf_bloqueo != 1000) {
             tvAccederPin.setVisibility(View.GONE);

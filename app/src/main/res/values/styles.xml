@@ -15,8 +15,20 @@
         <item name="colorAccent">@color/md_grey_900</item>
     </style>
 
+    <style name="AppThemeMarron" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimaryMarron</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkMarron</item>
+        <item name="colorAccent">@color/colorAccentMarron</item>
+    </style>
+
     <style name="etiqueta">
         <item name="android:textColor">#fff</item>
+    </style>
+
+    <style name="Theme.Acerca" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">#000000</item>
+
     </style>
 
     <style name="Theme.Dialog.MiPerfil" parent="Theme.MaterialComponents.Dialog.Alert">
@@ -26,6 +38,11 @@
 
     <style name="Theme.Dialog.MiPerfilRojo" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">@color/md_red_900</item>
+
+    </style>
+
+    <style name="Theme.Dialog.MiPerfilMarron" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimaryMarron</item>
 
     </style>
 

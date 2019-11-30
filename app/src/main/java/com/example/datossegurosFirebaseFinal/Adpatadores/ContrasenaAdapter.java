@@ -83,6 +83,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                 viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
             case "Marron":
+                viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
             case "Lila":
                 break;

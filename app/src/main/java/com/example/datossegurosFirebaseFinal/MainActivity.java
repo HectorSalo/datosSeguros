@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 setTheme(R.style.AppThemeRojo);
                 break;
             case "Marron":
+                setTheme(R.style.AppThemeMarron);
                 break;
             case "Lila":
                 break;
@@ -214,6 +215,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)), PorterDuff.Mode.SRC_IN);
                 break;
             case "Marron":
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentMarron));
+                fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)));
+                progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)), PorterDuff.Mode.SRC_IN);
                 break;
             case "Lila":
                 break;

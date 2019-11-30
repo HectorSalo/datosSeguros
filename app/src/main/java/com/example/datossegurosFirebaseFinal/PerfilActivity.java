@@ -59,6 +59,7 @@ public class PerfilActivity extends AppCompatActivity {
                 setTheme(R.style.Theme_Dialog_MiPerfilRojo);
                 break;
             case "Marron":
+                setTheme(R.style.Theme_Dialog_MiPerfilMarron);
                 break;
             case "Lila":
                 break;

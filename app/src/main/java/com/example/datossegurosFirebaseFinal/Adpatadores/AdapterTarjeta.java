@@ -75,6 +75,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                 viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
             case "Marron":
+                viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
             case "Lila":
                 break;

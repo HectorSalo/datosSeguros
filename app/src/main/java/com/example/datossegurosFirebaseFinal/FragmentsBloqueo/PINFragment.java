@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.preference.PreferenceManager;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -91,12 +93,32 @@ public class PINFragment extends Fragment {
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPIN);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
         tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPIN);
+        FrameLayout frameLayout = vista.findViewById(R.id.fragmentPin);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         final boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
         final boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
         boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
         pinGuardado = preferences.getString(UtilidadesStatic.PIN_RESPALDO, "0000");
+
+
+        String tema = preferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+
+                break;
+            case "Rojo":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentRojo));
+
+                break;
+            case "Marron":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
+                break;
+            case "Lila":
+                break;
+        }
 
         if (huella || pin) {
             tvPinTitle.setText("Ingrese PIN almacenado");

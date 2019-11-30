@@ -20,11 +20,28 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                setTheme(R.style.AppTheme);
+                break;
+            case "Rojo":
+                setTheme(R.style.AppThemeRojo);
+                break;
+            case "Marron":
+                setTheme(R.style.AppThemeMarron);
+                break;
+            case "Lila":
+                break;
+        }
         setContentView(R.layout.activity_bloqueo);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
-        boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+        boolean huella = sharedPreferences.getBoolean(UtilidadesStatic.HUELLA, false);
+        boolean sinBloqueo = sharedPreferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
 
         HuellaFragment huellaFragment = new HuellaFragment();
         SinBloqueoFragment sinBloqueoFragment = new SinBloqueoFragment();

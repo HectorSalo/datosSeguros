@@ -31,19 +31,6 @@ public class TemasActivity extends AppCompatActivity implements View.OnClickList
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
-
-        switch (tema){
-            case "Amarillo":
-                break;
-            case "Rojo":
-                break;
-            case "Marron":
-                break;
-            case "Lila":
-                break;
-        }
-
     }
 
 

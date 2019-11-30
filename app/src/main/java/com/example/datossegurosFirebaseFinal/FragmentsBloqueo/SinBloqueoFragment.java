@@ -2,15 +2,20 @@ package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.R;
@@ -71,6 +76,32 @@ public class SinBloqueoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+        View vista = inflater.inflate(R.layout.fragment_sin_bloqueo, container, false);
+
+        FrameLayout frameLayout = vista.findViewById(R.id.fragmentSinBloqueo);
+        TextView textView = vista.findViewById(R.id.tvBienvenido);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+
+        String tema = sharedPreferences.getString("tema", "Amarillo");
+
+        switch (tema){
+            case "Amarillo":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
+                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                break;
+            case "Rojo":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentRojo));
+                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkRojo));
+                break;
+            case "Marron":
+                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
+                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkMarron));
+                break;
+            case "Lila":
+                break;
+        }
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -79,7 +110,7 @@ public class SinBloqueoFragment extends Fragment {
 
             }
         }, 1000);
-        return inflater.inflate(R.layout.fragment_sin_bloqueo, container, false);
+        return vista;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

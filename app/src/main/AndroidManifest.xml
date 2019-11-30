@@ -25,7 +25,8 @@
             android:name=".PerfilActivity"
             android:label="@string/titleMiPerfil"
             android:theme="@style/Theme.Dialog.MiPerfil"/>
-        <activity android:name=".AcercaActivity" />
+        <activity android:name=".AcercaActivity"
+            android:theme="@style/Theme.Acerca"/>
         <activity android:name=".EditarActivity" />
         <activity android:name=".RegistrarActivity" />
         <activity android:name=".InicSesionActivity"></activity>
