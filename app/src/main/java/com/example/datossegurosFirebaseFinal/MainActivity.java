@@ -286,6 +286,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             startActivity(new Intent(this, TemasActivity.class));
             return true;
         } else if (id == R.id.menu_eliminar_cuenta) {
+            final EliminarCuenta eliminarCuenta = new EliminarCuenta(this);
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle("¡Advertencia!")
                     .setMessage(R.string.explicacion_eliminar_cuenta)
@@ -293,7 +294,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-
+                            eliminarCuenta.eliminarAlmacenamiento(user.getUid());
+                            getApplicationContext().deleteDatabase(UtilidadesStatic.BD_PROPIETARIOS);
                         }
                     })
                     .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
