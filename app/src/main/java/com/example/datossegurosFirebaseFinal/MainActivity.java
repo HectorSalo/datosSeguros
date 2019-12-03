@@ -295,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             eliminarCuenta.eliminarAlmacenamiento(user.getUid());
-                            getApplicationContext().deleteDatabase(UtilidadesStatic.BD_PROPIETARIOS);
+
                         }
                     })
                     .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {

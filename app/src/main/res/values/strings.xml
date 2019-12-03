@@ -11,7 +11,7 @@
     <string name="perfil">Actualizar Perfil</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
     <string name="exportar_importar">Exportar/Importar Datos</string>
-    <string name="eliminar_cuenta">Eliminar Cuenta</string>
+    <string name="eliminar_cuenta">Borrar Datos</string>
     <string name="tema">Cambiar Tema</string>
 
 
@@ -91,9 +91,6 @@
 
     <!-- Registrar -->
     <string name="acerca">Información de App</string>
-    <string name="desarrollado">Desarrollado por</string>
-    <string name="skysam">Inversiones SkySam, C.A.</string>
-    <string name="atencion_cliente">Atención al usuario:</string>
 
     <!-- Acerca -->
     <string name="contacto">inversionesskysam@gmail.com</string>

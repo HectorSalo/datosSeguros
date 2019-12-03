@@ -280,5 +280,8 @@ public class InicSesionActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, InicSesionActivity.class));
+    }
 }
