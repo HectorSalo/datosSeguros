@@ -1,6 +1,5 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -25,8 +24,8 @@ import android.widget.Toast;
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -165,9 +164,9 @@ public class AddContrasenaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.almacenamientoExterno) {
+                if (VariablesGenerales.almacenamientoExterno) {
                     guardarContrasenaFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarContrasenaSQLite();
                 }
 
@@ -242,14 +241,14 @@ public class AddContrasenaFragment extends Fragment {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                 Map<String, Object> contrasenaM = new HashMap<>();
-                contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-                contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasena);
-                contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
-                contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaActual);
+                contrasenaM.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                contrasenaM.put(VariablesEstaticas.BD_USUARIO, usuario);
+                contrasenaM.put(VariablesEstaticas.BD_PASSWORD, contrasena);
+                contrasenaM.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
+                contrasenaM.put(VariablesEstaticas.BD_PROPIETARIO, userID);
+                contrasenaM.put(VariablesEstaticas.BD_FECHA_CREACION, fechaActual);
 
-                db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         progressBarAdd.setVisibility(View.GONE);
@@ -279,7 +278,7 @@ public class AddContrasenaFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String fechaS = sdf.format(fechaActual);
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         if (servicio.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
@@ -299,13 +298,13 @@ public class AddContrasenaFragment extends Fragment {
                 }
 
                 ContentValues values = new ContentValues();
-                values.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                values.put(UtilidadesStatic.BD_USUARIO, usuario);
-                values.put(UtilidadesStatic.BD_PASSWORD, contrasena);
-                values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                values.put(UtilidadesStatic.BD_FECHA_CREACION, fechaS);
+                values.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                values.put(VariablesEstaticas.BD_USUARIO, usuario);
+                values.put(VariablesEstaticas.BD_PASSWORD, contrasena);
+                values.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
+                values.put(VariablesEstaticas.BD_FECHA_CREACION, fechaS);
 
-                db.insert(UtilidadesStatic.BD_CONTRASENAS, null, values);
+                db.insert(VariablesEstaticas.BD_CONTRASENAS, null, values);
                 db.close();
 
                 Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();

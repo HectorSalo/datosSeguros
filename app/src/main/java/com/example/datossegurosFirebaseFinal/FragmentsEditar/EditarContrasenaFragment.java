@@ -1,7 +1,6 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,11 +25,10 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
-import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -38,7 +36,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -176,9 +173,9 @@ public class EditarContrasenaFragment extends Fragment {
             }
         });
 
-        if (Utilidades.almacenamientoExterno) {
+        if (VariablesGenerales.almacenamientoExterno) {
             cargarDataFirebase();
-        } else if (Utilidades.almacenamientoInterno) {
+        } else if (VariablesGenerales.almacenamientoInterno) {
             cargarDataSQLite();
         }
 
@@ -186,9 +183,9 @@ public class EditarContrasenaFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.almacenamientoExterno) {
+                if (VariablesGenerales.almacenamientoExterno) {
                     guardarDataFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarDataSQLite();
                 }
             }
@@ -238,24 +235,24 @@ public class EditarContrasenaFragment extends Fragment {
     public void cargarDataFirebase() {
         progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
-        String idContrasena = Utilidades.idContrasena;
+        String idContrasena = VariablesGenerales.idContrasena;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS);
+        CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS);
 
         reference.document(idContrasena).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    etServicio.setText(doc.getString(UtilidadesStatic.BD_SERVICIO));
-                    etUsuario.setText(doc.getString(UtilidadesStatic.BD_USUARIO));
-                    etContrasena.setText(doc.getString(UtilidadesStatic.BD_PASSWORD));
-                    fechaCreacion = doc.getDate(UtilidadesStatic.BD_FECHA_CREACION);
+                    etServicio.setText(doc.getString(VariablesEstaticas.BD_SERVICIO));
+                    etUsuario.setText(doc.getString(VariablesEstaticas.BD_USUARIO));
+                    etContrasena.setText(doc.getString(VariablesEstaticas.BD_PASSWORD));
+                    fechaCreacion = doc.getDate(VariablesEstaticas.BD_FECHA_CREACION);
 
-                    contrasenaVieja = doc.getString(UtilidadesStatic.BD_PASSWORD);
+                    contrasenaVieja = doc.getString(VariablesEstaticas.BD_PASSWORD);
 
-                    String vigencia = doc.getString(UtilidadesStatic.BD_VIGENCIA);
+                    String vigencia = doc.getString(VariablesEstaticas.BD_VIGENCIA);
                     vigenciaAnterior = Integer.parseInt(vigencia);
 
                     if (vigencia.equals("0")) {
@@ -274,23 +271,23 @@ public class EditarContrasenaFragment extends Fragment {
                         etOtro.setText(vigencia);
                     }
 
-                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_1) != null) {
-                        pass1 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_1);
+                    if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_1) != null) {
+                        pass1 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_1);
 
                     }
 
-                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_2) != null) {
-                        pass2 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_2);
+                    if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_2) != null) {
+                        pass2 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_2);
 
                     }
 
-                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_3) != null) {
-                        pass3 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_3);
+                    if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_3) != null) {
+                        pass3 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_3);
 
                     }
 
-                    if (doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_4) != null) {
-                        pass4 = doc.getString(UtilidadesStatic.BD_ULTIMO_PASS_4);
+                    if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_4) != null) {
+                        pass4 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_4);
 
                     }
 
@@ -307,12 +304,12 @@ public class EditarContrasenaFragment extends Fragment {
 
     public void cargarDataSQLite() {
         progressBarEditar.setVisibility(View.VISIBLE);
-        String idContrasena = Utilidades.idContrasena;
+        String idContrasena = VariablesGenerales.idContrasena;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + VariablesEstaticas.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
 
         if (cursor.moveToFirst()) {
             etServicio.setText(cursor.getString(1));
@@ -395,19 +392,19 @@ public class EditarContrasenaFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
-                    contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
-                    contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviar);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+                    contrasenaM.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                    contrasenaM.put(VariablesEstaticas.BD_USUARIO, usuario);
+                    contrasenaM.put(VariablesEstaticas.BD_PASSWORD, contrasenaNueva);
+                    contrasenaM.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
+                    contrasenaM.put(VariablesEstaticas.BD_PROPIETARIO, userID);
+                    contrasenaM.put(VariablesEstaticas.BD_FECHA_CREACION, fechaEnviar);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_2, pass1);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_3, pass2);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_4, pass3);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_5, pass4);
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS).document(VariablesGenerales.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
@@ -435,19 +432,19 @@ public class EditarContrasenaFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    contrasenaM.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
-                    contrasenaM.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
-                    contrasenaM.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviar);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
-                    contrasenaM.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+                    contrasenaM.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                    contrasenaM.put(VariablesEstaticas.BD_USUARIO, usuario);
+                    contrasenaM.put(VariablesEstaticas.BD_PASSWORD, contrasenaNueva);
+                    contrasenaM.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
+                    contrasenaM.put(VariablesEstaticas.BD_PROPIETARIO, userID);
+                    contrasenaM.put(VariablesEstaticas.BD_FECHA_CREACION, fechaEnviar);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_2, pass1);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_3, pass2);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_4, pass3);
+                    contrasenaM.put(VariablesEstaticas.BD_ULTIMO_PASS_5, pass4);
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS).document(VariablesGenerales.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
@@ -482,11 +479,11 @@ public class EditarContrasenaFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    contrasenaM.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    contrasenaM.put(UtilidadesStatic.BD_PROPIETARIO, userID);
+                    contrasenaM.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                    contrasenaM.put(VariablesEstaticas.BD_USUARIO, usuario);
+                    contrasenaM.put(VariablesEstaticas.BD_PROPIETARIO, userID);
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CONTRASENAS).document(Utilidades.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS).document(VariablesGenerales.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
@@ -513,7 +510,7 @@ public class EditarContrasenaFragment extends Fragment {
         String usuario = etUsuario.getText().toString();
         contrasenaNueva = etContrasena.getText().toString();
         vigencia = "";
-        String idContrasena = Utilidades.idContrasena;
+        String idContrasena = VariablesGenerales.idContrasena;
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         fechaActualS = sdf.format(fechaActual);
@@ -537,22 +534,22 @@ public class EditarContrasenaFragment extends Fragment {
 
                     fechaEnviarS = fechaActualS;
 
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
-                    values.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    values.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    values.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
-                    values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                    values.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviarS);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+                    values.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                    values.put(VariablesEstaticas.BD_USUARIO, usuario);
+                    values.put(VariablesEstaticas.BD_PASSWORD, contrasenaNueva);
+                    values.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
+                    values.put(VariablesEstaticas.BD_FECHA_CREACION, fechaEnviarS);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_2, pass1);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_3, pass2);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_4, pass3);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_5, pass4);
 
-                    db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.update(VariablesEstaticas.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
@@ -564,22 +561,22 @@ public class EditarContrasenaFragment extends Fragment {
                     fechaEnviarS = fechaActualS;
                     vigencia = "0";
 
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
-                    values.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    values.put(UtilidadesStatic.BD_USUARIO, usuario);
-                    values.put(UtilidadesStatic.BD_PASSWORD, contrasenaNueva);
-                    values.put(UtilidadesStatic.BD_VIGENCIA, vigencia);
-                    values.put(UtilidadesStatic.BD_FECHA_CREACION, fechaEnviarS);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_2, pass1);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_3, pass2);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_4, pass3);
-                    values.put(UtilidadesStatic.BD_ULTIMO_PASS_5, pass4);
+                    values.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                    values.put(VariablesEstaticas.BD_USUARIO, usuario);
+                    values.put(VariablesEstaticas.BD_PASSWORD, contrasenaNueva);
+                    values.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
+                    values.put(VariablesEstaticas.BD_FECHA_CREACION, fechaEnviarS);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_1, contrasenaVieja);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_2, pass1);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_3, pass2);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_4, pass3);
+                    values.put(VariablesEstaticas.BD_ULTIMO_PASS_5, pass4);
 
-                    db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.update(VariablesEstaticas.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
@@ -599,14 +596,14 @@ public class EditarContrasenaFragment extends Fragment {
                     });
                     dialog.show();
                 } else {
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
-                    values.put(UtilidadesStatic.BD_SERVICIO, servicio);
-                    values.put(UtilidadesStatic.BD_USUARIO, usuario);
+                    values.put(VariablesEstaticas.BD_SERVICIO, servicio);
+                    values.put(VariablesEstaticas.BD_USUARIO, usuario);
 
-                    db.update(UtilidadesStatic.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.update(VariablesEstaticas.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();

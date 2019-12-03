@@ -24,12 +24,11 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
-import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.example.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,9 +119,9 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (Utilidades.almacenamientoExterno) {
+                                        if (VariablesGenerales.almacenamientoExterno) {
                                             eliminarFirebase(listTarjeta.get(i));
-                                        } else if (Utilidades.almacenamientoInterno) {
+                                        } else if (VariablesGenerales.almacenamientoInterno) {
                                             eliminarSQLite(listTarjeta.get(i));
                                         }
                                     }
@@ -272,7 +271,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     }
 
     public void editar(TarjetaConstructor i) {
-        Utilidades.idTarjeta = i.getIdTarjeta();
+        VariablesGenerales.idTarjeta = i.getIdTarjeta();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putInt("data", 2);
@@ -285,7 +284,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         String userID = user.getUid();
         String doc = i.getIdTarjeta();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS);
+        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS);
 
         reference.document(doc)
                 .delete()
@@ -309,10 +308,10 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     public void eliminarSQLite(TarjetaConstructor i) {
         String idTarjeta = i.getIdTarjeta();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        db.delete(UtilidadesStatic.BD_TARJETAS, "idTarjeta=" + idTarjeta, null);
+        db.delete(VariablesEstaticas.BD_TARJETAS, "idTarjeta=" + idTarjeta, null);
         db.close();
 
         listTarjeta.remove(i);

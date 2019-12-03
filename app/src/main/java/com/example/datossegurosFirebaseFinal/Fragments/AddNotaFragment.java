@@ -1,6 +1,5 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -23,8 +22,8 @@ import android.widget.Toast;
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -106,9 +105,9 @@ public class AddNotaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.almacenamientoExterno) {
+                if (VariablesGenerales.almacenamientoExterno) {
                     guardarNotaFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarNotaSQLite();
                 }
             }
@@ -164,10 +163,10 @@ public class AddNotaFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
-        nota.put(UtilidadesStatic.BD_TITULO_NOTAS, tituloS);
-        nota.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenidoS);
+        nota.put(VariablesEstaticas.BD_TITULO_NOTAS, tituloS);
+        nota.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenidoS);
 
-        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 progressBarAdd.setVisibility(View.GONE);
@@ -190,14 +189,14 @@ public class AddNotaFragment extends Fragment {
         String tituloS = titulo.getText().toString();
         String contenidoS = contenido.getText().toString();
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(UtilidadesStatic.BD_TITULO_NOTAS, tituloS);
-        values.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenidoS);
+        values.put(VariablesEstaticas.BD_TITULO_NOTAS, tituloS);
+        values.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenidoS);
 
-        db.insert(UtilidadesStatic.BD_NOTAS, null, values);
+        db.insert(VariablesEstaticas.BD_NOTAS, null, values);
         db.close();
 
         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();

@@ -25,11 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.Constructores.BancoConstructor;
-import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.example.datossegurosFirebaseFinal.EditarActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -120,9 +119,9 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (Utilidades.almacenamientoExterno) {
+                                        if (VariablesGenerales.almacenamientoExterno) {
                                             eliminarFirebase(listBanco.get(i));
-                                        } else if (Utilidades.almacenamientoInterno) {
+                                        } else if (VariablesGenerales.almacenamientoInterno) {
                                             eliminarSQLite(listBanco.get(i));
                                         }
                                     }
@@ -271,7 +270,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     }
 
     public void editar(BancoConstructor i) {
-        Utilidades.idCuenta = i.getIdCuenta();
+        VariablesGenerales.idCuenta = i.getIdCuenta();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putInt("data", 1);
@@ -284,7 +283,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
         String userID = user.getUid();
         String doc = i.getIdCuenta();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS);
+        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CUENTAS);
 
         reference.document(doc)
                 .delete()
@@ -309,10 +308,10 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     public void eliminarSQLite(BancoConstructor i) {
         String idCuenta = i.getIdCuenta();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        db.delete(UtilidadesStatic.BD_CUENTAS, "idCuenta=" + idCuenta, null);
+        db.delete(VariablesEstaticas.BD_CUENTAS, "idCuenta=" + idCuenta, null);
         db.close();
 
         listBanco.remove(i);

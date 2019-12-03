@@ -1,7 +1,6 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -12,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.UiThread;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -30,8 +28,8 @@ import android.widget.Toast;
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,7 +37,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -146,9 +143,9 @@ public class EditarTarjetaFragment extends Fragment {
             }
         });
 
-        if (Utilidades.almacenamientoExterno) {
+        if (VariablesGenerales.almacenamientoExterno) {
             cargarDataFirebase();
-        } else if (Utilidades.almacenamientoInterno) {
+        } else if (VariablesGenerales.almacenamientoInterno) {
             cargarDataSQLite();
         }
 
@@ -163,9 +160,9 @@ public class EditarTarjetaFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(Utilidades.almacenamientoExterno) {
+                if(VariablesGenerales.almacenamientoExterno) {
                     guardarDataFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarDataSQLite();
                 }
             }
@@ -215,25 +212,25 @@ public class EditarTarjetaFragment extends Fragment {
     public void cargarDataFirebase() {
         progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
-        String idTarjeta = Utilidades.idTarjeta;
+        String idTarjeta = VariablesGenerales.idTarjeta;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS);
+        CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS);
 
         reference.document(idTarjeta).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    etTitular.setText(doc.getString(UtilidadesStatic.BD_TITULAR_TARJETA));
-                    etnumeroTarjeta.setText(doc.getString(UtilidadesStatic.BD_NUMERO_TARJETA));
-                    etCVV.setText(doc.getString(UtilidadesStatic.BD_CVV));
-                    etCedula.setText(doc.getString(UtilidadesStatic.BD_CEDULA_TARJETA));
-                    etBanco.setText(doc.getString(UtilidadesStatic.BD_BANCO_TARJETA));
-                    etVencimiento.setText(doc.getString(UtilidadesStatic.BD_VENCIMIENTO_TARJETA));
-                    etClave.setText(doc.getString(UtilidadesStatic.BD_CLAVE_TARJETA));
+                    etTitular.setText(doc.getString(VariablesEstaticas.BD_TITULAR_TARJETA));
+                    etnumeroTarjeta.setText(doc.getString(VariablesEstaticas.BD_NUMERO_TARJETA));
+                    etCVV.setText(doc.getString(VariablesEstaticas.BD_CVV));
+                    etCedula.setText(doc.getString(VariablesEstaticas.BD_CEDULA_TARJETA));
+                    etBanco.setText(doc.getString(VariablesEstaticas.BD_BANCO_TARJETA));
+                    etVencimiento.setText(doc.getString(VariablesEstaticas.BD_VENCIMIENTO_TARJETA));
+                    etClave.setText(doc.getString(VariablesEstaticas.BD_CLAVE_TARJETA));
 
-                    String tipo = doc.getString(UtilidadesStatic.BD_TIPO_TARJETA);
+                    String tipo = doc.getString(VariablesEstaticas.BD_TIPO_TARJETA);
 
                     if (tipo.equals("Maestro")) {
                         rbMaestro.setChecked(true);
@@ -259,12 +256,12 @@ public class EditarTarjetaFragment extends Fragment {
 
     public void cargarDataSQLite() {
 
-        String idTarjeta = Utilidades.idTarjeta;
+        String idTarjeta = VariablesGenerales.idTarjeta;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_TARJETAS + " WHERE idTarjeta =" + idTarjeta, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + VariablesEstaticas.BD_TARJETAS + " WHERE idTarjeta =" + idTarjeta, null);
 
         if (cursor.moveToFirst()) {
             etTitular.setText(cursor.getString(1));
@@ -327,16 +324,16 @@ public class EditarTarjetaFragment extends Fragment {
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         Map<String, Object> tarjeta = new HashMap<>();
-                        tarjeta.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
-                        tarjeta.put(UtilidadesStatic.BD_NUMERO_TARJETA, numeroTarjeta);
-                        tarjeta.put(UtilidadesStatic.BD_CVV, cvv);
-                        tarjeta.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
-                        tarjeta.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
-                        tarjeta.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, vencimiento);
-                        tarjeta.put(UtilidadesStatic.BD_CLAVE_TARJETA, clave);
-                        tarjeta.put(UtilidadesStatic.BD_BANCO_TARJETA, banco);
+                        tarjeta.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
+                        tarjeta.put(VariablesEstaticas.BD_NUMERO_TARJETA, numeroTarjeta);
+                        tarjeta.put(VariablesEstaticas.BD_CVV, cvv);
+                        tarjeta.put(VariablesEstaticas.BD_CEDULA_TARJETA, cedula);
+                        tarjeta.put(VariablesEstaticas.BD_TIPO_TARJETA, tipo);
+                        tarjeta.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, vencimiento);
+                        tarjeta.put(VariablesEstaticas.BD_CLAVE_TARJETA, clave);
+                        tarjeta.put(VariablesEstaticas.BD_BANCO_TARJETA, banco);
 
-                        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS).document(Utilidades.idTarjeta).set(tarjeta).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS).document(VariablesGenerales.idTarjeta).set(tarjeta).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                             public void onSuccess(Void aVoid) {
                                 progressBarEditar.setVisibility(View.GONE);
@@ -360,7 +357,7 @@ public class EditarTarjetaFragment extends Fragment {
     }
 
     public void guardarDataSQLite() {
-        String idTarjeta = Utilidades.idTarjeta;
+        String idTarjeta = VariablesGenerales.idTarjeta;
         String titular = etTitular.getText().toString();
         String numeroTarjeta = etnumeroTarjeta.getText().toString();
         String cvv = etCVV.getText().toString();
@@ -392,20 +389,20 @@ public class EditarTarjetaFragment extends Fragment {
                             tipo = etOtro.getText().toString();
                         }
 
-                        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
                         SQLiteDatabase db = conect.getWritableDatabase();
 
                         ContentValues values = new ContentValues();
-                        values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
-                        values.put(UtilidadesStatic.BD_NUMERO_TARJETA, numeroTarjeta);
-                        values.put(UtilidadesStatic.BD_CVV, cvv);
-                        values.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
-                        values.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
-                        values.put(UtilidadesStatic.BD_BANCO_TARJETA, banco);
-                        values.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, vencimiento);
-                        values.put(UtilidadesStatic.BD_CLAVE_TARJETA, clave);
+                        values.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
+                        values.put(VariablesEstaticas.BD_NUMERO_TARJETA, numeroTarjeta);
+                        values.put(VariablesEstaticas.BD_CVV, cvv);
+                        values.put(VariablesEstaticas.BD_CEDULA_TARJETA, cedula);
+                        values.put(VariablesEstaticas.BD_TIPO_TARJETA, tipo);
+                        values.put(VariablesEstaticas.BD_BANCO_TARJETA, banco);
+                        values.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, vencimiento);
+                        values.put(VariablesEstaticas.BD_CLAVE_TARJETA, clave);
 
-                        db.update(UtilidadesStatic.BD_TARJETAS, values, "idTarjeta=" + idTarjeta, null);
+                        db.update(VariablesEstaticas.BD_TARJETAS, values, "idTarjeta=" + idTarjeta, null);
                         db.close();
 
                         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();

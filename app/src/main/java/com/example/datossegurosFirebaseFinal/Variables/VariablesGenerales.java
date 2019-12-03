@@ -1,6 +1,6 @@
-package com.example.datossegurosFirebaseFinal.Utilidades;
+package com.example.datossegurosFirebaseFinal.Variables;
 
-public class Utilidades {
+public class VariablesGenerales {
     public static String idContrasena = null;
     public static String idCuenta = null;
     public static String idTarjeta = null;
@@ -13,4 +13,6 @@ public class Utilidades {
     public static boolean escogerAlmacenamiento = false;
 
     public static int conf_bloqueo = 1000;
+
+    public static String userIdSQlite = null;
 }

@@ -1,6 +1,6 @@
-package com.example.datossegurosFirebaseFinal.Utilidades;
+package com.example.datossegurosFirebaseFinal.Variables;
 
-public class UtilidadesStatic {
+public class VariablesEstaticas {
     public static final String BD_PROPIETARIOS = "propietarios";
     public static final String BD_PROPIETARIO = "propietario";
     public static final String BD_CONTRASENAS= "contrasenas";

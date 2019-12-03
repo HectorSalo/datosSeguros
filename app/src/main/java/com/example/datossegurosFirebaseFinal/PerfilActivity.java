@@ -1,12 +1,8 @@
 package com.example.datossegurosFirebaseFinal;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -19,19 +15,16 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -88,9 +81,9 @@ public class PerfilActivity extends AppCompatActivity {
         final LinearLayout layoutPass = (LinearLayout) findViewById(R.id.layoutPass);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean huella = preferences.getBoolean(UtilidadesStatic.HUELLA, false);
-        boolean pin = preferences.getBoolean(UtilidadesStatic.PIN, false);
-        final boolean sinBloqueo = preferences.getBoolean(UtilidadesStatic.SIN_BLOQUEO, true);
+        final boolean huella = preferences.getBoolean(VariablesEstaticas.HUELLA, false);
+        boolean pin = preferences.getBoolean(VariablesEstaticas.PIN, false);
+        final boolean sinBloqueo = preferences.getBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
 
         if (huella) {
             rbHuella.setChecked(true);
@@ -101,9 +94,9 @@ public class PerfilActivity extends AppCompatActivity {
         }
 
 
-        if (Utilidades.almacenamientoInterno) {
+        if (VariablesGenerales.almacenamientoInterno) {
             rbDispositivo.setChecked(true);
-        } else if (Utilidades.almacenamientoExterno) {
+        } else if (VariablesGenerales.almacenamientoExterno) {
             rbNube.setChecked(true);
         }
 
@@ -160,16 +153,16 @@ public class PerfilActivity extends AppCompatActivity {
                 } else if (rbAlmacenamiento.isChecked()) {
                     actualizarAlmacenamiento();
                 } else if (rbHuella.isChecked()) {
-                    Utilidades.conf_bloqueo = UtilidadesStatic.HUELLA_INT;
+                    VariablesGenerales.conf_bloqueo = VariablesEstaticas.HUELLA_INT;
                     startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
                 } else if (rbPIN.isChecked()) {
-                    Utilidades.conf_bloqueo = UtilidadesStatic.PIN_INT;
+                    VariablesGenerales.conf_bloqueo = VariablesEstaticas.PIN_INT;
                     startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
                 } else if (rbSinBloqueo.isChecked()) {
                     if (sinBloqueo) {
                         finish();
                     } else {
-                        Utilidades.conf_bloqueo = UtilidadesStatic.SIN_BLOQUEO_INT;
+                        VariablesGenerales.conf_bloqueo = VariablesEstaticas.SIN_BLOQUEO_INT;
                         startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
                     }
                 }
@@ -282,18 +275,18 @@ public class PerfilActivity extends AppCompatActivity {
 
         if (rbNube.isChecked()) {
 
-            almacenar.put(UtilidadesStatic.INTERNO, false);
-            almacenar.put(UtilidadesStatic.EXTERNO, true);
-            almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
+            almacenar.put(VariablesEstaticas.INTERNO, false);
+            almacenar.put(VariablesEstaticas.EXTERNO, true);
+            almacenar.put(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO, true);
         } else if (rbDispositivo.isChecked()) {
-            almacenar.put(UtilidadesStatic.INTERNO, true);
-            almacenar.put(UtilidadesStatic.EXTERNO, false);
-            almacenar.put(UtilidadesStatic.ALMACENAMIENTO_ESCOGIDO, true);
+            almacenar.put(VariablesEstaticas.INTERNO, true);
+            almacenar.put(VariablesEstaticas.EXTERNO, false);
+            almacenar.put(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO, true);
         }
 
 
 
-        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.ALMACENAMIENTO).document(UtilidadesStatic.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.ALMACENAMIENTO).document(VariablesEstaticas.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("msg", "Succes");

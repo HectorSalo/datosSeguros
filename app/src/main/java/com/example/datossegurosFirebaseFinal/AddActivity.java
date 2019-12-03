@@ -21,9 +21,7 @@ import com.example.datossegurosFirebaseFinal.Fragments.AddContrasenaFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddCuentasFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddNotaFragment;
 import com.example.datossegurosFirebaseFinal.Fragments.AddTarjetaFragment;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-
-import io.grpc.internal.SharedResourceHolder;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
         AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {
@@ -74,13 +72,13 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
         addNotaFragment = new AddNotaFragment();
 
 
-        if (Utilidades.Add == 0) {
+        if (VariablesGenerales.Add == 0) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addContrasenaFragment).commit();
-        } else if (Utilidades.Add == 1) {
+        } else if (VariablesGenerales.Add == 1) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addCuentasFragment).commit();
-        } else if (Utilidades.Add == 2) {
+        } else if (VariablesGenerales.Add == 2) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addTarjetaFragment).commit();
-        } else if (Utilidades.Add == 3) {
+        } else if (VariablesGenerales.Add == 3) {
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addNotaFragment).commit();
         }
 

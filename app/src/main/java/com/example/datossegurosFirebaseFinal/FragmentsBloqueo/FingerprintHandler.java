@@ -3,30 +3,23 @@ package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.datossegurosFirebaseFinal.BloqueoActivity;
 import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler extends FingerprintManager.AuthenticationCallback {
@@ -73,7 +66,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                 mensaje.setText(s);
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
-                if (Utilidades.conf_bloqueo == 1000) {
+                if (VariablesGenerales.conf_bloqueo == 1000) {
                     lottieAnimationView.setAnimation("huellaactivo.json");
                     lottieAnimationView.playAnimation();
                     mensaje.setText(s);
@@ -82,7 +75,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            context.startActivity(new Intent(context, MainActivity.class));
+                            context.startActivity(new Intent(context, InicSesionActivity.class));
                         }
                     }, 1500);
 

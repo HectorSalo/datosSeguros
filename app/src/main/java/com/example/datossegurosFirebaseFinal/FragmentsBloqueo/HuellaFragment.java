@@ -1,7 +1,6 @@
 package com.example.datossegurosFirebaseFinal.FragmentsBloqueo;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -22,17 +21,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.example.datossegurosFirebaseFinal.BloqueoActivity;
+import com.example.datossegurosFirebaseFinal.InicSesionActivity;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.material.textfield.TextInputLayout;
 
 /**
@@ -107,7 +104,7 @@ public class HuellaFragment extends Fragment {
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentHuella);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        pinGuardado = preferences.getString(UtilidadesStatic.PIN_RESPALDO, "0000");
+        pinGuardado = preferences.getString(VariablesEstaticas.PIN_RESPALDO, "0000");
         String tema = preferences.getString("tema", "Amarillo");
 
         switch (tema){
@@ -125,7 +122,7 @@ public class HuellaFragment extends Fragment {
                 break;
         }
 
-        if (Utilidades.conf_bloqueo != 1000) {
+        if (VariablesGenerales.conf_bloqueo != 1000) {
             tvAccederPin.setVisibility(View.GONE);
         }
 
@@ -142,7 +139,7 @@ public class HuellaFragment extends Fragment {
         registrarPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.conf_bloqueo != 1000) {
+                if (VariablesGenerales.conf_bloqueo != 1000) {
                     validarPinRespaldo();
                 } else {
                     accederPin();
@@ -244,7 +241,7 @@ public class HuellaFragment extends Fragment {
         String pinS = etPin.getText().toString();
 
         if (pinS.equals(pinGuardado)) {
-            startActivity(new Intent(getContext(), MainActivity.class));
+            startActivity(new Intent(getContext(), InicSesionActivity.class));
         } else {
             Toast.makeText(getContext(), "El PIN no coincide con el almacenado", Toast.LENGTH_LONG).show();
         }
@@ -253,10 +250,10 @@ public class HuellaFragment extends Fragment {
     public void guardarPIN(String pin) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(UtilidadesStatic.HUELLA, true);
-        editor.putBoolean(UtilidadesStatic.PIN, false);
-        editor.putBoolean(UtilidadesStatic.SIN_BLOQUEO, false);
-        editor.putString(UtilidadesStatic.PIN_RESPALDO, pin);
+        editor.putBoolean(VariablesEstaticas.HUELLA, true);
+        editor.putBoolean(VariablesEstaticas.PIN, false);
+        editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, false);
+        editor.putString(VariablesEstaticas.PIN_RESPALDO, pin);
         editor.commit();
     }
 

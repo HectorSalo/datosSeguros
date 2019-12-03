@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -164,7 +165,9 @@ public class InicSesionActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         user = mAuth.getCurrentUser();
         if (user != null) {
+            VariablesGenerales.userIdSQlite = user.getUid();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
         }
     }
 
@@ -204,6 +207,7 @@ public class InicSesionActivity extends AppCompatActivity {
                                 Log.d("msg", "signInWithEmail:success");
                                 user = mAuth.getCurrentUser();
                                 progressBarInicSesion.setVisibility(View.GONE);
+                                VariablesGenerales.userIdSQlite = user.getUid();
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.

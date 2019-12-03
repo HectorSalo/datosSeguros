@@ -1,6 +1,5 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -27,8 +26,8 @@ import android.widget.Toast;
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,7 +35,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -122,9 +120,9 @@ public class EditarCuentasFragment extends Fragment {
         ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(getContext(), R.layout.spinner_editar, spDocumentos);
         spinnerDocumento.setAdapter(adapterDocumentos);
 
-        if (Utilidades.almacenamientoExterno) {
+        if (VariablesGenerales.almacenamientoExterno) {
             cargarDataFirebase();
-        } else if (Utilidades.almacenamientoInterno) {
+        } else if (VariablesGenerales.almacenamientoInterno) {
             cargarDataSQLite();
         }
 
@@ -132,9 +130,9 @@ public class EditarCuentasFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.almacenamientoExterno) {
+                if (VariablesGenerales.almacenamientoExterno) {
                     guardarDataFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarDataSQLite();
                 }
             }
@@ -185,24 +183,24 @@ public class EditarCuentasFragment extends Fragment {
     public void cargarDataFirebase() {
         progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
-        String idCuenta = Utilidades.idCuenta;
+        String idCuenta = VariablesGenerales.idCuenta;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS);
+        CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CUENTAS);
 
         reference.document(idCuenta).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    etTitular.setText(doc.getString(UtilidadesStatic.BD_TITULAR_BANCO));
-                    etBanco.setText(doc.getString(UtilidadesStatic.BD_BANCO));
-                    etnumeroCuenta.setText(doc.getString(UtilidadesStatic.BD_NUMERO_CUENTA));
-                    etCedula.setText(doc.getString(UtilidadesStatic.BD_CEDULA_BANCO));
-                    String telefono = doc.getString(UtilidadesStatic.BD_TELEFONO);
-                    String tipo = doc.getString(UtilidadesStatic.BD_TIPO_CUENTA);
-                    etCorreo.setText(doc.getString(UtilidadesStatic.BD_CORREO_CUENTA));
-                    String tipoDocumento = doc.getString(UtilidadesStatic.BD_TIPO_DOCUMENTO);
+                    etTitular.setText(doc.getString(VariablesEstaticas.BD_TITULAR_BANCO));
+                    etBanco.setText(doc.getString(VariablesEstaticas.BD_BANCO));
+                    etnumeroCuenta.setText(doc.getString(VariablesEstaticas.BD_NUMERO_CUENTA));
+                    etCedula.setText(doc.getString(VariablesEstaticas.BD_CEDULA_BANCO));
+                    String telefono = doc.getString(VariablesEstaticas.BD_TELEFONO);
+                    String tipo = doc.getString(VariablesEstaticas.BD_TIPO_CUENTA);
+                    etCorreo.setText(doc.getString(VariablesEstaticas.BD_CORREO_CUENTA));
+                    String tipoDocumento = doc.getString(VariablesEstaticas.BD_TIPO_DOCUMENTO);
 
                     if (tipoDocumento == null) {
                         spinnerDocumento.setSelection(0);
@@ -240,12 +238,12 @@ public class EditarCuentasFragment extends Fragment {
 
     public void cargarDataSQLite() {
 
-        String idCuenta = Utilidades.idCuenta;
+        String idCuenta = VariablesGenerales.idCuenta;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_CUENTAS + " WHERE idCuenta =" + idCuenta, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + VariablesEstaticas.BD_CUENTAS + " WHERE idCuenta =" + idCuenta, null);
 
         if (cursor.moveToFirst()) {
             etTitular.setText(cursor.getString(1));
@@ -312,26 +310,26 @@ public class EditarCuentasFragment extends Fragment {
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                     Map<String, Object> cuentaBancaria = new HashMap<>();
-                    cuentaBancaria.put(UtilidadesStatic.BD_TITULAR_BANCO, titular);
-                    cuentaBancaria.put(UtilidadesStatic.BD_BANCO, banco);
-                    cuentaBancaria.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
-                    cuentaBancaria.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
-                    cuentaBancaria.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
-                    cuentaBancaria.put(UtilidadesStatic.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+                    cuentaBancaria.put(VariablesEstaticas.BD_TITULAR_BANCO, titular);
+                    cuentaBancaria.put(VariablesEstaticas.BD_BANCO, banco);
+                    cuentaBancaria.put(VariablesEstaticas.BD_NUMERO_CUENTA, cuentaNumero);
+                    cuentaBancaria.put(VariablesEstaticas.BD_CEDULA_BANCO, cedula);
+                    cuentaBancaria.put(VariablesEstaticas.BD_TIPO_CUENTA, tipo);
+                    cuentaBancaria.put(VariablesEstaticas.BD_TIPO_DOCUMENTO, spinnerSeleccion);
 
                     if (telefono.isEmpty()) {
-                        cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, "0");
+                        cuentaBancaria.put(VariablesEstaticas.BD_TELEFONO, "0");
                     } else {
-                        cuentaBancaria.put(UtilidadesStatic.BD_TELEFONO, telefono);
+                        cuentaBancaria.put(VariablesEstaticas.BD_TELEFONO, telefono);
                     }
 
                     if (correo.isEmpty()) {
-                        cuentaBancaria.put(UtilidadesStatic.BD_CORREO_CUENTA, "");
+                        cuentaBancaria.put(VariablesEstaticas.BD_CORREO_CUENTA, "");
                     } else {
-                        cuentaBancaria.put(UtilidadesStatic.BD_CORREO_CUENTA, correo);
+                        cuentaBancaria.put(VariablesEstaticas.BD_CORREO_CUENTA, correo);
                     }
 
-                    db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_CUENTAS).document(Utilidades.idCuenta).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CUENTAS).document(VariablesGenerales.idCuenta).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
@@ -354,7 +352,7 @@ public class EditarCuentasFragment extends Fragment {
     }
 
     public void guardarDataSQLite() {
-        String idCuenta = Utilidades.idCuenta;
+        String idCuenta = VariablesGenerales.idCuenta;
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
         String cuentaNumero = etnumeroCuenta.getText().toString();
@@ -380,30 +378,30 @@ public class EditarCuentasFragment extends Fragment {
                 if (cuentaNumero.length() != 20) {
                     Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
                 } else {
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
-                    values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
-                    values.put(UtilidadesStatic.BD_BANCO, banco);
-                    values.put(UtilidadesStatic.BD_NUMERO_CUENTA, cuentaNumero);
-                    values.put(UtilidadesStatic.BD_CEDULA_BANCO, cedula);
-                    values.put(UtilidadesStatic.BD_TIPO_CUENTA, tipo);
-                    values.put(UtilidadesStatic.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+                    values.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
+                    values.put(VariablesEstaticas.BD_BANCO, banco);
+                    values.put(VariablesEstaticas.BD_NUMERO_CUENTA, cuentaNumero);
+                    values.put(VariablesEstaticas.BD_CEDULA_BANCO, cedula);
+                    values.put(VariablesEstaticas.BD_TIPO_CUENTA, tipo);
+                    values.put(VariablesEstaticas.BD_TIPO_DOCUMENTO, spinnerSeleccion);
 
                     if (telefono.isEmpty()) {
-                        values.put(UtilidadesStatic.BD_TELEFONO, "0");
+                        values.put(VariablesEstaticas.BD_TELEFONO, "0");
                     } else {
-                        values.put(UtilidadesStatic.BD_TELEFONO, telefono);
+                        values.put(VariablesEstaticas.BD_TELEFONO, telefono);
                     }
 
                     if (correo.isEmpty()) {
-                        values.put(UtilidadesStatic.BD_CORREO_CUENTA, "");
+                        values.put(VariablesEstaticas.BD_CORREO_CUENTA, "");
                     } else {
-                        values.put(UtilidadesStatic.BD_CORREO_CUENTA, correo);
+                        values.put(VariablesEstaticas.BD_CORREO_CUENTA, correo);
                     }
 
-                    db.update(UtilidadesStatic.BD_CUENTAS, values, "idCuenta=" + idCuenta, null);
+                    db.update(VariablesEstaticas.BD_CUENTAS, values, "idCuenta=" + idCuenta, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();

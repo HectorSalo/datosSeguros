@@ -1,7 +1,6 @@
 package com.example.datossegurosFirebaseFinal.Fragments;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,8 +27,8 @@ import android.widget.Toast;
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -150,9 +149,9 @@ public class AddTarjetaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.almacenamientoExterno) {
+                if (VariablesGenerales.almacenamientoExterno) {
                     guardarTarjetaFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarTarjetaSQLite();
                 }
             }
@@ -238,26 +237,26 @@ public class AddTarjetaFragment extends Fragment {
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         Map<String, Object> tarjeta = new HashMap<>();
-                        tarjeta.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
-                        tarjeta.put(UtilidadesStatic.BD_BANCO_TARJETA, banco);
-                        tarjeta.put(UtilidadesStatic.BD_NUMERO_TARJETA, numeroTarjeta);
-                        tarjeta.put(UtilidadesStatic.BD_CVV, cvv);
-                        tarjeta.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
-                        tarjeta.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
+                        tarjeta.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
+                        tarjeta.put(VariablesEstaticas.BD_BANCO_TARJETA, banco);
+                        tarjeta.put(VariablesEstaticas.BD_NUMERO_TARJETA, numeroTarjeta);
+                        tarjeta.put(VariablesEstaticas.BD_CVV, cvv);
+                        tarjeta.put(VariablesEstaticas.BD_CEDULA_TARJETA, cedula);
+                        tarjeta.put(VariablesEstaticas.BD_TIPO_TARJETA, tipo);
 
                         if (vencimiento.isEmpty()) {
-                            tarjeta.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, "");
+                            tarjeta.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, "");
                         } else {
-                            tarjeta.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, vencimiento);
+                            tarjeta.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, vencimiento);
                         }
 
                         if (clave.isEmpty()) {
-                            tarjeta.put(UtilidadesStatic.BD_CLAVE_TARJETA, "");
+                            tarjeta.put(VariablesEstaticas.BD_CLAVE_TARJETA, "");
                         } else {
-                            tarjeta.put(UtilidadesStatic.BD_CLAVE_TARJETA, clave);
+                            tarjeta.put(VariablesEstaticas.BD_CLAVE_TARJETA, clave);
                         }
 
-                        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 progressBarAdd.setVisibility(View.GONE);
@@ -290,7 +289,7 @@ public class AddTarjetaFragment extends Fragment {
         String clave = etClave.getText().toString();
         String tipo = "";
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty() || banco.isEmpty()) {
@@ -316,25 +315,25 @@ public class AddTarjetaFragment extends Fragment {
                         }
 
                         ContentValues values = new ContentValues();
-                        values.put(UtilidadesStatic.BD_TITULAR_TARJETA, titular);
-                        values.put(UtilidadesStatic.BD_NUMERO_TARJETA, numeroTarjeta);
-                        values.put(UtilidadesStatic.BD_CVV, cvv);
-                        values.put(UtilidadesStatic.BD_CEDULA_TARJETA, cedula);
-                        values.put(UtilidadesStatic.BD_TIPO_TARJETA, tipo);
+                        values.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
+                        values.put(VariablesEstaticas.BD_NUMERO_TARJETA, numeroTarjeta);
+                        values.put(VariablesEstaticas.BD_CVV, cvv);
+                        values.put(VariablesEstaticas.BD_CEDULA_TARJETA, cedula);
+                        values.put(VariablesEstaticas.BD_TIPO_TARJETA, tipo);
 
                         if (vencimiento.isEmpty()) {
-                            values.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, "");
+                            values.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, "");
                         } else {
-                            values.put(UtilidadesStatic.BD_VENCIMIENTO_TARJETA, vencimiento);
+                            values.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, vencimiento);
                         }
 
                         if (clave.isEmpty()) {
-                            values.put(UtilidadesStatic.BD_CLAVE_TARJETA, "");
+                            values.put(VariablesEstaticas.BD_CLAVE_TARJETA, "");
                         } else {
-                            values.put(UtilidadesStatic.BD_CLAVE_TARJETA, clave);
+                            values.put(VariablesEstaticas.BD_CLAVE_TARJETA, clave);
                         }
 
-                        db.insert(UtilidadesStatic.BD_TARJETAS, null, values);
+                        db.insert(VariablesEstaticas.BD_TARJETAS, null, values);
                         db.close();
 
                         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();

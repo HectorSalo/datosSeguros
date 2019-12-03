@@ -1,6 +1,5 @@
 package com.example.datossegurosFirebaseFinal.FragmentsEditar;
 
-import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -24,8 +23,8 @@ import android.widget.Toast;
 import com.example.datossegurosFirebaseFinal.ConexionSQLite;
 import com.example.datossegurosFirebaseFinal.MainActivity;
 import com.example.datossegurosFirebaseFinal.R;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,7 +32,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -104,9 +102,9 @@ public class EditarNotaFragment extends Fragment {
         user = FirebaseAuth.getInstance().getCurrentUser();
         progressBarEditar = vista.findViewById(R.id.progressBarEditarNota);
 
-        if (Utilidades.almacenamientoExterno) {
+        if (VariablesGenerales.almacenamientoExterno) {
             cargarDataFirebase();
-        } else if (Utilidades.almacenamientoInterno) {
+        } else if (VariablesGenerales.almacenamientoInterno) {
             cargarDataSQLite();
         }
 
@@ -114,9 +112,9 @@ public class EditarNotaFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utilidades.almacenamientoExterno) {
+                if (VariablesGenerales.almacenamientoExterno) {
                     guardarDataFirebase();
-                } else if (Utilidades.almacenamientoInterno) {
+                } else if (VariablesGenerales.almacenamientoInterno) {
                     guardarDataSQLite();
                 }
             }
@@ -167,18 +165,18 @@ public class EditarNotaFragment extends Fragment {
     public void cargarDataFirebase() {
         progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
-        String idNota = Utilidades.idNota;
+        String idNota = VariablesGenerales.idNota;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS);
+        CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS);
 
         reference.document(idNota).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    etTitulo.setText(doc.getString(UtilidadesStatic.BD_TITULO_NOTAS));
-                    etContenido.setText(doc.getString(UtilidadesStatic.BD_CONTENIDO_NOTAS));
+                    etTitulo.setText(doc.getString(VariablesEstaticas.BD_TITULO_NOTAS));
+                    etContenido.setText(doc.getString(VariablesEstaticas.BD_CONTENIDO_NOTAS));
 
                     progressBarEditar.setVisibility(View.GONE);
 
@@ -193,12 +191,12 @@ public class EditarNotaFragment extends Fragment {
 
     public void cargarDataSQLite() {
 
-        String idNota = Utilidades.idNota;
+        String idNota = VariablesGenerales.idNota;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + UtilidadesStatic.BD_NOTAS + " WHERE idNota =" + idNota, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + VariablesEstaticas.BD_NOTAS + " WHERE idNota =" + idNota, null);
 
         if(cursor.moveToFirst()) {
             etTitulo.setText(cursor.getString(1));
@@ -217,10 +215,10 @@ public class EditarNotaFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
-        nota.put(UtilidadesStatic.BD_TITULO_NOTAS, titulo);
-        nota.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenido);
+        nota.put(VariablesEstaticas.BD_TITULO_NOTAS, titulo);
+        nota.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenido);
 
-        db.collection(UtilidadesStatic.BD_PROPIETARIOS).document(userID).collection(UtilidadesStatic.BD_NOTAS).document(Utilidades.idNota).set(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS).document(VariablesGenerales.idNota).set(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
 
             public void onSuccess(Void aVoid) {
                 progressBarEditar.setVisibility(View.GONE);
@@ -240,18 +238,18 @@ public class EditarNotaFragment extends Fragment {
     }
 
     public void guardarDataSQLite() {
-        String idNota = Utilidades.idNota;
+        String idNota = VariablesGenerales.idNota;
         String titulo = etTitulo.getText().toString();
         String contenido = etContenido.getText().toString();
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), UtilidadesStatic.BD_PROPIETARIOS, null, UtilidadesStatic.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(UtilidadesStatic.BD_TITULO_NOTAS, titulo);
-        values.put(UtilidadesStatic.BD_CONTENIDO_NOTAS, contenido);
+        values.put(VariablesEstaticas.BD_TITULO_NOTAS, titulo);
+        values.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenido);
 
-        db.update(UtilidadesStatic.BD_NOTAS, values, "idNota=" + idNota, null);
+        db.update(VariablesEstaticas.BD_NOTAS, values, "idNota=" + idNota, null);
         db.close();
 
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();

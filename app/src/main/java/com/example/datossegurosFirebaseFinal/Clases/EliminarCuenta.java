@@ -1,16 +1,16 @@
-package com.example.datossegurosFirebaseFinal;
+package com.example.datossegurosFirebaseFinal.Clases;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
-import com.example.datossegurosFirebaseFinal.Utilidades.Utilidades;
-import com.example.datossegurosFirebaseFinal.Utilidades.UtilidadesStatic;
+import com.example.datossegurosFirebaseFinal.InicSesionActivity;
+import com.example.datossegurosFirebaseFinal.MainActivity;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.example.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,16 +19,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-
-import java.util.Date;
 
 public class EliminarCuenta {
 
@@ -43,7 +38,7 @@ public class EliminarCuenta {
     public void eliminarAlmacenamiento(final String id) {
         //progressBarCargar.setVisibility(View.VISIBLE);
 
-        final CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(id).collection(UtilidadesStatic.ALMACENAMIENTO);
+        final CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(id).collection(VariablesEstaticas.ALMACENAMIENTO);
 
         reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -79,7 +74,7 @@ public class EliminarCuenta {
     }
 
     public void eliminarContrasenas(final String id) {
-        final CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(id).collection(UtilidadesStatic.BD_CONTRASENAS);
+        final CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(id).collection(VariablesEstaticas.BD_CONTRASENAS);
 
         reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -117,7 +112,7 @@ public class EliminarCuenta {
     }
 
     public void eliminarCuentas(final String id) {
-        final CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(id).collection(UtilidadesStatic.BD_CUENTAS);
+        final CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(id).collection(VariablesEstaticas.BD_CUENTAS);
 
         reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -153,7 +148,7 @@ public class EliminarCuenta {
     }
 
     public void eliminarTarjetas(final String id) {
-        final CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(id).collection(UtilidadesStatic.BD_TARJETAS);
+        final CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(id).collection(VariablesEstaticas.BD_TARJETAS);
 
         reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -189,7 +184,7 @@ public class EliminarCuenta {
     }
 
     public void eliminarNotas (final String id) {
-        final CollectionReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(id).collection(UtilidadesStatic.BD_NOTAS);
+        final CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(id).collection(VariablesEstaticas.BD_NOTAS);
 
         reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -225,13 +220,13 @@ public class EliminarCuenta {
     }
 
     public void eliminarPropietario(String id) {
-        final DocumentReference reference = dbFirestore.collection(UtilidadesStatic.BD_PROPIETARIOS).document(id);
+        final DocumentReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(id);
 
         reference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("Status", "DocumentSnapshot successfully deleted!");
-                context.deleteDatabase(UtilidadesStatic.BD_PROPIETARIOS);
+                context.deleteDatabase(VariablesGenerales.userIdSQlite);
                 context.startActivity(new Intent(context, MainActivity.class));
                 //eliminarUsuario();
             }
