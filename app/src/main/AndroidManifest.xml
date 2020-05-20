@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.datossegurosFirebaseFinal">
+    package="com.skysam.datossegurosFirebaseFinal">
 
     <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -12,10 +12,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".TemasActivity"
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.TemasActivity"
             android:theme="@style/Theme.Dialog.MiPerfil"
             android:label="@string/title_tema"></activity>
-        <activity android:name=".BloqueoActivity">
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.BloqueoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,18 +23,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PerfilActivity"
+            android:name="com.skysam.datossegurosFirebaseFinal.PerfilActivity"
             android:label="@string/titleMiPerfil"
             android:theme="@style/Theme.Dialog.MiPerfil"/>
-        <activity android:name=".AcercaActivity"
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.AcercaActivity"
             android:theme="@style/Theme.Acerca"/>
-        <activity android:name=".EditarActivity" />
-        <activity android:name=".RegistrarActivity" />
-        <activity android:name=".InicSesionActivity"></activity>
-        <activity android:name=".AddActivity"
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.EditarActivity" />
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.RegistrarActivity" />
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.InicSesionActivity"></activity>
+        <activity android:name="com.skysam.datossegurosFirebaseFinal.AddActivity"
             android:label="@string/title_activity_add"/>
         <activity
-            android:name=".MainActivity"
+            android:name="com.skysam.datossegurosFirebaseFinal.MainActivity"
             android:label="@string/app_name"
             />
 
