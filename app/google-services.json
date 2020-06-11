@@ -60,6 +60,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "383252820495-5bhekpm2a5amtquvpbu7e0lptgje8k8b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.skysam.datossegurosFirebaseFinal",
+            "certificate_hash": "3d0cd8a51cc8115f9c14940c8fb6cfe1b5be6930"
+          }
+        },
+        {
           "client_id": "383252820495-j4484e93g1fqea328b7kutktqadfv673.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

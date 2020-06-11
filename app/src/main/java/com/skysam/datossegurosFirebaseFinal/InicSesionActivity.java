@@ -233,7 +233,7 @@ public class InicSesionActivity extends AppCompatActivity {
                 autenticarFirebaseGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.w("msg", "Google sign in failed", e);
+                Log.e("msg", "Google sign in failed", e);
                 // ...
             }
         }
