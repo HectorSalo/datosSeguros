@@ -18,7 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -81,9 +81,9 @@ public class PerfilActivity extends AppCompatActivity {
         final LinearLayout layoutPass = (LinearLayout) findViewById(R.id.layoutPass);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean huella = preferences.getBoolean(VariablesEstaticas.HUELLA, false);
-        boolean pin = preferences.getBoolean(VariablesEstaticas.PIN, false);
-        final boolean sinBloqueo = preferences.getBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
+        final boolean huella = preferences.getBoolean(Constantes.HUELLA, false);
+        boolean pin = preferences.getBoolean(Constantes.PIN, false);
+        final boolean sinBloqueo = preferences.getBoolean(Constantes.SIN_BLOQUEO, true);
 
         if (huella) {
             rbHuella.setChecked(true);
@@ -153,16 +153,16 @@ public class PerfilActivity extends AppCompatActivity {
                 } else if (rbAlmacenamiento.isChecked()) {
                     actualizarAlmacenamiento();
                 } else if (rbHuella.isChecked()) {
-                    VariablesGenerales.conf_bloqueo = VariablesEstaticas.HUELLA_INT;
+                    VariablesGenerales.conf_bloqueo = Constantes.HUELLA_INT;
                     startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
                 } else if (rbPIN.isChecked()) {
-                    VariablesGenerales.conf_bloqueo = VariablesEstaticas.PIN_INT;
+                    VariablesGenerales.conf_bloqueo = Constantes.PIN_INT;
                     startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
                 } else if (rbSinBloqueo.isChecked()) {
                     if (sinBloqueo) {
                         finish();
                     } else {
-                        VariablesGenerales.conf_bloqueo = VariablesEstaticas.SIN_BLOQUEO_INT;
+                        VariablesGenerales.conf_bloqueo = Constantes.SIN_BLOQUEO_INT;
                         startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
                     }
                 }
@@ -275,18 +275,18 @@ public class PerfilActivity extends AppCompatActivity {
 
         if (rbNube.isChecked()) {
 
-            almacenar.put(VariablesEstaticas.INTERNO, false);
-            almacenar.put(VariablesEstaticas.EXTERNO, true);
-            almacenar.put(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO, true);
+            almacenar.put(Constantes.INTERNO, false);
+            almacenar.put(Constantes.EXTERNO, true);
+            almacenar.put(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
         } else if (rbDispositivo.isChecked()) {
-            almacenar.put(VariablesEstaticas.INTERNO, true);
-            almacenar.put(VariablesEstaticas.EXTERNO, false);
-            almacenar.put(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO, true);
+            almacenar.put(Constantes.INTERNO, true);
+            almacenar.put(Constantes.EXTERNO, false);
+            almacenar.put(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
         }
 
 
 
-        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.ALMACENAMIENTO).document(VariablesEstaticas.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.ALMACENAMIENTO).document(Constantes.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("msg", "Succes");

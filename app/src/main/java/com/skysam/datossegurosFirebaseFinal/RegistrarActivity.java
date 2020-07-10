@@ -24,6 +24,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 
 public class RegistrarActivity extends AppCompatActivity {
     private EditText usuario, contrasena, repetirContrasena;
@@ -37,19 +38,19 @@ public class RegistrarActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 setTheme(R.style.AppThemeLila);
                 break;
         }
@@ -64,19 +65,19 @@ public class RegistrarActivity extends AppCompatActivity {
         progressBarRegistrar = findViewById(R.id.progressBarRegistrar);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
                 progressBarRegistrar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDark)), PorterDuff.Mode.SRC_IN);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentRojo));
                 progressBarRegistrar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)), PorterDuff.Mode.SRC_IN);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentMarron));
                 progressBarRegistrar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)), PorterDuff.Mode.SRC_IN);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentLila));
                 progressBarRegistrar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkLila)), PorterDuff.Mode.SRC_IN);
                 break;

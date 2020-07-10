@@ -28,7 +28,7 @@ import com.skysam.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.skysam.datossegurosFirebaseFinal.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -283,7 +283,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
         String userID = user.getUid();
         String doc = i.getIdCuenta();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CUENTAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS);
 
         reference.document(doc)
                 .delete()
@@ -308,10 +308,10 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     public void eliminarSQLite(BancoConstructor i) {
         String idCuenta = i.getIdCuenta();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        db.delete(VariablesEstaticas.BD_CUENTAS, "idCuenta=" + idCuenta, null);
+        db.delete(Constantes.BD_CUENTAS, "idCuenta=" + idCuenta, null);
         db.close();
 
         listBanco.remove(i);

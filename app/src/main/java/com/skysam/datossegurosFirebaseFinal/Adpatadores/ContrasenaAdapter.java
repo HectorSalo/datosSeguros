@@ -32,7 +32,7 @@ import com.skysam.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.skysam.datossegurosFirebaseFinal.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -292,7 +292,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         String userID = user.getUid();
         String doc = i.getIdContrasena();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS);
 
         reference.document(doc)
                 .delete()
@@ -316,10 +316,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     public void eliminarSQLite(ContrasenaConstructor i) {
         String idContrasena = i.getIdContrasena();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        db.delete(VariablesEstaticas.BD_CONTRASENAS, "idContrasena=" + idContrasena, null);
+        db.delete(Constantes.BD_CONTRASENAS, "idContrasena=" + idContrasena, null);
         db.close();
 
         listContrasena.remove(i);
@@ -337,7 +337,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String userID = user.getUid();
-        DocumentReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS).document(idPass);
+        DocumentReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idPass);
 
         LinearLayout layout = new LinearLayout(mCtx);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -369,30 +369,30 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                     DocumentSnapshot doc = task.getResult();
 
                     if (doc.exists()) {
-                        if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_1) != null) {
-                            String pass1 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_1);
+                        if (doc.getString(Constantes.BD_ULTIMO_PASS_1) != null) {
+                            String pass1 = doc.getString(Constantes.BD_ULTIMO_PASS_1);
                             textView1.setText(pass1);
                         } else {
                             textView1.setText("Sin historial de contraseñas");
                         }
 
-                        if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_2) != null) {
-                            String pass2 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_2);
+                        if (doc.getString(Constantes.BD_ULTIMO_PASS_2) != null) {
+                            String pass2 = doc.getString(Constantes.BD_ULTIMO_PASS_2);
                             textView2.setText(pass2);
                         }
 
-                        if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_3) != null) {
-                            String pass3 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_3);
+                        if (doc.getString(Constantes.BD_ULTIMO_PASS_3) != null) {
+                            String pass3 = doc.getString(Constantes.BD_ULTIMO_PASS_3);
                             textView3.setText(pass3);
                         }
 
-                        if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_4) != null) {
-                            String pass4 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_4);
+                        if (doc.getString(Constantes.BD_ULTIMO_PASS_4) != null) {
+                            String pass4 = doc.getString(Constantes.BD_ULTIMO_PASS_4);
                             textView4.setText(pass4);
                         }
 
-                        if (doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_5) != null) {
-                            String pass5 = doc.getString(VariablesEstaticas.BD_ULTIMO_PASS_5);
+                        if (doc.getString(Constantes.BD_ULTIMO_PASS_5) != null) {
+                            String pass5 = doc.getString(Constantes.BD_ULTIMO_PASS_5);
                             textView5.setText(pass5);
                         }
                         progress.dismiss();
@@ -431,10 +431,10 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         progress.setCancelable(false);
         progress.show();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + VariablesEstaticas.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constantes.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
 
         LinearLayout layout = new LinearLayout(mCtx);
         layout.setOrientation(LinearLayout.VERTICAL);

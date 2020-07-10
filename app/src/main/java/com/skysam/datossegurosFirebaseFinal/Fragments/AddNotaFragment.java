@@ -23,7 +23,7 @@ import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -163,10 +163,10 @@ public class AddNotaFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
-        nota.put(VariablesEstaticas.BD_TITULO_NOTAS, tituloS);
-        nota.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenidoS);
+        nota.put(Constantes.BD_TITULO_NOTAS, tituloS);
+        nota.put(Constantes.BD_CONTENIDO_NOTAS, contenidoS);
 
-        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
                 progressBarAdd.setVisibility(View.GONE);
@@ -189,14 +189,14 @@ public class AddNotaFragment extends Fragment {
         String tituloS = titulo.getText().toString();
         String contenidoS = contenido.getText().toString();
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(VariablesEstaticas.BD_TITULO_NOTAS, tituloS);
-        values.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenidoS);
+        values.put(Constantes.BD_TITULO_NOTAS, tituloS);
+        values.put(Constantes.BD_CONTENIDO_NOTAS, contenidoS);
 
-        db.insert(VariablesEstaticas.BD_NOTAS, null, values);
+        db.insert(Constantes.BD_NOTAS, null, values);
         db.close();
 
         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();

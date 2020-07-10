@@ -1,7 +1,9 @@
 package com.skysam.datossegurosFirebaseFinal;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
@@ -17,10 +19,13 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.Fragments.AddContrasenaFragment;
 import com.skysam.datossegurosFirebaseFinal.Fragments.AddCuentasFragment;
 import com.skysam.datossegurosFirebaseFinal.Fragments.AddNotaFragment;
 import com.skysam.datossegurosFirebaseFinal.Fragments.AddTarjetaFragment;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
@@ -31,28 +36,27 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
     private AddCuentasFragment addCuentasFragment;
     private AddTarjetaFragment addTarjetaFragment;
     private AddNotaFragment addNotaFragment;
-    private SharedPreferences sharedPreferences;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 setTheme(R.style.AppThemeLila);
                 break;
         }
@@ -71,17 +75,25 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
         addTarjetaFragment = new AddTarjetaFragment();
         addNotaFragment = new AddNotaFragment();
 
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            int add = bundle.getInt(Constantes.AGREGAR);
 
-        if (VariablesGenerales.Add == 0) {
-            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addContrasenaFragment).commit();
-        } else if (VariablesGenerales.Add == 1) {
-            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addCuentasFragment).commit();
-        } else if (VariablesGenerales.Add == 2) {
-            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addTarjetaFragment).commit();
-        } else if (VariablesGenerales.Add == 3) {
-            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addNotaFragment).commit();
+            switch (add) {
+                case 0:
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addContrasenaFragment).commit();
+                    break;
+                case 1:
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addCuentasFragment).commit();
+                    break;
+                case 2:
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addTarjetaFragment).commit();
+                    break;
+                case 3:
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addNotaFragment).commit();
+                    break;
+            }
         }
-
 
 
         spinnerOpciones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

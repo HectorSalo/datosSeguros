@@ -2,6 +2,7 @@ package com.skysam.datossegurosFirebaseFinal;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +13,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -42,7 +42,7 @@ import com.skysam.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -79,18 +79,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private NotaAdapter adapterNota;
     private AdapterTarjeta adapterTarjeta;
     private BancoAdapter adapterBanco;
-    private FirebaseUser user;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private FloatingActionButton fabAdd;
     private TextView sinLista;
     private Date fechaMomento;
-    private int listaBuscar;
+    private int listaBuscar, add;
     private ConexionSQLite conect;
     private ProgressBar progressBarCargar;
-    private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
     private ConstraintLayout constraintLayout;
     private ExportarSQLite exportarSQLite;
     private ImportarSQLite importarSQLite;
     private boolean exportar;
+    private boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
 
 
@@ -101,48 +102,48 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_contrasena:
-                    if (VariablesGenerales.almacenamientoExterno) {
+                    if (almacenamientoNube) {
                         verContrasenaFirebase();
-                    } else if (VariablesGenerales.almacenamientoInterno) {
+                    } else {
                         verContrasenasSQLite();
                     }
 
                     fabAdd.setImageResource(R.drawable.ic_add_contrasena);
                     listaBuscar = 0;
-                    VariablesGenerales.Add = 0;
+                    add = 0;
                     return true;
                 case R.id.navigation_cuentas:
-                    if (VariablesGenerales.almacenamientoExterno) {
+                    if (almacenamientoNube) {
                         verCuentasBancariasFirebase();
-                    } else if (VariablesGenerales.almacenamientoInterno) {
+                    } else {
                         verCuentasBancariasSQLite();
                     }
 
                     fabAdd.setImageResource(R.drawable.ic_add_banco);
                     listaBuscar = 1;
-                    VariablesGenerales.Add = 1;
+                    add = 1;
                     return true;
                 case R.id.navigation_tarjetas:
-                    if (VariablesGenerales.almacenamientoExterno) {
+                    if (almacenamientoNube) {
                         verTarjetasFirebase();
-                    } else if (VariablesGenerales.almacenamientoInterno) {
+                    } else {
                         verTarjetasSQLite();
                     }
 
                     fabAdd.setImageResource(R.drawable.ic_add_card);
                     listaBuscar = 2;
-                    VariablesGenerales.Add = 2;
+                    add = 2;
                     return true;
                 case R.id.navigation_notas:
-                    if (VariablesGenerales.almacenamientoExterno) {
+                    if (almacenamientoNube) {
                         verNotasFirebase();
-                    } else if (VariablesGenerales.almacenamientoInterno) {
+                    } else {
                         verNotasSQLite();
                     }
 
                     fabAdd.setImageResource(R.drawable.ic_add_nota);
                     listaBuscar = 3;
-                    VariablesGenerales.Add = 3;
+                    add = 3;
                     return true;
             }
             return false;
@@ -153,21 +154,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 setTheme(R.style.AppThemeLila);
                 break;
         }
@@ -189,8 +188,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         progressBarCargar = findViewById(R.id.progressBarCargar);
         constraintLayout = findViewById(R.id.containerMain);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        conect = new ConexionSQLite(getApplicationContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
+        conect = new ConexionSQLite(getApplicationContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
 
         exportarSQLite = new ExportarSQLite(this, constraintLayout);
         importarSQLite = new ImportarSQLite(this, constraintLayout);
@@ -199,34 +197,39 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setLayoutManager(new LinearLayoutManager(this));
         recycler.setHasFixedSize(true);
 
-        VariablesGenerales.Add = 0;
+        add = 0;
 
         fabAdd = (FloatingActionButton) findViewById(R.id.fabAdd);
         fabAdd.setImageResource(R.drawable.ic_add_contrasena);
         fabAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, AddActivity.class));
+                Bundle bundle = new Bundle();
+                bundle.putInt(Constantes.AGREGAR, add);
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtras(bundle);
+
+                startActivity(intent);
             }
         });
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccent));
                 fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDark)));
                 progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDark)), PorterDuff.Mode.SRC_IN);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentRojo));
                 fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)));
                 progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)), PorterDuff.Mode.SRC_IN);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentMarron));
                 fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)));
                 progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)), PorterDuff.Mode.SRC_IN);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentLila));
                 fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkLila)));
                 progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkLila)), PorterDuff.Mode.SRC_IN);
@@ -234,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
 
-        escogenciaAlmacenamiento();
+        validarEscogencia();
 
 
     }
@@ -323,14 +326,26 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @Override
     public void onBackPressed() {
         cerrarSesion();
     }
 
-    public void seleccionAlmacenamiento () {
+
+    public void validarEscogencia() {
+        boolean escogerAlmacenamiento = sharedPreferences.getBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, false);
+        if (!escogerAlmacenamiento) {
+            seleccionarAlmacenamiento();
+        } else {
+            if (almacenamientoNube) {
+                verContrasenaFirebase();
+            } else {
+                verContrasenasSQLite();
+            }
+        }
+    }
+
+    public void seleccionarAlmacenamiento () {
 
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Escoja lugar de almacenamiento")
@@ -338,109 +353,23 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        progressBarCargar.setVisibility(View.VISIBLE);
-                        String userID = user.getUid();
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                        Map<String, Object> almacenar = new HashMap<>();
-                        almacenar.put(VariablesEstaticas.INTERNO, true);
-                        almacenar.put(VariablesEstaticas.EXTERNO, false);
-                        almacenar.put(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO, true);
-
-                        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.ALMACENAMIENTO).document(VariablesEstaticas.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("msg", "Succes");
-                                progressBarCargar.setVisibility(View.GONE);
-                                recreate();
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("msg", "Error adding document", e);
-                                Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                                progressBarCargar.setVisibility(View.GONE);
-                                seleccionAlmacenamiento();
-                            }
-                        });
-
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, false);
+                        editor.putBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
+                        editor.commit();
                     }
                 }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                progressBarCargar.setVisibility(View.VISIBLE);
-                String userID = user.getUid();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                Map<String, Object> almacenar = new HashMap<>();
-                almacenar.put(VariablesEstaticas.INTERNO, false);
-                almacenar.put(VariablesEstaticas.EXTERNO, true);
-                almacenar.put(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO, true);
-
-                db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.ALMACENAMIENTO).document(VariablesEstaticas.ALMACENAMIENTO_DOC).set(almacenar).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("msg", "Succes");
-                        progressBarCargar.setVisibility(View.GONE);
-                        recreate();
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("msg", "Error adding document", e);
-                        progressBarCargar.setVisibility(View.GONE);
-                        Toast.makeText(getApplicationContext(), "Error al configurar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        seleccionAlmacenamiento();
-                    }
-                });
-
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+                editor.putBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
+                editor.commit();
             }
         })
                 .setCancelable(false).show();
     }
 
-
-    public void escogenciaAlmacenamiento() {
-        progressBarCargar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
-        FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.ALMACENAMIENTO);
-
-        reference.document(VariablesEstaticas.ALMACENAMIENTO_DOC).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
-
-                    if(doc.exists()) {
-
-                        VariablesGenerales.escogerAlmacenamiento = doc.getBoolean(VariablesEstaticas.ALMACENAMIENTO_ESCOGIDO);
-                        VariablesGenerales.almacenamientoExterno = doc.getBoolean(VariablesEstaticas.EXTERNO);
-                        VariablesGenerales.almacenamientoInterno = doc.getBoolean(VariablesEstaticas.INTERNO);
-                    }
-
-                    validarEscogencia();
-                    progressBarCargar.setVisibility(View.GONE);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d ("msg", "Failed", e);
-                progressBarCargar.setVisibility(View.GONE);
-            }
-        });
-    }
-
-    public void validarEscogencia() {
-        if (!VariablesGenerales.escogerAlmacenamiento) {
-            seleccionAlmacenamiento();
-        } else if (VariablesGenerales.almacenamientoExterno) {
-            verContrasenaFirebase();
-        } else if (VariablesGenerales.almacenamientoInterno) {
-            verContrasenasSQLite();
-        }
-    }
 
     private void verContrasenaFirebase() {
         progressBarCargar.setVisibility(View.VISIBLE);
@@ -450,9 +379,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setAdapter(adapterContrasena);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS);
 
-        Query query = reference.orderBy(VariablesEstaticas.BD_SERVICIO, Query.Direction.ASCENDING);
+        Query query = reference.orderBy(Constantes.BD_SERVICIO, Query.Direction.ASCENDING);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -460,11 +389,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     for (QueryDocumentSnapshot doc : task.getResult()) {
                         ContrasenaConstructor pass = new ContrasenaConstructor();
                         pass.setIdContrasena(doc.getId());
-                        pass.setServicio(doc.getString(VariablesEstaticas.BD_SERVICIO));
-                        pass.setUsuario(doc.getString(VariablesEstaticas.BD_USUARIO));
-                        pass.setContrasena(doc.getString(VariablesEstaticas.BD_PASSWORD));
+                        pass.setServicio(doc.getString(Constantes.BD_SERVICIO));
+                        pass.setUsuario(doc.getString(Constantes.BD_USUARIO));
+                        pass.setContrasena(doc.getString(Constantes.BD_PASSWORD));
 
-                        Date momentoCreacion = doc.getDate(VariablesEstaticas.BD_FECHA_CREACION);
+                        Date momentoCreacion = doc.getDate(Constantes.BD_FECHA_CREACION);
                         long fechaCreacion = momentoCreacion.getTime();
                         long fechaActual = fechaMomento.getTime();
 
@@ -477,10 +406,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         int diasTranscurridos = (int) dias;
 
 
-                        if (doc.getString(VariablesEstaticas.BD_VIGENCIA).equals("0")) {
+                        if (doc.getString(Constantes.BD_VIGENCIA).equals("0")) {
                             pass.setVencimiento(0);
                         } else {
-                            int vencimiento = Integer.parseInt(doc.getString(VariablesEstaticas.BD_VIGENCIA));
+                            int vencimiento = Integer.parseInt(doc.getString(Constantes.BD_VIGENCIA));
                             int faltante = vencimiento - diasTranscurridos;
                             pass.setVencimiento(faltante);
                         }
@@ -514,9 +443,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setAdapter(adapterBanco);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CUENTAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS);
 
-        Query query = reference.orderBy(VariablesEstaticas.BD_BANCO, Query.Direction.ASCENDING);
+        Query query = reference.orderBy(Constantes.BD_BANCO, Query.Direction.ASCENDING);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -524,14 +453,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
                         BancoConstructor bank = new BancoConstructor();
                         bank.setIdCuenta(doc.getId());
-                        bank.setTitular(doc.getString(VariablesEstaticas.BD_TITULAR_BANCO));
-                        bank.setBanco(doc.getString(VariablesEstaticas.BD_BANCO));
-                        bank.setNumeroCuenta(doc.getString(VariablesEstaticas.BD_NUMERO_CUENTA));
-                        bank.setCedula(doc.getString(VariablesEstaticas.BD_CEDULA_BANCO));
-                        bank.setTipo(doc.getString(VariablesEstaticas.BD_TIPO_CUENTA));
-                        bank.setTelefono(doc.getString(VariablesEstaticas.BD_TELEFONO));
-                        bank.setCorreo(doc.getString(VariablesEstaticas.BD_CORREO_CUENTA));
-                        bank.setTipoDocumento(doc.getString(VariablesEstaticas.BD_TIPO_DOCUMENTO));
+                        bank.setTitular(doc.getString(Constantes.BD_TITULAR_BANCO));
+                        bank.setBanco(doc.getString(Constantes.BD_BANCO));
+                        bank.setNumeroCuenta(doc.getString(Constantes.BD_NUMERO_CUENTA));
+                        bank.setCedula(doc.getString(Constantes.BD_CEDULA_BANCO));
+                        bank.setTipo(doc.getString(Constantes.BD_TIPO_CUENTA));
+                        bank.setTelefono(doc.getString(Constantes.BD_TELEFONO));
+                        bank.setCorreo(doc.getString(Constantes.BD_CORREO_CUENTA));
+                        bank.setTipoDocumento(doc.getString(Constantes.BD_TIPO_DOCUMENTO));
 
                         listBancos.add(bank);
 
@@ -562,9 +491,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setAdapter(adapterTarjeta);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS);
 
-        Query query = reference.orderBy(VariablesEstaticas.BD_TITULAR_TARJETA, Query.Direction.ASCENDING);
+        Query query = reference.orderBy(Constantes.BD_TITULAR_TARJETA, Query.Direction.ASCENDING);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -572,14 +501,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
                         TarjetaConstructor tarjeta = new TarjetaConstructor();
                         tarjeta.setIdTarjeta(doc.getId());
-                        tarjeta.setTitular(doc.getString(VariablesEstaticas.BD_TITULAR_TARJETA));
-                        tarjeta.setNumeroTarjeta(doc.getString(VariablesEstaticas.BD_NUMERO_TARJETA));
-                        tarjeta.setCvv(doc.getString(VariablesEstaticas.BD_CVV));
-                        tarjeta.setCedula(doc.getString(VariablesEstaticas.BD_CEDULA_TARJETA));
-                        tarjeta.setTipo(doc.getString(VariablesEstaticas.BD_TIPO_TARJETA));
-                        tarjeta.setBanco(doc.getString(VariablesEstaticas.BD_BANCO_TARJETA));
-                        tarjeta.setVencimiento(doc.getString(VariablesEstaticas.BD_VENCIMIENTO_TARJETA));
-                        tarjeta.setClave(doc.getString(VariablesEstaticas.BD_CLAVE_TARJETA));
+                        tarjeta.setTitular(doc.getString(Constantes.BD_TITULAR_TARJETA));
+                        tarjeta.setNumeroTarjeta(doc.getString(Constantes.BD_NUMERO_TARJETA));
+                        tarjeta.setCvv(doc.getString(Constantes.BD_CVV));
+                        tarjeta.setCedula(doc.getString(Constantes.BD_CEDULA_TARJETA));
+                        tarjeta.setTipo(doc.getString(Constantes.BD_TIPO_TARJETA));
+                        tarjeta.setBanco(doc.getString(Constantes.BD_BANCO_TARJETA));
+                        tarjeta.setVencimiento(doc.getString(Constantes.BD_VENCIMIENTO_TARJETA));
+                        tarjeta.setClave(doc.getString(Constantes.BD_CLAVE_TARJETA));
 
                         listTarjetas.add(tarjeta);
 
@@ -609,9 +538,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         recycler.setAdapter(adapterNota);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS);
 
-        Query query = reference.orderBy(VariablesEstaticas.BD_TITULO_NOTAS, Query.Direction.ASCENDING);
+        Query query = reference.orderBy(Constantes.BD_TITULO_NOTAS, Query.Direction.ASCENDING);
         query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -619,8 +548,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
                         NotaConstructor nota = new NotaConstructor();
                         nota.setIdNota(doc.getId());
-                        nota.setTitulo(doc.getString(VariablesEstaticas.BD_TITULO_NOTAS));
-                        nota.setContenido(doc.getString(VariablesEstaticas.BD_CONTENIDO_NOTAS));
+                        nota.setTitulo(doc.getString(Constantes.BD_TITULO_NOTAS));
+                        nota.setContenido(doc.getString(Constantes.BD_CONTENIDO_NOTAS));
 
                         listNota.add(nota);
 
@@ -652,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         SQLiteDatabase db = conect.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * from " + VariablesEstaticas.BD_CONTRASENAS, null);
+        Cursor cursor = db.rawQuery("SELECT * from " + Constantes.BD_CONTRASENAS, null);
 
         while (cursor.moveToNext()) {
             ContrasenaConstructor pass = new ContrasenaConstructor();
@@ -709,7 +638,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         SQLiteDatabase db = conect.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * from " + VariablesEstaticas.BD_CUENTAS, null);
+        Cursor cursor = db.rawQuery("SELECT * from " + Constantes.BD_CUENTAS, null);
 
         while (cursor.moveToNext()) {
             BancoConstructor bank = new BancoConstructor();
@@ -744,7 +673,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         SQLiteDatabase db = conect.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * from " + VariablesEstaticas.BD_TARJETAS, null);
+        Cursor cursor = db.rawQuery("SELECT * from " + Constantes.BD_TARJETAS, null);
 
         while (cursor.moveToNext()) {
             TarjetaConstructor card = new TarjetaConstructor();
@@ -780,7 +709,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         SQLiteDatabase db = conect.getReadableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * from " + VariablesEstaticas.BD_NOTAS, null);
+        Cursor cursor = db.rawQuery("SELECT * from " + Constantes.BD_NOTAS, null);
 
         while (cursor.moveToNext()) {
             NotaConstructor note = new NotaConstructor();
@@ -946,10 +875,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void configurarSinBloqueo() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(VariablesEstaticas.HUELLA, false);
-        editor.putBoolean(VariablesEstaticas.PIN, false);
-        editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
-        editor.putString(VariablesEstaticas.PIN_RESPALDO, "0000");
+        editor.putBoolean(Constantes.HUELLA, false);
+        editor.putBoolean(Constantes.PIN, false);
+        editor.putBoolean(Constantes.SIN_BLOQUEO, true);
+        editor.putString(Constantes.PIN_RESPALDO, "0000");
         editor.commit();
     }
 

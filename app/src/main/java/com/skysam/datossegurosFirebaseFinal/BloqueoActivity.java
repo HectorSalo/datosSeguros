@@ -11,7 +11,7 @@ import com.skysam.datossegurosFirebaseFinal.FragmentsBloqueo.HuellaFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsBloqueo.PINFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsBloqueo.SinBloqueoFragment;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 
 public class BloqueoActivity extends AppCompatActivity implements HuellaFragment.OnFragmentInteractionListener, SinBloqueoFragment.OnFragmentInteractionListener, PINFragment.OnFragmentInteractionListener {
 
@@ -39,17 +39,17 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
         }
         setContentView(R.layout.activity_bloqueo);
 
-        boolean huella = sharedPreferences.getBoolean(VariablesEstaticas.HUELLA, false);
-        boolean sinBloqueo = sharedPreferences.getBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
+        boolean huella = sharedPreferences.getBoolean(Constantes.HUELLA, false);
+        boolean sinBloqueo = sharedPreferences.getBoolean(Constantes.SIN_BLOQUEO, true);
 
         HuellaFragment huellaFragment = new HuellaFragment();
         SinBloqueoFragment sinBloqueoFragment = new SinBloqueoFragment();
         PINFragment pinFragment = new PINFragment();
 
         if (sinBloqueo) {
-            if (VariablesGenerales.conf_bloqueo == VariablesEstaticas.HUELLA_INT) {
+            if (VariablesGenerales.conf_bloqueo == Constantes.HUELLA_INT) {
                 getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, huellaFragment).commit();
-            } else if (VariablesGenerales.conf_bloqueo == VariablesEstaticas.PIN_INT) {
+            } else if (VariablesGenerales.conf_bloqueo == Constantes.PIN_INT) {
                 getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, pinFragment).commit();
             } else {
                 getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, sinBloqueoFragment).commit();

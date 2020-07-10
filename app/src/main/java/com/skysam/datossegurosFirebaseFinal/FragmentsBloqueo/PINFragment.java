@@ -24,7 +24,7 @@ import com.skysam.datossegurosFirebaseFinal.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.material.textfield.TextInputLayout;
 
 
@@ -97,10 +97,10 @@ public class PINFragment extends Fragment {
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentPin);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        final boolean huella = preferences.getBoolean(VariablesEstaticas.HUELLA, false);
-        final boolean pin = preferences.getBoolean(VariablesEstaticas.PIN, false);
-        boolean sinBloqueo = preferences.getBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
-        pinGuardado = preferences.getString(VariablesEstaticas.PIN_RESPALDO, "0000");
+        final boolean huella = preferences.getBoolean(Constantes.HUELLA, false);
+        final boolean pin = preferences.getBoolean(Constantes.PIN, false);
+        boolean sinBloqueo = preferences.getBoolean(Constantes.SIN_BLOQUEO, true);
+        pinGuardado = preferences.getString(Constantes.PIN_RESPALDO, "0000");
 
 
         String tema = preferences.getString("tema", "Amarillo");
@@ -187,30 +187,30 @@ public class PINFragment extends Fragment {
         String pin = etPin.getText().toString();
 
         if (pin.equals(pinGuardado)) {
-            if (VariablesGenerales.conf_bloqueo == VariablesEstaticas.HUELLA_INT) {
+            if (VariablesGenerales.conf_bloqueo == Constantes.HUELLA_INT) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(VariablesEstaticas.HUELLA, false);
-                editor.putBoolean(VariablesEstaticas.PIN, false);
-                editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
-                editor.putString(VariablesEstaticas.PIN_RESPALDO, "0000");
+                editor.putBoolean(Constantes.HUELLA, false);
+                editor.putBoolean(Constantes.PIN, false);
+                editor.putBoolean(Constantes.SIN_BLOQUEO, true);
+                editor.putString(Constantes.PIN_RESPALDO, "0000");
                 editor.commit();
                 startActivity(new Intent(getContext(), BloqueoActivity.class));
 
-            } else if (VariablesGenerales.conf_bloqueo == VariablesEstaticas.PIN_INT) {
+            } else if (VariablesGenerales.conf_bloqueo == Constantes.PIN_INT) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(VariablesEstaticas.HUELLA, false);
-                editor.putBoolean(VariablesEstaticas.PIN, false);
-                editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
-                editor.putString(VariablesEstaticas.PIN_RESPALDO, "0000");
+                editor.putBoolean(Constantes.HUELLA, false);
+                editor.putBoolean(Constantes.PIN, false);
+                editor.putBoolean(Constantes.SIN_BLOQUEO, true);
+                editor.putString(Constantes.PIN_RESPALDO, "0000");
                 editor.commit();
                 startActivity(new Intent(getContext(), BloqueoActivity.class));
 
-            } else if (VariablesGenerales.conf_bloqueo == VariablesEstaticas.SIN_BLOQUEO_INT) {
+            } else if (VariablesGenerales.conf_bloqueo == Constantes.SIN_BLOQUEO_INT) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(VariablesEstaticas.HUELLA, false);
-                editor.putBoolean(VariablesEstaticas.PIN, false);
-                editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, true);
-                editor.putString(VariablesEstaticas.PIN_RESPALDO, "0000");
+                editor.putBoolean(Constantes.HUELLA, false);
+                editor.putBoolean(Constantes.PIN, false);
+                editor.putBoolean(Constantes.SIN_BLOQUEO, true);
+                editor.putString(Constantes.PIN_RESPALDO, "0000");
                 editor.commit();
                 startActivity(new Intent(getContext(), MainActivity.class));
             } else if (VariablesGenerales.conf_bloqueo == 1000) {
@@ -256,10 +256,10 @@ public class PINFragment extends Fragment {
         if (pin1 && pin2) {
             if (pin.equals(pinRepetir)) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(VariablesEstaticas.HUELLA, false);
-                editor.putBoolean(VariablesEstaticas.PIN, true);
-                editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, false);
-                editor.putString(VariablesEstaticas.PIN_RESPALDO, pin);
+                editor.putBoolean(Constantes.HUELLA, false);
+                editor.putBoolean(Constantes.PIN, true);
+                editor.putBoolean(Constantes.SIN_BLOQUEO, false);
+                editor.putString(Constantes.PIN_RESPALDO, pin);
                 editor.commit();
                 startActivity(new Intent(getContext(), MainActivity.class));
             }

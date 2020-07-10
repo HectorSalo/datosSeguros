@@ -24,7 +24,7 @@ import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -168,15 +168,15 @@ public class EditarNotaFragment extends Fragment {
         String idNota = VariablesGenerales.idNota;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS);
+        CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS);
 
         reference.document(idNota).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
                     DocumentSnapshot doc = task.getResult();
-                    etTitulo.setText(doc.getString(VariablesEstaticas.BD_TITULO_NOTAS));
-                    etContenido.setText(doc.getString(VariablesEstaticas.BD_CONTENIDO_NOTAS));
+                    etTitulo.setText(doc.getString(Constantes.BD_TITULO_NOTAS));
+                    etContenido.setText(doc.getString(Constantes.BD_CONTENIDO_NOTAS));
 
                     progressBarEditar.setVisibility(View.GONE);
 
@@ -193,10 +193,10 @@ public class EditarNotaFragment extends Fragment {
 
         String idNota = VariablesGenerales.idNota;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + VariablesEstaticas.BD_NOTAS + " WHERE idNota =" + idNota, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constantes.BD_NOTAS + " WHERE idNota =" + idNota, null);
 
         if(cursor.moveToFirst()) {
             etTitulo.setText(cursor.getString(1));
@@ -215,10 +215,10 @@ public class EditarNotaFragment extends Fragment {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
-        nota.put(VariablesEstaticas.BD_TITULO_NOTAS, titulo);
-        nota.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenido);
+        nota.put(Constantes.BD_TITULO_NOTAS, titulo);
+        nota.put(Constantes.BD_CONTENIDO_NOTAS, contenido);
 
-        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS).document(VariablesGenerales.idNota).set(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS).document(VariablesGenerales.idNota).set(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
 
             public void onSuccess(Void aVoid) {
                 progressBarEditar.setVisibility(View.GONE);
@@ -242,14 +242,14 @@ public class EditarNotaFragment extends Fragment {
         String titulo = etTitulo.getText().toString();
         String contenido = etContenido.getText().toString();
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(VariablesEstaticas.BD_TITULO_NOTAS, titulo);
-        values.put(VariablesEstaticas.BD_CONTENIDO_NOTAS, contenido);
+        values.put(Constantes.BD_TITULO_NOTAS, titulo);
+        values.put(Constantes.BD_CONTENIDO_NOTAS, contenido);
 
-        db.update(VariablesEstaticas.BD_NOTAS, values, "idNota=" + idNota, null);
+        db.update(Constantes.BD_NOTAS, values, "idNota=" + idNota, null);
         db.close();
 
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();

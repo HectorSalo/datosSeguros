@@ -28,7 +28,7 @@ import com.skysam.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.skysam.datossegurosFirebaseFinal.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -259,7 +259,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
         String userID = user.getUid();
         String doc = i.getIdNota();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_NOTAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS);
 
         reference.document(doc)
                 .delete()
@@ -283,10 +283,10 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     public void eliminarSQLite(NotaConstructor i) {
         String idNota = i.getIdNota();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        db.delete(VariablesEstaticas.BD_NOTAS, "idNota=" + idNota, null);
+        db.delete(Constantes.BD_NOTAS, "idNota=" + idNota, null);
         db.close();
 
         listNota.remove(i);

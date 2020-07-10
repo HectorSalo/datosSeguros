@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,19 +49,19 @@ public class InicSesionActivity extends AppCompatActivity {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 setTheme(R.style.AppThemeLila);
                 break;
         }
@@ -77,16 +78,16 @@ public class InicSesionActivity extends AppCompatActivity {
 
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryRojo));
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryMarron));
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryLila));
                 break;
         }
@@ -143,7 +144,6 @@ public class InicSesionActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String correo = usuario.getText().toString();
                         enviarCorreo(correo);
-                        dialog.dismiss();
                     }
                 })
                 .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
@@ -162,7 +162,6 @@ public class InicSesionActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         user = mAuth.getCurrentUser();
         if (user != null) {
-            VariablesGenerales.userIdSQlite = user.getUid();
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
         }
@@ -204,7 +203,6 @@ public class InicSesionActivity extends AppCompatActivity {
                                 Log.d("msg", "signInWithEmail:success");
                                 user = mAuth.getCurrentUser();
                                 progressBarInicSesion.setVisibility(View.GONE);
-                                VariablesGenerales.userIdSQlite = user.getUid();
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.

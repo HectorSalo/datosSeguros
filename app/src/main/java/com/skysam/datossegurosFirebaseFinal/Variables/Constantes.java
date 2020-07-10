@@ -1,6 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.Variables;
 
-public class VariablesEstaticas {
+public class Constantes {
     public static final String BD_PROPIETARIOS = "propietarios";
     public static final String BD_PROPIETARIO = "propietario";
     public static final String BD_CONTRASENAS= "contrasenas";
@@ -41,13 +41,12 @@ public class VariablesEstaticas {
 
     public static final int VERSION_SQLITE = 6;
 
+    public static final String AGREGAR = "agregar";
+
     public static final String ALMACENAMIENTO = "almacenamientos";
     public static final String ALMACENAMIENTO_DOC = "almacenamientoDoc";
     public static final String ALMACENAMIENTO_ESCOGIDO = "escogido";
-    public static final String INTERNO = "interno";
-    public static final String EXTERNO = "externo";
 
-    public static final String BLOQUEO = "bloqueo";
     public static final String HUELLA = "huella";
     public static final String PIN = "pin";
     public static final String PIN_RESPALDO = "pinRespaldo";
@@ -55,5 +54,12 @@ public class VariablesEstaticas {
     public static final int HUELLA_INT = 1;
     public static final int PIN_INT = 2;
     public static final int SIN_BLOQUEO_INT = 0;
+
+    public static final String PREFERENCE_TEMA = "tema";
+    public static final String PREFERENCE_AMARILLO = "Amarillo";
+    public static final String PREFERENCE_ROJO = "Rojo";
+    public static final String PREFERENCE_MARRON = "Marron";
+    public static final String PREFERENCE_LILA = "Lila";
+    public static final String PREFERENCE_ALMACENAMIENTO_NUBE = "almacenamientoNube";
 
 }

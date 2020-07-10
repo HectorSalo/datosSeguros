@@ -28,7 +28,7 @@ import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -237,26 +237,26 @@ public class AddTarjetaFragment extends Fragment {
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                         Map<String, Object> tarjeta = new HashMap<>();
-                        tarjeta.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
-                        tarjeta.put(VariablesEstaticas.BD_BANCO_TARJETA, banco);
-                        tarjeta.put(VariablesEstaticas.BD_NUMERO_TARJETA, numeroTarjeta);
-                        tarjeta.put(VariablesEstaticas.BD_CVV, cvv);
-                        tarjeta.put(VariablesEstaticas.BD_CEDULA_TARJETA, cedula);
-                        tarjeta.put(VariablesEstaticas.BD_TIPO_TARJETA, tipo);
+                        tarjeta.put(Constantes.BD_TITULAR_TARJETA, titular);
+                        tarjeta.put(Constantes.BD_BANCO_TARJETA, banco);
+                        tarjeta.put(Constantes.BD_NUMERO_TARJETA, numeroTarjeta);
+                        tarjeta.put(Constantes.BD_CVV, cvv);
+                        tarjeta.put(Constantes.BD_CEDULA_TARJETA, cedula);
+                        tarjeta.put(Constantes.BD_TIPO_TARJETA, tipo);
 
                         if (vencimiento.isEmpty()) {
-                            tarjeta.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, "");
+                            tarjeta.put(Constantes.BD_VENCIMIENTO_TARJETA, "");
                         } else {
-                            tarjeta.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, vencimiento);
+                            tarjeta.put(Constantes.BD_VENCIMIENTO_TARJETA, vencimiento);
                         }
 
                         if (clave.isEmpty()) {
-                            tarjeta.put(VariablesEstaticas.BD_CLAVE_TARJETA, "");
+                            tarjeta.put(Constantes.BD_CLAVE_TARJETA, "");
                         } else {
-                            tarjeta.put(VariablesEstaticas.BD_CLAVE_TARJETA, clave);
+                            tarjeta.put(Constantes.BD_CLAVE_TARJETA, clave);
                         }
 
-                        db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                             @Override
                             public void onSuccess(DocumentReference documentReference) {
                                 progressBarAdd.setVisibility(View.GONE);
@@ -289,7 +289,7 @@ public class AddTarjetaFragment extends Fragment {
         String clave = etClave.getText().toString();
         String tipo = "";
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty() || banco.isEmpty()) {
@@ -315,25 +315,25 @@ public class AddTarjetaFragment extends Fragment {
                         }
 
                         ContentValues values = new ContentValues();
-                        values.put(VariablesEstaticas.BD_TITULAR_TARJETA, titular);
-                        values.put(VariablesEstaticas.BD_NUMERO_TARJETA, numeroTarjeta);
-                        values.put(VariablesEstaticas.BD_CVV, cvv);
-                        values.put(VariablesEstaticas.BD_CEDULA_TARJETA, cedula);
-                        values.put(VariablesEstaticas.BD_TIPO_TARJETA, tipo);
+                        values.put(Constantes.BD_TITULAR_TARJETA, titular);
+                        values.put(Constantes.BD_NUMERO_TARJETA, numeroTarjeta);
+                        values.put(Constantes.BD_CVV, cvv);
+                        values.put(Constantes.BD_CEDULA_TARJETA, cedula);
+                        values.put(Constantes.BD_TIPO_TARJETA, tipo);
 
                         if (vencimiento.isEmpty()) {
-                            values.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, "");
+                            values.put(Constantes.BD_VENCIMIENTO_TARJETA, "");
                         } else {
-                            values.put(VariablesEstaticas.BD_VENCIMIENTO_TARJETA, vencimiento);
+                            values.put(Constantes.BD_VENCIMIENTO_TARJETA, vencimiento);
                         }
 
                         if (clave.isEmpty()) {
-                            values.put(VariablesEstaticas.BD_CLAVE_TARJETA, "");
+                            values.put(Constantes.BD_CLAVE_TARJETA, "");
                         } else {
-                            values.put(VariablesEstaticas.BD_CLAVE_TARJETA, clave);
+                            values.put(Constantes.BD_CLAVE_TARJETA, clave);
                         }
 
-                        db.insert(VariablesEstaticas.BD_TARJETAS, null, values);
+                        db.insert(Constantes.BD_TARJETAS, null, values);
                         db.close();
 
                         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();

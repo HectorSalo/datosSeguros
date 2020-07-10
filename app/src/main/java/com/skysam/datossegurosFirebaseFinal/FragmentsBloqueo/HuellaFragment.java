@@ -29,7 +29,7 @@ import com.skysam.datossegurosFirebaseFinal.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.material.textfield.TextInputLayout;
 
 /**
@@ -104,7 +104,7 @@ public class HuellaFragment extends Fragment {
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentHuella);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        pinGuardado = preferences.getString(VariablesEstaticas.PIN_RESPALDO, "0000");
+        pinGuardado = preferences.getString(Constantes.PIN_RESPALDO, "0000");
         String tema = preferences.getString("tema", "Amarillo");
 
         switch (tema){
@@ -250,10 +250,10 @@ public class HuellaFragment extends Fragment {
     public void guardarPIN(String pin) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(VariablesEstaticas.HUELLA, true);
-        editor.putBoolean(VariablesEstaticas.PIN, false);
-        editor.putBoolean(VariablesEstaticas.SIN_BLOQUEO, false);
-        editor.putString(VariablesEstaticas.PIN_RESPALDO, pin);
+        editor.putBoolean(Constantes.HUELLA, true);
+        editor.putBoolean(Constantes.PIN, false);
+        editor.putBoolean(Constantes.SIN_BLOQUEO, false);
+        editor.putString(Constantes.PIN_RESPALDO, pin);
         editor.commit();
     }
 

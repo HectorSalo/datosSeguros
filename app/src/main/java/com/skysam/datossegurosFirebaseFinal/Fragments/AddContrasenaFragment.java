@@ -3,6 +3,7 @@ package com.skysam.datossegurosFirebaseFinal.Fragments;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,7 +26,7 @@ import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,15 +39,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AddContrasenaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AddContrasenaFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class AddContrasenaFragment extends Fragment {
 
     private EditText etServicio, etUsuario, etContrasena, etOtroDias;
@@ -57,34 +51,15 @@ public class AddContrasenaFragment extends Fragment {
     private Date fechaActual;
 
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
     public AddContrasenaFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddContrasenaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+
     public static AddContrasenaFragment newInstance(String param1, String param2) {
         AddContrasenaFragment fragment = new AddContrasenaFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -92,8 +67,6 @@ public class AddContrasenaFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
@@ -102,6 +75,12 @@ public class AddContrasenaFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_add_contrasena, container, false);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         etServicio = (EditText) vista.findViewById(R.id.etServicio);
         etUsuario = (EditText) vista.findViewById(R.id.etUsuario);
@@ -122,8 +101,6 @@ public class AddContrasenaFragment extends Fragment {
         int anualActual = almanaque.get(Calendar.YEAR);
         almanaque.set(anualActual, mesActual, diaActual);
         fechaActual = almanaque.getTime();
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -164,9 +141,9 @@ public class AddContrasenaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VariablesGenerales.almacenamientoExterno) {
+                if (almacenamientoNube) {
                     guardarContrasenaFirebase();
-                } else if (VariablesGenerales.almacenamientoInterno) {
+                } else {
                     guardarContrasenaSQLite();
                 }
 
@@ -176,12 +153,6 @@ public class AddContrasenaFragment extends Fragment {
         return vista;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -200,18 +171,7 @@ public class AddContrasenaFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -241,20 +201,19 @@ public class AddContrasenaFragment extends Fragment {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
 
                 Map<String, Object> contrasenaM = new HashMap<>();
-                contrasenaM.put(VariablesEstaticas.BD_SERVICIO, servicio);
-                contrasenaM.put(VariablesEstaticas.BD_USUARIO, usuario);
-                contrasenaM.put(VariablesEstaticas.BD_PASSWORD, contrasena);
-                contrasenaM.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
-                contrasenaM.put(VariablesEstaticas.BD_PROPIETARIO, userID);
-                contrasenaM.put(VariablesEstaticas.BD_FECHA_CREACION, fechaActual);
+                contrasenaM.put(Constantes.BD_SERVICIO, servicio);
+                contrasenaM.put(Constantes.BD_USUARIO, usuario);
+                contrasenaM.put(Constantes.BD_PASSWORD, contrasena);
+                contrasenaM.put(Constantes.BD_VIGENCIA, vigencia);
+                contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
+                contrasenaM.put(Constantes.BD_FECHA_CREACION, fechaActual);
 
-                db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
                         progressBarAdd.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                        Intent myIntent = new Intent(getContext(), MainActivity.class);
-                        startActivity(myIntent);
+                        requireActivity().finish();
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -278,7 +237,7 @@ public class AddContrasenaFragment extends Fragment {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String fechaS = sdf.format(fechaActual);
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         if (servicio.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
@@ -298,18 +257,17 @@ public class AddContrasenaFragment extends Fragment {
                 }
 
                 ContentValues values = new ContentValues();
-                values.put(VariablesEstaticas.BD_SERVICIO, servicio);
-                values.put(VariablesEstaticas.BD_USUARIO, usuario);
-                values.put(VariablesEstaticas.BD_PASSWORD, contrasena);
-                values.put(VariablesEstaticas.BD_VIGENCIA, vigencia);
-                values.put(VariablesEstaticas.BD_FECHA_CREACION, fechaS);
+                values.put(Constantes.BD_SERVICIO, servicio);
+                values.put(Constantes.BD_USUARIO, usuario);
+                values.put(Constantes.BD_PASSWORD, contrasena);
+                values.put(Constantes.BD_VIGENCIA, vigencia);
+                values.put(Constantes.BD_FECHA_CREACION, fechaS);
 
-                db.insert(VariablesEstaticas.BD_CONTRASENAS, null, values);
+                db.insert(Constantes.BD_CONTRASENAS, null, values);
                 db.close();
 
                 Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                Intent myIntent = new Intent(getContext(), MainActivity.class);
-                startActivity(myIntent);
+                requireActivity().finish();
             }
         }
 

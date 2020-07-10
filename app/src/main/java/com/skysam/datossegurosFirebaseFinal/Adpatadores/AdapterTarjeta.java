@@ -28,7 +28,7 @@ import com.skysam.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.skysam.datossegurosFirebaseFinal.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesEstaticas;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -284,7 +284,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
         String userID = user.getUid();
         String doc = i.getIdTarjeta();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(VariablesEstaticas.BD_PROPIETARIOS).document(userID).collection(VariablesEstaticas.BD_TARJETAS);
+        CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS);
 
         reference.document(doc)
                 .delete()
@@ -308,10 +308,10 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     public void eliminarSQLite(TarjetaConstructor i) {
         String idTarjeta = i.getIdTarjeta();
 
-        ConexionSQLite conect = new ConexionSQLite(mCtx, VariablesEstaticas.BD_PROPIETARIOS, null, VariablesEstaticas.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(mCtx, Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        db.delete(VariablesEstaticas.BD_TARJETAS, "idTarjeta=" + idTarjeta, null);
+        db.delete(Constantes.BD_TARJETAS, "idTarjeta=" + idTarjeta, null);
         db.close();
 
         listTarjeta.remove(i);
