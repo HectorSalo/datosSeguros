@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.ajts.androidmads.library.ExcelToSQLite;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.material.snackbar.Snackbar;
@@ -15,6 +17,7 @@ public class ImportarSQLite {
 
     private Context context;
     private View view;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
     public ImportarSQLite(Context context, View view) {
@@ -25,7 +28,7 @@ public class ImportarSQLite {
 
     public void importarBD() {
 
-        ExcelToSQLite excelToSQLite = new ExcelToSQLite(context, VariablesGenerales.userIdSQlite, true);
+        ExcelToSQLite excelToSQLite = new ExcelToSQLite(context, user.getUid(), true);
 
         String NOMBRE_CARPETA = "/Datos Seguros/";
         String carpetaPath = Environment.getExternalStorageDirectory() + NOMBRE_CARPETA + "DatosSeguros.xls";

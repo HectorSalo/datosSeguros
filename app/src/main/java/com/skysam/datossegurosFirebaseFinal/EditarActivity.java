@@ -3,16 +3,20 @@ package com.skysam.datossegurosFirebaseFinal;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.FragmentsEditar.EditarContrasenaFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsEditar.EditarCuentasFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsEditar.EditarNotaFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsEditar.EditarTarjetaFragment;
+import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 
 public class EditarActivity extends AppCompatActivity implements EditarContrasenaFragment.OnFragmentInteractionListener, EditarCuentasFragment.OnFragmentInteractionListener,
 EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragmentInteractionListener{
@@ -22,22 +26,22 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 setTheme(R.style.AppThemeLila);
                 break;
         }
@@ -51,14 +55,23 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
 
         Bundle myBundle = this.getIntent().getExtras();
         int data = myBundle.getInt("data");
+        String id = myBundle.getString("id");
+
+        Bundle bundleFragment = new Bundle();
+        bundleFragment.putString("id", id);
+
 
         if (data == 0) {
+            editarContrasenaFragment.setArguments(bundleFragment);
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsEditar, editarContrasenaFragment).commit();
         } else if (data == 1) {
+            editarCuentasFragment.setArguments(bundleFragment);
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsEditar, editarCuentasFragment).commit();
         } else if (data == 2) {
+            editarTarjetaFragment.setArguments(bundleFragment);
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsEditar, editarTarjetaFragment).commit();
         } else if (data == 3) {
+            editarNotaFragment.setArguments(bundleFragment);
             getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsEditar, editarNotaFragment).commit();
         }
     }

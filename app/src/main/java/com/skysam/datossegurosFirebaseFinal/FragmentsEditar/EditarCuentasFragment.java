@@ -3,6 +3,7 @@ package com.skysam.datossegurosFirebaseFinal.FragmentsEditar;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -40,30 +41,18 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link EditarCuentasFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link EditarCuentasFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class EditarCuentasFragment extends Fragment {
 
     private EditText etTitular, etBanco, etnumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente;
     private ProgressBar progressBarEditar;
     private FirebaseUser user;
-    private String spinnerSeleccion;
+    private String spinnerSeleccion, idDoc;
     private Spinner spinnerDocumento;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -71,37 +60,22 @@ public class EditarCuentasFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EditarCuentasFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EditarCuentasFragment newInstance(String param1, String param2) {
-        EditarCuentasFragment fragment = new EditarCuentasFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_editar_cuentas, container, false);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         etTitular = (EditText) vista.findViewById(R.id.etTitularEditar);
         etBanco = (EditText) vista.findViewById(R.id.etBancoEditar);
@@ -112,17 +86,18 @@ public class EditarCuentasFragment extends Fragment {
         rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorroEditar);
         rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorrienteEditar);
         spinnerDocumento = (Spinner) vista.findViewById(R.id.spinnerTipoDocumentoEditar);
-        user = FirebaseAuth.getInstance().getCurrentUser();
         progressBarEditar = vista.findViewById(R.id.progressBarEditarCuenta);
+
+        idDoc = getArguments().getString("id");
 
 
         String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
         ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(getContext(), R.layout.spinner_editar, spDocumentos);
         spinnerDocumento.setAdapter(adapterDocumentos);
 
-        if (VariablesGenerales.almacenamientoExterno) {
+        if (almacenamientoNube) {
             cargarDataFirebase();
-        } else if (VariablesGenerales.almacenamientoInterno) {
+        } else {
             cargarDataSQLite();
         }
 
@@ -130,22 +105,15 @@ public class EditarCuentasFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VariablesGenerales.almacenamientoExterno) {
+                if (almacenamientoNube) {
                     guardarDataFirebase();
-                } else if (VariablesGenerales.almacenamientoInterno) {
+                } else {
                     guardarDataSQLite();
                 }
             }
         });
 
         return vista;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -165,30 +133,18 @@ public class EditarCuentasFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
     public void cargarDataFirebase() {
         progressBarEditar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
-        String idCuenta = VariablesGenerales.idCuenta;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
         CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS);
 
-        reference.document(idCuenta).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        reference.document(idDoc).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
@@ -237,13 +193,10 @@ public class EditarCuentasFragment extends Fragment {
     }
 
     public void cargarDataSQLite() {
-
-        String idCuenta = VariablesGenerales.idCuenta;
-
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Constantes.BD_CUENTAS + " WHERE idCuenta =" + idCuenta, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constantes.BD_CUENTAS + " WHERE idCuenta =" + idDoc, null);
 
         if (cursor.moveToFirst()) {
             etTitular.setText(cursor.getString(1));
@@ -329,13 +282,12 @@ public class EditarCuentasFragment extends Fragment {
                         cuentaBancaria.put(Constantes.BD_CORREO_CUENTA, correo);
                     }
 
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS).document(VariablesGenerales.idCuenta).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS).document(idDoc).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
+                            requireActivity().finish();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -352,7 +304,6 @@ public class EditarCuentasFragment extends Fragment {
     }
 
     public void guardarDataSQLite() {
-        String idCuenta = VariablesGenerales.idCuenta;
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
         String cuentaNumero = etnumeroCuenta.getText().toString();
@@ -378,7 +329,7 @@ public class EditarCuentasFragment extends Fragment {
                 if (cuentaNumero.length() != 20) {
                     Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
                 } else {
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
@@ -401,12 +352,11 @@ public class EditarCuentasFragment extends Fragment {
                         values.put(Constantes.BD_CORREO_CUENTA, correo);
                     }
 
-                    db.update(Constantes.BD_CUENTAS, values, "idCuenta=" + idCuenta, null);
+                    db.update(Constantes.BD_CUENTAS, values, "idCuenta=" + idDoc, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    Intent myIntent = new Intent(getContext(), MainActivity.class);
-                    startActivity(myIntent);
+                    requireActivity().finish();
                 }
             }
         }

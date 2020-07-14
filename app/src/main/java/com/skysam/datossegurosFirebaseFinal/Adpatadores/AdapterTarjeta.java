@@ -44,7 +44,7 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
-    private FirebaseUser user;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public AdapterTarjeta(ArrayList<TarjetaConstructor> listTarjeta, Context mCtx) {
         this.listTarjeta = listTarjeta;
@@ -62,21 +62,22 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, final int i) {
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 viewHolderTarjeta.cardView.setBackgroundResource(R.drawable.fondo_listas_lila);
                 break;
         }
@@ -119,9 +120,9 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (VariablesGenerales.almacenamientoExterno) {
+                                        if (almacenamientoNube) {
                                             eliminarFirebase(listTarjeta.get(i));
-                                        } else if (VariablesGenerales.almacenamientoInterno) {
+                                        } else {
                                             eliminarSQLite(listTarjeta.get(i));
                                         }
                                     }
@@ -271,16 +272,15 @@ public class AdapterTarjeta extends RecyclerView.Adapter<AdapterTarjeta.ViewHold
     }
 
     public void editar(TarjetaConstructor i) {
-        VariablesGenerales.idTarjeta = i.getIdTarjeta();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
+        myBundle.putString("id", i.getIdTarjeta());
         myBundle.putInt("data", 2);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
     public void eliminarFirebase(final TarjetaConstructor i) {
-        user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdTarjeta();
         FirebaseFirestore db = FirebaseFirestore.getInstance();

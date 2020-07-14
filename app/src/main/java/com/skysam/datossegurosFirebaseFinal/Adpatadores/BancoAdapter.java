@@ -44,7 +44,7 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
-    private FirebaseUser user;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public BancoAdapter (ArrayList<BancoConstructor> listBanco, Context mCtx){
         this.listBanco = listBanco;
@@ -62,21 +62,22 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderBanco viewHolderBanco, final int i) {
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 viewHolderBanco.cardView.setBackgroundResource(R.drawable.fondo_listas_lila);
                 break;
         }
@@ -119,9 +120,9 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (VariablesGenerales.almacenamientoExterno) {
+                                        if (almacenamientoNube) {
                                             eliminarFirebase(listBanco.get(i));
-                                        } else if (VariablesGenerales.almacenamientoInterno) {
+                                        } else {
                                             eliminarSQLite(listBanco.get(i));
                                         }
                                     }
@@ -270,16 +271,15 @@ public class BancoAdapter extends RecyclerView.Adapter<BancoAdapter.ViewHolderBa
     }
 
     public void editar(BancoConstructor i) {
-        VariablesGenerales.idCuenta = i.getIdCuenta();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
+        myBundle.putString("id", i.getIdCuenta());
         myBundle.putInt("data", 1);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
     public void eliminarFirebase(final BancoConstructor i) {
-        user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdCuenta();
         FirebaseFirestore db = FirebaseFirestore.getInstance();

@@ -52,7 +52,7 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     private ArrayList<String> selectedItems;
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
-    private FirebaseUser user;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public ContrasenaAdapter (ArrayList<ContrasenaConstructor> listContrasena, Context mCtx) {
         this.listContrasena = listContrasena;
@@ -70,21 +70,22 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     @Override
     public void onBindViewHolder(@NonNull final ContrasenaAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 viewHolderContrasena.cardView.setBackgroundResource(R.drawable.fondo_listas_lila);
                 break;
         }
@@ -131,9 +132,9 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (VariablesGenerales.almacenamientoExterno) {
+                                        if (almacenamientoNube) {
                                             eliminarFirebase(listContrasena.get(i));
-                                        } else if (VariablesGenerales.almacenamientoInterno) {
+                                        } else {
                                             eliminarSQLite(listContrasena.get(i));
                                         }
                                     }
@@ -150,9 +151,9 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
                                 break;
 
                             case R.id.menu_ultimos_pass:
-                                if (VariablesGenerales.almacenamientoExterno) {
+                                if (almacenamientoNube) {
                                     verUltimosPassFirebase(listContrasena.get(i).getIdContrasena());
-                                } else if (VariablesGenerales.almacenamientoInterno) {
+                                } else {
                                     verUltimosPassSQLite(listContrasena.get(i).getIdContrasena());
                                 }
                                 break;
@@ -279,16 +280,15 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
     }
 
     public void editar(ContrasenaConstructor i) {
-        VariablesGenerales.idContrasena = i.getIdContrasena();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
+        myBundle.putString("id", i.getIdContrasena());
         myBundle.putInt("data", 0);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
     public void eliminarFirebase(final ContrasenaConstructor i) {
-        user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdContrasena();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -333,7 +333,6 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
         progress.setCancelable(false);
         progress.show();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         String userID = user.getUid();

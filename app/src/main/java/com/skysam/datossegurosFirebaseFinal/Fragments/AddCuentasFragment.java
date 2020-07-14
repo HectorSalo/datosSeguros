@@ -3,6 +3,7 @@ package com.skysam.datossegurosFirebaseFinal.Fragments;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,15 +37,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AddCuentasFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AddCuentasFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AddCuentasFragment extends Fragment {
 
     private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
@@ -54,12 +49,6 @@ public class AddCuentasFragment extends Fragment {
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -67,31 +56,10 @@ public class AddCuentasFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddCuentasFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddCuentasFragment newInstance(String param1, String param2) {
-        AddCuentasFragment fragment = new AddCuentasFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -99,6 +67,12 @@ public class AddCuentasFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_add_cuentas, container, false);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         etTitular = (EditText) vista.findViewById(R.id.etTitular);
         etBanco = (EditText) vista.findViewById(R.id.etBanco);
@@ -123,24 +97,15 @@ public class AddCuentasFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VariablesGenerales.almacenamientoExterno) {
+                if (almacenamientoNube) {
                     guardarCuentaFirebase();
-
-                } else if (VariablesGenerales.almacenamientoInterno) {
+                } else {
                     guardarCuentaSQLite();
-
                 }
             }
         });
 
         return vista;
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
     }
 
     @Override
@@ -160,18 +125,8 @@ public class AddCuentasFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -230,8 +185,7 @@ public class AddCuentasFragment extends Fragment {
                         public void onSuccess(DocumentReference documentReference) {
                             progressBarAdd.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
+                            requireActivity().finish();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -264,7 +218,7 @@ public class AddCuentasFragment extends Fragment {
             tipo = "Corriente";
         }
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         if (titular.isEmpty() || banco.isEmpty() || cuentaNumero.isEmpty() || cedula.isEmpty()) {
@@ -301,8 +255,7 @@ public class AddCuentasFragment extends Fragment {
                     db.close();
 
                     Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                    Intent myIntent = new Intent(getContext(), MainActivity.class);
-                    startActivity(myIntent);
+                    requireActivity().finish();
                 }
             }
         }

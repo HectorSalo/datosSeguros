@@ -58,16 +58,9 @@ public class AddContrasenaFragment extends Fragment {
     }
 
 
-    public static AddContrasenaFragment newInstance(String param1, String param2) {
-        AddContrasenaFragment fragment = new AddContrasenaFragment();
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-        }
     }
 
     @Override

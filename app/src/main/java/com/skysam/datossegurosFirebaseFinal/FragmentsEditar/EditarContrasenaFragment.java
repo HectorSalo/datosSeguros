@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -44,15 +45,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link EditarContrasenaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link EditarContrasenaFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class EditarContrasenaFragment extends Fragment {
 
     private EditText etServicio, etUsuario, etContrasena, etOtro;
@@ -60,16 +54,10 @@ public class EditarContrasenaFragment extends Fragment {
     private FirebaseUser user;
     private ProgressBar progressBarEditar;
     private int duracionVigencia;
-    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaActualS, fechaEnviarS;
+    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaActualS, fechaEnviarS, idDoc;
     private Date fechaActual, fechaCreacion, fechaEnviar;
     private int vigenciaAnterior, vigenciaNueva;
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -77,31 +65,9 @@ public class EditarContrasenaFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment EditarContrasenaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static EditarContrasenaFragment newInstance(String param1, String param2) {
-        EditarContrasenaFragment fragment = new EditarContrasenaFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -109,6 +75,14 @@ public class EditarContrasenaFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View vista = inflater.inflate(R.layout.fragment_editar_contrasena, container, false);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+
+        idDoc = getArguments().getString("id");
 
         etServicio = (EditText) vista.findViewById(R.id.etServicioEditar);
         etUsuario = (EditText) vista.findViewById(R.id.etUsuarioEditar);
@@ -121,7 +95,6 @@ public class EditarContrasenaFragment extends Fragment {
         rb120 = (RadioButton) vista.findViewById(R.id.radioButton120Editar);
         rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminadoEditar);
         rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroEditar);
-        user = FirebaseAuth.getInstance().getCurrentUser();
         progressBarEditar = vista.findViewById(R.id.progressBarEditarContrasena);
 
         Calendar almanaque = Calendar.getInstance();
@@ -173,9 +146,9 @@ public class EditarContrasenaFragment extends Fragment {
             }
         });
 
-        if (VariablesGenerales.almacenamientoExterno) {
+        if (almacenamientoNube) {
             cargarDataFirebase();
-        } else if (VariablesGenerales.almacenamientoInterno) {
+        } else {
             cargarDataSQLite();
         }
 
@@ -183,9 +156,9 @@ public class EditarContrasenaFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VariablesGenerales.almacenamientoExterno) {
+                if (almacenamientoNube) {
                     guardarDataFirebase();
-                } else if (VariablesGenerales.almacenamientoInterno) {
+                } else {
                     guardarDataSQLite();
                 }
             }
@@ -193,12 +166,6 @@ public class EditarContrasenaFragment extends Fragment {
         return vista;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -217,16 +184,6 @@ public class EditarContrasenaFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -234,13 +191,12 @@ public class EditarContrasenaFragment extends Fragment {
 
     public void cargarDataFirebase() {
         progressBarEditar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
-        String idContrasena = VariablesGenerales.idContrasena;
+        String userID = user.getUid();;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
         CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS);
 
-        reference.document(idContrasena).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        reference.document(idDoc).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()) {
@@ -304,12 +260,11 @@ public class EditarContrasenaFragment extends Fragment {
 
     public void cargarDataSQLite() {
         progressBarEditar.setVisibility(View.VISIBLE);
-        String idContrasena = VariablesGenerales.idContrasena;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Constantes.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Constantes.BD_CONTRASENAS + " WHERE idContrasena =" + idDoc, null);
 
         if (cursor.moveToFirst()) {
             etServicio.setText(cursor.getString(1));
@@ -404,13 +359,12 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_4, pass3);
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_5, pass4);
 
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(VariablesGenerales.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
+                            requireActivity().finish();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -444,13 +398,12 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_4, pass3);
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_5, pass4);
 
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(VariablesGenerales.idContrasena).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
+                            requireActivity().finish();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -483,13 +436,12 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(Constantes.BD_USUARIO, usuario);
                     contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
 
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(VariablesGenerales.idContrasena).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
 
                         public void onSuccess(Void aVoid) {
                             progressBarEditar.setVisibility(View.GONE);
                             Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            Intent myIntent = new Intent(getContext(), MainActivity.class);
-                            startActivity(myIntent);
+                            requireActivity().finish();
 
                         }
                     }).addOnFailureListener(new OnFailureListener() {
@@ -510,7 +462,6 @@ public class EditarContrasenaFragment extends Fragment {
         String usuario = etUsuario.getText().toString();
         contrasenaNueva = etContrasena.getText().toString();
         vigencia = "";
-        String idContrasena = VariablesGenerales.idContrasena;
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         fechaActualS = sdf.format(fechaActual);
@@ -534,7 +485,7 @@ public class EditarContrasenaFragment extends Fragment {
 
                     fechaEnviarS = fechaActualS;
 
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
+                    ConexionSQLite conect = new ConexionSQLite(getContext(), idDoc, null, Constantes.VERSION_SQLITE);
                     SQLiteDatabase db = conect.getWritableDatabase();
 
                     ContentValues values = new ContentValues();
@@ -549,12 +500,11 @@ public class EditarContrasenaFragment extends Fragment {
                     values.put(Constantes.BD_ULTIMO_PASS_4, pass3);
                     values.put(Constantes.BD_ULTIMO_PASS_5, pass4);
 
-                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    Intent myIntent = new Intent(getContext(), MainActivity.class);
-                    startActivity(myIntent);
+                    requireActivity().finish();
 
                 } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
 
@@ -576,12 +526,11 @@ public class EditarContrasenaFragment extends Fragment {
                     values.put(Constantes.BD_ULTIMO_PASS_4, pass3);
                     values.put(Constantes.BD_ULTIMO_PASS_5, pass4);
 
-                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    Intent myIntent = new Intent(getContext(), MainActivity.class);
-                    startActivity(myIntent);
+                    requireActivity().finish();
 
                 } else if (contrasenaNueva.equals(contrasenaVieja) && vigenciaAnterior != duracionVigencia){
                     AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
@@ -603,12 +552,11 @@ public class EditarContrasenaFragment extends Fragment {
                     values.put(Constantes.BD_SERVICIO, servicio);
                     values.put(Constantes.BD_USUARIO, usuario);
 
-                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idContrasena, null);
+                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
                     db.close();
 
                     Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    Intent myIntent = new Intent(getContext(), MainActivity.class);
-                    startActivity(myIntent);
+                    requireActivity().finish();
 
                 }
             }

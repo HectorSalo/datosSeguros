@@ -44,7 +44,7 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
-    private FirebaseUser user;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public NotaAdapter(ArrayList<NotaConstructor> listNota, Context mCtx) {
         this.listNota = listNota;
@@ -61,21 +61,22 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderNota viewHolderNota, final int i) {
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mCtx);
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_contrasena);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_listas_rojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_listas_marron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 viewHolderNota.cardView.setBackgroundResource(R.drawable.fondo_listas_lila);
                 break;
         }
@@ -112,9 +113,9 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
                                 dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        if (VariablesGenerales.almacenamientoExterno) {
+                                        if (almacenamientoNube) {
                                             eliminarFirebase(listNota.get(i));
-                                        } else if (VariablesGenerales.almacenamientoInterno) {
+                                        } else {
                                             eliminarSQLite(listNota.get(i));
                                         }
                                     }
@@ -246,16 +247,15 @@ public class NotaAdapter extends RecyclerView.Adapter<NotaAdapter.ViewHolderNota
     }
 
     public void editar(NotaConstructor i) {
-        VariablesGenerales.idNota = i.getIdNota();
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
+        myBundle.putString("id", i.getIdNota());
         myBundle.putInt("data", 3);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
     public void eliminarFirebase(final NotaConstructor i) {
-        user = FirebaseAuth.getInstance().getCurrentUser();
         String userID = user.getUid();
         String doc = i.getIdNota();
         FirebaseFirestore db = FirebaseFirestore.getInstance();

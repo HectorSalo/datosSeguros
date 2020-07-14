@@ -29,6 +29,7 @@ public class EliminarCuenta {
 
     private  Context context;
     private FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
     public EliminarCuenta(Context context) {
@@ -226,7 +227,7 @@ public class EliminarCuenta {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("Status", "DocumentSnapshot successfully deleted!");
-                context.deleteDatabase(VariablesGenerales.userIdSQlite);
+                context.deleteDatabase(user.getUid());
                 context.startActivity(new Intent(context, MainActivity.class));
                 //eliminarUsuario();
             }

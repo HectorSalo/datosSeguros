@@ -3,6 +3,7 @@ package com.skysam.datossegurosFirebaseFinal.Fragments;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,29 +34,15 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link AddNotaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link AddNotaFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class AddNotaFragment extends Fragment {
 
     private EditText titulo, contenido;
     private FirebaseUser user;
     private ProgressBar progressBarAdd;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,31 +50,9 @@ public class AddNotaFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AddNotaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static AddNotaFragment newInstance(String param1, String param2) {
-        AddNotaFragment fragment = new AddNotaFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -95,6 +60,12 @@ public class AddNotaFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View vista = inflater.inflate(R.layout.fragment_add_nota, container, false);
+
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         titulo = (EditText) vista.findViewById(R.id.etTitulo);
         contenido = (EditText) vista.findViewById(R.id.etContenido);
@@ -105,9 +76,9 @@ public class AddNotaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VariablesGenerales.almacenamientoExterno) {
+                if (almacenamientoNube) {
                     guardarNotaFirebase();
-                } else if (VariablesGenerales.almacenamientoInterno) {
+                } else {
                     guardarNotaSQLite();
                 }
             }
@@ -115,7 +86,6 @@ public class AddNotaFragment extends Fragment {
         return vista;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -139,16 +109,6 @@ public class AddNotaFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -171,8 +131,7 @@ public class AddNotaFragment extends Fragment {
             public void onSuccess(DocumentReference documentReference) {
                 progressBarAdd.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                Intent myIntent = new Intent(getContext(), MainActivity.class);
-                startActivity(myIntent);
+                requireActivity().finish();
 
             }
         }).addOnFailureListener(new OnFailureListener() {
@@ -189,7 +148,7 @@ public class AddNotaFragment extends Fragment {
         String tituloS = titulo.getText().toString();
         String contenidoS = contenido.getText().toString();
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), VariablesGenerales.userIdSQlite, null, Constantes.VERSION_SQLITE);
+        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -200,7 +159,6 @@ public class AddNotaFragment extends Fragment {
         db.close();
 
         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-        Intent myIntent = new Intent(getContext(), MainActivity.class);
-        startActivity(myIntent);
+        requireActivity().finish();
     }
 }

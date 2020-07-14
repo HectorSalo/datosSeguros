@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.ajts.androidmads.library.SQLiteToExcel;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -17,6 +19,7 @@ public class ExportarSQLite {
     private Context context;
     private View view;
     private String carpetaPath;
+    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
     public ExportarSQLite(Context context, View view) {
         this.context = context;
@@ -45,7 +48,7 @@ public class ExportarSQLite {
         listTablas.add(3, "notas");
 
 
-        SQLiteToExcel sqLiteToExcel = new SQLiteToExcel(context, VariablesGenerales.userIdSQlite, carpetaPath);
+        SQLiteToExcel sqLiteToExcel = new SQLiteToExcel(context, user.getUid(), carpetaPath);
 
         sqLiteToExcel.exportSpecificTables(listTablas,  "DatosSeguros.xls", new SQLiteToExcel.ExportListener() {
             @Override
