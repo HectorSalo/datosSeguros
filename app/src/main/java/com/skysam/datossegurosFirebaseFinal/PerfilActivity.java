@@ -3,6 +3,7 @@ package com.skysam.datossegurosFirebaseFinal;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -40,22 +41,24 @@ public class PerfilActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+        boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         switch (tema){
-            case "Amarillo":
-                setTheme(R.style.Theme_Dialog_MiPerfil);
+            case Constantes.PREFERENCE_AMARILLO:
+                setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
-                setTheme(R.style.Theme_Dialog_MiPerfilRojo);
+            case Constantes.PREFERENCE_ROJO:
+                setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
-                setTheme(R.style.Theme_Dialog_MiPerfilMarron);
+            case Constantes.PREFERENCE_MARRON:
+                setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
-                setTheme(R.style.Theme_Dialog_MiPerfilLila);
+            case Constantes.PREFERENCE_LILA:
+                setTheme(R.style.AppThemeLila);
                 break;
         }
 
@@ -80,10 +83,10 @@ public class PerfilActivity extends AppCompatActivity {
         final LinearLayout layoutEmail = (LinearLayout) findViewById(R.id.layoutEmail);
         final LinearLayout layoutPass = (LinearLayout) findViewById(R.id.layoutPass);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        final boolean huella = preferences.getBoolean(Constantes.HUELLA, false);
-        boolean pin = preferences.getBoolean(Constantes.PIN, false);
-        final boolean sinBloqueo = preferences.getBoolean(Constantes.SIN_BLOQUEO, true);
+
+        final boolean huella = sharedPreferences.getBoolean(Constantes.PREFERENCE_HUELLA, false);
+        boolean pin = sharedPreferences.getBoolean(Constantes.PREFERENCE_PIN, false);
+        final boolean sinBloqueo = sharedPreferences.getBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
 
         if (huella) {
             rbHuella.setChecked(true);
@@ -94,9 +97,9 @@ public class PerfilActivity extends AppCompatActivity {
         }
 
 
-        if (VariablesGenerales.almacenamientoInterno) {
+        if (almacenamientoNube) {
             rbDispositivo.setChecked(true);
-        } else if (VariablesGenerales.almacenamientoExterno) {
+        } else {
             rbNube.setChecked(true);
         }
 
@@ -274,13 +277,12 @@ public class PerfilActivity extends AppCompatActivity {
 
 
         if (rbNube.isChecked()) {
-
-            almacenar.put(Constantes.INTERNO, false);
-            almacenar.put(Constantes.EXTERNO, true);
+            //almacenar.put(Constantes.INTERNO, false);
+            //almacenar.put(Constantes.EXTERNO, true);
             almacenar.put(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
         } else if (rbDispositivo.isChecked()) {
-            almacenar.put(Constantes.INTERNO, true);
-            almacenar.put(Constantes.EXTERNO, false);
+            //almacenar.put(Constantes.INTERNO, true);
+            //almacenar.put(Constantes.EXTERNO, false);
             almacenar.put(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
         }
 

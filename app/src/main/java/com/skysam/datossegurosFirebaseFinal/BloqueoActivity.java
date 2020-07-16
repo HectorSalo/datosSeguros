@@ -2,11 +2,14 @@ package com.skysam.datossegurosFirebaseFinal;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.FragmentsBloqueo.HuellaFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsBloqueo.PINFragment;
 import com.skysam.datossegurosFirebaseFinal.FragmentsBloqueo.SinBloqueoFragment;
@@ -19,28 +22,37 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String usuario;
+        if (user != null) {
+            usuario = user.getUid();
+        } else {
+            usuario = "default";
+        }
+        SharedPreferences sharedPreferences = getSharedPreferences(usuario, Context.MODE_PRIVATE);
 
-        String tema = sharedPreferences.getString("tema", "Amarillo");
+        String bloqueo = sharedPreferences.getString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_SIN_BLOQUEO);
+
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 setTheme(R.style.AppTheme);
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 setTheme(R.style.AppThemeRojo);
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 setTheme(R.style.AppThemeMarron);
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 setTheme(R.style.AppThemeLila);
                 break;
         }
         setContentView(R.layout.activity_bloqueo);
 
-        boolean huella = sharedPreferences.getBoolean(Constantes.HUELLA, false);
-        boolean sinBloqueo = sharedPreferences.getBoolean(Constantes.SIN_BLOQUEO, true);
+        boolean huella = sharedPreferences.getBoolean(Constantes.PREFERENCE_HUELLA, false);
+        boolean sinBloqueo = sharedPreferences.getBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
 
         HuellaFragment huellaFragment = new HuellaFragment();
         SinBloqueoFragment sinBloqueoFragment = new SinBloqueoFragment();

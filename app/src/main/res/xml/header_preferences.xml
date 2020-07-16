@@ -1,0 +1,37 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$SyncFragment"
+        app:icon="@drawable/sync"
+        app:key="preferencias_header"
+        app:title="@string/preferencias" />
+
+    <PreferenceCategory app:title="Perfil">
+    <Preference
+        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$MessagesFragment"
+        app:icon="@drawable/messages"
+        app:key="datos_personales_header"
+        app:title="@string/datos_personales" />
+
+    <Preference
+        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$SyncFragment"
+        app:icon="@drawable/sync"
+        app:key="borrar_datos_header"
+        app:title="@string/eliminar_cuenta" />
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/acerca">
+        <PreferenceScreen
+            app:title="@string/acerca_title"
+            android:icon="@drawable/ic_info"
+            >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="com.skysam.datossegurosFirebaseFinal"
+                android:targetClass="com.skysam.datossegurosFirebaseFinal.AcercaActivity"
+                />
+        </PreferenceScreen>
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -12,10 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.TemasActivity"
-            android:theme="@style/Theme.Dialog.MiPerfil"
-            android:label="@string/title_tema"></activity>
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.BloqueoActivity">
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"></activity>
+        <activity
+            android:name=".TemasActivity"
+            android:label="@string/title_tema"
+            android:theme="@style/Theme.Dialog.MiPerfil" />
+        <activity android:name=".BloqueoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,20 +27,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.skysam.datossegurosFirebaseFinal.PerfilActivity"
+            android:name=".PerfilActivity"
             android:label="@string/titleMiPerfil"
-            android:theme="@style/Theme.Dialog.MiPerfil"/>
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.AcercaActivity"
-            android:theme="@style/Theme.Acerca"/>
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.EditarActivity" />
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.RegistrarActivity" />
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.InicSesionActivity"></activity>
-        <activity android:name="com.skysam.datossegurosFirebaseFinal.AddActivity"
-            android:label="@string/title_activity_add"/>
+            android:theme="@style/Theme.Dialog.MiPerfil" />
         <activity
-            android:name="com.skysam.datossegurosFirebaseFinal.MainActivity"
-            android:label="@string/app_name"
-            />
+            android:name=".AcercaActivity"
+            android:theme="@style/Theme.Acerca" />
+        <activity android:name=".EditarActivity" />
+        <activity android:name=".RegistrarActivity" />
+        <activity android:name=".InicSesionActivity" />
+        <activity
+            android:name=".AddActivity"
+            android:label="@string/title_activity_add" />
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/app_name" />
 
         <meta-data
             android:name="preloaded_fonts"

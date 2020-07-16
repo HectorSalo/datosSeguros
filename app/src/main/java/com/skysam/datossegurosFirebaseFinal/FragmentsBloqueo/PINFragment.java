@@ -97,10 +97,10 @@ public class PINFragment extends Fragment {
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentPin);
 
         preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        final boolean huella = preferences.getBoolean(Constantes.HUELLA, false);
-        final boolean pin = preferences.getBoolean(Constantes.PIN, false);
-        boolean sinBloqueo = preferences.getBoolean(Constantes.SIN_BLOQUEO, true);
-        pinGuardado = preferences.getString(Constantes.PIN_RESPALDO, "0000");
+        final boolean huella = preferences.getBoolean(Constantes.PREFERENCE_HUELLA, false);
+        final boolean pin = preferences.getBoolean(Constantes.PREFERENCE_PIN, false);
+        boolean sinBloqueo = preferences.getBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
+        pinGuardado = preferences.getString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
 
 
         String tema = preferences.getString("tema", "Amarillo");
@@ -189,28 +189,28 @@ public class PINFragment extends Fragment {
         if (pin.equals(pinGuardado)) {
             if (VariablesGenerales.conf_bloqueo == Constantes.HUELLA_INT) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.HUELLA, false);
-                editor.putBoolean(Constantes.PIN, false);
-                editor.putBoolean(Constantes.SIN_BLOQUEO, true);
-                editor.putString(Constantes.PIN_RESPALDO, "0000");
+                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
+                editor.putBoolean(Constantes.PREFERENCE_PIN, false);
+                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
+                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
                 editor.commit();
                 startActivity(new Intent(getContext(), BloqueoActivity.class));
 
             } else if (VariablesGenerales.conf_bloqueo == Constantes.PIN_INT) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.HUELLA, false);
-                editor.putBoolean(Constantes.PIN, false);
-                editor.putBoolean(Constantes.SIN_BLOQUEO, true);
-                editor.putString(Constantes.PIN_RESPALDO, "0000");
+                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
+                editor.putBoolean(Constantes.PREFERENCE_PIN, false);
+                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
+                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
                 editor.commit();
                 startActivity(new Intent(getContext(), BloqueoActivity.class));
 
             } else if (VariablesGenerales.conf_bloqueo == Constantes.SIN_BLOQUEO_INT) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.HUELLA, false);
-                editor.putBoolean(Constantes.PIN, false);
-                editor.putBoolean(Constantes.SIN_BLOQUEO, true);
-                editor.putString(Constantes.PIN_RESPALDO, "0000");
+                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
+                editor.putBoolean(Constantes.PREFERENCE_PIN, false);
+                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
+                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
                 editor.commit();
                 startActivity(new Intent(getContext(), MainActivity.class));
             } else if (VariablesGenerales.conf_bloqueo == 1000) {
@@ -256,10 +256,10 @@ public class PINFragment extends Fragment {
         if (pin1 && pin2) {
             if (pin.equals(pinRepetir)) {
                 SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.HUELLA, false);
-                editor.putBoolean(Constantes.PIN, true);
-                editor.putBoolean(Constantes.SIN_BLOQUEO, false);
-                editor.putString(Constantes.PIN_RESPALDO, pin);
+                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
+                editor.putBoolean(Constantes.PREFERENCE_PIN, true);
+                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, false);
+                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, pin);
                 editor.commit();
                 startActivity(new Intent(getContext(), MainActivity.class));
             }

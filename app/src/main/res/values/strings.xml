@@ -11,6 +11,7 @@
     <string name="perfil">Actualizar Perfil</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
     <string name="exportar_importar">Exportar/Importar Datos</string>
+    <string name="menu_ajustes">Ajustes</string>
     <string name="eliminar_cuenta">Borrar Datos</string>
     <string name="tema">Cambiar Tema</string>
 
@@ -91,9 +92,9 @@
 
     <!-- Registrar -->
     <string name="acerca">Información de App</string>
+    <string name="acerca_title">Desarrollado por&#8230;</string>
 
     <!-- Acerca -->
-    <string name="contacto">inversionesskysam@gmail.com</string>
     <string name="titleMiPerfil">¿Qué desea actualizar?</string>
     <string name="updateEmail">Actualizar Correo</string>
     <string name="updatePass">Actualizar Contraseña</string>
@@ -154,11 +155,27 @@
 
     <string name="explicacion_importar_exportar">Sólo puede importar/exportar los datos almacenados en el Dispositivo.</string>
     <string name="explicacion_eliminar_cuenta">Se eliminarán todos los datos asociados a su cuenta (en la Nube y Dispositivo). Esta acción no se puede deshacer. \n¿Continuar?</string>
-    <string name="explicacion_escoger_almacenamiento">Puede guardar algunos datos en la nube y otros en su dispositivo, de acuerdo a su preferencia. Para intercambiar el lugar, ingrese a Actualizar Mi Perfil. \nEscoja con cuál desea inciar</string>
+    <string name="explicacion_escoger_almacenamiento">Puede guardar algunos datos en la nube y otros en su dispositivo. \nEscoja con cuál desea inciar</string>
 
     <!-- Tema -->
     <string name="button_amarillo">Amarillo</string>
     <string name="button_rojo">Rojo</string>
     <string name="button_marron">Marrón</string>
     <string name="button_lila">Lila</string>
+    <string name="title_activity_settings">Ajustes</string>
+
+    <!-- Preference Titles -->
+    <string name="datos_personales">Datos Personales</string>
+    <string name="preferencias">Preferencias</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

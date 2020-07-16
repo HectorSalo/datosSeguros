@@ -13,7 +13,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,11 +40,8 @@ import com.skysam.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.NotaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -53,7 +49,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -64,8 +59,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
@@ -86,73 +79,20 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private int listaBuscar, add;
     private ConexionSQLite conect;
     private ProgressBar progressBarCargar;
-    private SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+    private SharedPreferences sharedPreferences;
     private ConstraintLayout constraintLayout;
     private ExportarSQLite exportarSQLite;
     private ImportarSQLite importarSQLite;
     private boolean exportar;
-    private boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_contrasena:
-                    if (almacenamientoNube) {
-                        verContrasenaFirebase();
-                    } else {
-                        verContrasenasSQLite();
-                    }
-
-                    fabAdd.setImageResource(R.drawable.ic_add_contrasena);
-                    listaBuscar = 0;
-                    add = 0;
-                    return true;
-                case R.id.navigation_cuentas:
-                    if (almacenamientoNube) {
-                        verCuentasBancariasFirebase();
-                    } else {
-                        verCuentasBancariasSQLite();
-                    }
-
-                    fabAdd.setImageResource(R.drawable.ic_add_banco);
-                    listaBuscar = 1;
-                    add = 1;
-                    return true;
-                case R.id.navigation_tarjetas:
-                    if (almacenamientoNube) {
-                        verTarjetasFirebase();
-                    } else {
-                        verTarjetasSQLite();
-                    }
-
-                    fabAdd.setImageResource(R.drawable.ic_add_card);
-                    listaBuscar = 2;
-                    add = 2;
-                    return true;
-                case R.id.navigation_notas:
-                    if (almacenamientoNube) {
-                        verNotasFirebase();
-                    } else {
-                        verNotasSQLite();
-                    }
-
-                    fabAdd.setImageResource(R.drawable.ic_add_nota);
-                    listaBuscar = 3;
-                    add = 3;
-                    return true;
-            }
-            return false;
-        }
-    };
+    private boolean almacenamientoNube;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
         String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
@@ -317,7 +257,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     })
                     .show();
             return true;
-        } else if (id == R.id.menu_cerrar_sesion) {
+        } else if (id == R.id.menu_ajustes) {
+            startActivity(new Intent(this, SettingsActivity.class));
+        }else if (id == R.id.menu_cerrar_sesion) {
             cerrarSesion();
             return true;
         } else if (id == R.id.menu_buscar) {
@@ -357,6 +299,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         editor.putBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, false);
                         editor.putBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
                         editor.commit();
+                        verContrasenasSQLite();
                     }
                 }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
             @Override
@@ -365,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 editor.putBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
                 editor.putBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, true);
                 editor.commit();
+                verContrasenaFirebase();
             }
         })
                 .setCancelable(false).show();
@@ -875,12 +819,68 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void configurarSinBloqueo() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(Constantes.HUELLA, false);
-        editor.putBoolean(Constantes.PIN, false);
-        editor.putBoolean(Constantes.SIN_BLOQUEO, true);
-        editor.putString(Constantes.PIN_RESPALDO, "0000");
+        editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
+        editor.putBoolean(Constantes.PREFERENCE_PIN, false);
+        editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
+        editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
         editor.commit();
     }
+
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_contrasena:
+                    if (almacenamientoNube) {
+                        verContrasenaFirebase();
+                    } else {
+                        verContrasenasSQLite();
+                    }
+
+                    fabAdd.setImageResource(R.drawable.ic_add_contrasena);
+                    listaBuscar = 0;
+                    add = 0;
+                    return true;
+                case R.id.navigation_cuentas:
+                    if (almacenamientoNube) {
+                        verCuentasBancariasFirebase();
+                    } else {
+                        verCuentasBancariasSQLite();
+                    }
+
+                    fabAdd.setImageResource(R.drawable.ic_add_banco);
+                    listaBuscar = 1;
+                    add = 1;
+                    return true;
+                case R.id.navigation_tarjetas:
+                    if (almacenamientoNube) {
+                        verTarjetasFirebase();
+                    } else {
+                        verTarjetasSQLite();
+                    }
+
+                    fabAdd.setImageResource(R.drawable.ic_add_card);
+                    listaBuscar = 2;
+                    add = 2;
+                    return true;
+                case R.id.navigation_notas:
+                    if (almacenamientoNube) {
+                        verNotasFirebase();
+                    } else {
+                        verNotasSQLite();
+                    }
+
+                    fabAdd.setImageResource(R.drawable.ic_add_nota);
+                    listaBuscar = 3;
+                    add = 3;
+                    return true;
+            }
+            return false;
+        }
+    };
 
 
 }

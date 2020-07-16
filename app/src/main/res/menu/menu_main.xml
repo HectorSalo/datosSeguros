@@ -8,6 +8,11 @@
         />
 
     <item
+        android:title="@string/menu_ajustes"
+        android:id="@+id/menu_ajustes"
+        />
+
+    <item
         android:title="@string/exportar_importar"
         android:id="@+id/menu_exportar_importar"
         />

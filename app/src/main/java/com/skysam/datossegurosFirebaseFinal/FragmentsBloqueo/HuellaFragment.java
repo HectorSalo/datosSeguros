@@ -104,7 +104,7 @@ public class HuellaFragment extends Fragment {
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentHuella);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        pinGuardado = preferences.getString(Constantes.PIN_RESPALDO, "0000");
+        pinGuardado = preferences.getString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
         String tema = preferences.getString("tema", "Amarillo");
 
         switch (tema){
@@ -250,10 +250,10 @@ public class HuellaFragment extends Fragment {
     public void guardarPIN(String pin) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(Constantes.HUELLA, true);
-        editor.putBoolean(Constantes.PIN, false);
-        editor.putBoolean(Constantes.SIN_BLOQUEO, false);
-        editor.putString(Constantes.PIN_RESPALDO, pin);
+        editor.putBoolean(Constantes.PREFERENCE_HUELLA, true);
+        editor.putBoolean(Constantes.PREFERENCE_PIN, false);
+        editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, false);
+        editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, pin);
         editor.commit();
     }
 
