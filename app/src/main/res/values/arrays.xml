@@ -1,12 +1,28 @@
 <resources>
-    <!-- Reply Preference -->
-    <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+    <!-- Bloqueo Preference -->
+    <string-array name="bloqueo_entries">
+        <item>Sin Bloqueo</item>
+        <item>Huella</item>
+        <item>PIN</item>
     </string-array>
 
-    <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+    <string-array name="bloqueo_values">
+        <item>sinBloqueo</item>
+        <item>huella</item>
+        <item>pin</item>
+    </string-array>
+
+    <string-array name="tema_entries">
+        <item>Amarillo</item>
+        <item>Rojo</item>
+        <item>Marrón</item>
+        <item>Lila</item>
+    </string-array>
+
+    <string-array name="tema_values">
+        <item>Amarillo</item>
+        <item>Rojo</item>
+        <item>Marron</item>
+        <item>Lila</item>
     </string-array>
 </resources>

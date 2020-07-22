@@ -1,0 +1,32 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        app:defaultValue="sinBloqueo"
+        app:entries="@array/bloqueo_entries"
+        app:entryValues="@array/bloqueo_values"
+        app:key="tipoBloqueo"
+        app:title="@string/tipo_bloqueo_title"
+        app:useSimpleSummaryProvider="true"
+        android:icon="@drawable/ic_bloqueo_24"/>
+
+    <SwitchPreferenceCompat
+        app:key="almacenamientoNube"
+        app:summaryOff="@string/almacenamiento_summary_off"
+        app:summaryOn="@string/almacenamiento_summary_on"
+        app:title="@string/tipo_almacenamiento_title"
+        app:defaultValue="true"
+        android:icon="@drawable/ic_cloud_done_24"/>
+
+    <ListPreference
+        app:key="tema"
+        app:title="@string/title_tema"
+        app:entries="@array/tema_entries"
+        app:entryValues="@array/tema_values"
+        app:defaultValue="Amarillo|true"
+        app:useSimpleSummaryProvider="true"
+        android:icon="@drawable/ic_temas_24"
+        />
+
+
+</PreferenceScreen>

@@ -1,36 +1,34 @@
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Preference
-        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$SyncFragment"
-        app:icon="@drawable/sync"
+        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$PreferenciasFragment"
+        app:icon="@drawable/ic_preference_24"
         app:key="preferencias_header"
-        app:title="@string/preferencias" />
+        app:title="@string/preferencias"/>
 
     <PreferenceCategory app:title="Perfil">
-    <Preference
-        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$MessagesFragment"
-        app:icon="@drawable/messages"
-        app:key="datos_personales_header"
-        app:title="@string/datos_personales" />
+        <Preference
+            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$PreferenciasFragment"
+            app:icon="@drawable/ic_datos_personales_24"
+            app:key="datos_personales_header"
+            app:title="@string/datos_personales" />
 
-    <Preference
-        app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$SyncFragment"
-        app:icon="@drawable/sync"
-        app:key="borrar_datos_header"
-        app:title="@string/eliminar_cuenta" />
+        <Preference
+            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$BorrarDatos"
+            app:icon="@drawable/ic_delete_forever_24"
+            app:key="borrar_datos_header"
+            app:title="@string/eliminar_cuenta" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/acerca">
         <PreferenceScreen
-            app:title="@string/acerca_title"
-            android:icon="@drawable/ic_info"
-            >
+            android:icon="@drawable/ic_info_24"
+            app:title="@string/acerca_title">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:targetPackage="com.skysam.datossegurosFirebaseFinal"
                 android:targetClass="com.skysam.datossegurosFirebaseFinal.AcercaActivity"
-                />
+                android:targetPackage="com.skysam.datossegurosFirebaseFinal" />
         </PreferenceScreen>
     </PreferenceCategory>
 

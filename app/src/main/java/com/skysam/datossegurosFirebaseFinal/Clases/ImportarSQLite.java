@@ -10,7 +10,6 @@ import com.ajts.androidmads.library.ExcelToSQLite;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.material.snackbar.Snackbar;
 
 public class ImportarSQLite {

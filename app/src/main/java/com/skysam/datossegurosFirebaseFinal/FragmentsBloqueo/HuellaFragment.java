@@ -14,7 +14,6 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,36 +22,23 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.material.textfield.TextInputLayout;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link HuellaFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link HuellaFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class HuellaFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
+public class HuellaFragment extends Fragment {
     private TextView textViewHuella, tvAccederPin;
     private EditText etPin, etPinRepetir;
-    private String pinGuardado;
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private String pinGuardado, bloqueoGuardado;
+    private SharedPreferences sharedPreferences;
+    private int valorNull;
+    private LinearLayout linearHuella, linearPin;
 
     private OnFragmentInteractionListener mListener;
 
@@ -60,31 +46,10 @@ public class HuellaFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HuellaFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HuellaFragment newInstance(String param1, String param2) {
-        HuellaFragment fragment = new HuellaFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -97,33 +62,46 @@ public class HuellaFragment extends Fragment {
         tvAccederPin = vista.findViewById(R.id.tvAccederPin);
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPINRespaldo);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetirRespaldo);
-        final LinearLayout linearHuella = vista.findViewById(R.id.linearHuella);
-        final LinearLayout linearPin = vista.findViewById(R.id.linearPIN);
+        linearHuella = vista.findViewById(R.id.linearHuella);
+        linearPin = vista.findViewById(R.id.linearPIN);
         final TextInputLayout tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPINRespaldo);
         Button registrarPin = (Button) vista.findViewById(R.id.buttonRegistrarPINRespaldo);
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentHuella);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        pinGuardado = preferences.getString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
-        String tema = preferences.getString("tema", "Amarillo");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        sharedPreferences = requireActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+
+        pinGuardado = sharedPreferences.getString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
+
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentRojo));
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentLila));
                 break;
         }
 
-        if (VariablesGenerales.conf_bloqueo != 1000) {
+        bloqueoGuardado = getArguments().getString("bloqueoGuardado");
+        valorNull = getArguments().getInt("null");
+
+        if (valorNull != 1) {
             tvAccederPin.setVisibility(View.GONE);
+            if (bloqueoGuardado.equals(Constantes.PREFERENCE_PIN)) {
+                linearPin.setVisibility(View.VISIBLE);
+                linearHuella.setVisibility(View.GONE);
+                tvAccederPin.setVisibility(View.GONE);
+                tlPinRepetir.setVisibility(View.GONE);
+            }
         }
 
         tvAccederPin.setOnClickListener(new View.OnClickListener() {
@@ -139,8 +117,12 @@ public class HuellaFragment extends Fragment {
         registrarPin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (VariablesGenerales.conf_bloqueo != 1000) {
-                    validarPinRespaldo();
+                if (valorNull != 1) {
+                    if (bloqueoGuardado.equals(Constantes.PREFERENCE_PIN)) {
+                        accederPin();
+                    } else {
+                        validarPinRespaldo();
+                    }
                 } else {
                     accederPin();
                 }
@@ -153,7 +135,6 @@ public class HuellaFragment extends Fragment {
         return vista;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -175,21 +156,9 @@ public class HuellaFragment extends Fragment {
     public void onDetach() {
             super.onDetach();
             mListener = null;
-
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
@@ -204,7 +173,7 @@ public class HuellaFragment extends Fragment {
                     if (keyguardManager.isKeyguardSecure()) {
                         textViewHuella.setText("Se usará la huella registrada en su Dispositivo.");
 
-                        FingerprintHandler fingerprintHandler = new FingerprintHandler(getContext());
+                        FingerprintHandler fingerprintHandler = new FingerprintHandler(getContext(), valorNull);
                         fingerprintHandler.starAuth(fingerprintManager, null);
                     } else {
                         textViewHuella.setText("Debe agregar un tipo de bloqueo a su Dispositivo");
@@ -231,28 +200,33 @@ public class HuellaFragment extends Fragment {
                 guardarPIN(pinS);
                 startActivity(new Intent(getContext(), MainActivity.class));
             } else {
-                etPin.setError("Deben coincidir el PIN");
-                etPinRepetir.setError("Deben coincidir el PIN");
+                etPin.setError("Debe coincidir el PIN");
+                etPinRepetir.setError("Debe coincidir el PIN");
             }
         }
     }
 
     public void accederPin() {
+        etPin.setError(null);
         String pinS = etPin.getText().toString();
 
         if (pinS.equals(pinGuardado)) {
-            startActivity(new Intent(getContext(), InicSesionActivity.class));
+            if (valorNull != 1) {
+                linearPin.setVisibility(View.GONE);
+                linearHuella.setVisibility(View.VISIBLE);
+                tvAccederPin.setVisibility(View.GONE);
+                bloqueoGuardado = Constantes.PREFERENCE_HUELLA;
+            } else {
+                startActivity(new Intent(getContext(), InicSesionActivity.class));
+            }
         } else {
-            Toast.makeText(getContext(), "El PIN no coincide con el almacenado", Toast.LENGTH_LONG).show();
+            etPin.setError("El PIN no coincide con el almacenado");
         }
     }
 
     public void guardarPIN(String pin) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(Constantes.PREFERENCE_HUELLA, true);
-        editor.putBoolean(Constantes.PREFERENCE_PIN, false);
-        editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, false);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_HUELLA);
         editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, pin);
         editor.commit();
     }

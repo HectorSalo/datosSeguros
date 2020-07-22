@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import com.skysam.datossegurosFirebaseFinal.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,40 +16,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.skysam.datossegurosFirebaseFinal.BloqueoActivity;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.material.textfield.TextInputLayout;
 
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PINFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link PINFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class PINFragment extends Fragment {
 
     private EditText etPin, etPinRepetir;
     private TextView tvPinTitle;
-    private String pinGuardado;
-    private TextInputLayout tlPinRepetir;
-    private SharedPreferences preferences;
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private String pinGuardado, bloqueoEscogido;
+    private TextInputLayout tlPinRepetir, layoutPin;
+    private int valorNull;
+    private SharedPreferences sharedPreferences;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,31 +42,9 @@ public class PINFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment PINFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static PINFragment newInstance(String param1, String param2) {
-        PINFragment fragment = new PINFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -94,48 +56,62 @@ public class PINFragment extends Fragment {
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPIN);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
         tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPIN);
+        layoutPin = vista.findViewById(R.id.inputLayoutPIN);
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentPin);
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        final boolean huella = preferences.getBoolean(Constantes.PREFERENCE_HUELLA, false);
-        final boolean pin = preferences.getBoolean(Constantes.PREFERENCE_PIN, false);
-        boolean sinBloqueo = preferences.getBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
-        pinGuardado = preferences.getString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        sharedPreferences = requireActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        String tema = preferences.getString("tema", "Amarillo");
+        pinGuardado = sharedPreferences.getString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
+
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
-            case "Amarillo":
+            case Constantes.PREFERENCE_AMARILLO:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-
                 break;
-            case "Rojo":
+            case Constantes.PREFERENCE_ROJO:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentRojo));
-
                 break;
-            case "Marron":
+            case Constantes.PREFERENCE_MARRON:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
                 break;
-            case "Lila":
+            case Constantes.PREFERENCE_LILA:
                 frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentLila));
                 break;
         }
 
-        if (huella || pin) {
-            tvPinTitle.setText("Ingrese PIN almacenado");
-            tlPinRepetir.setVisibility(View.GONE);
+
+        final String bloqueoGuardado = getArguments().getString("bloqueoGuardado");
+
+        valorNull = getArguments().getInt("null");
+        if (valorNull == 0) {
+            bloqueoEscogido = getArguments().getString("bloqueoEscogido");
+            if (!bloqueoGuardado.equals(Constantes.PREFERENCE_SIN_BLOQUEO)) {
+                tvPinTitle.setText("Ingrese PIN almacenado");
+                tlPinRepetir.setVisibility(View.GONE);
+            }
+        } else {
+            if (bloqueoGuardado.equals(Constantes.PREFERENCE_PIN)) {
+                tvPinTitle.setText("Ingrese PIN almacenado");
+                tlPinRepetir.setVisibility(View.GONE);
+            }
         }
 
-        Button button = (Button) vista.findViewById(R.id.buttonRegistrarPIN);
+
+        Button button = vista.findViewById(R.id.buttonRegistrarPIN);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (huella || pin) {
-                    validarPinRespaldo();
+                if (valorNull == 0) {
+                    if (!bloqueoGuardado.equals(Constantes.PREFERENCE_SIN_BLOQUEO)) {
+                        validarPinRespaldo();
+                    } else {
+                        validarPinNuevo();
+                    }
                 } else {
-                    validarPinNuevo();
+                    validarPinRespaldo();
                 }
 
             }
@@ -144,7 +120,6 @@ public class PINFragment extends Fragment {
         return vista;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -168,61 +143,44 @@ public class PINFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
     public void validarPinRespaldo() {
+        layoutPin.setError("");
         String pin = etPin.getText().toString();
 
         if (pin.equals(pinGuardado)) {
-            if (VariablesGenerales.conf_bloqueo == Constantes.HUELLA_INT) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
-                editor.putBoolean(Constantes.PREFERENCE_PIN, false);
-                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
-                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
-                editor.commit();
-                startActivity(new Intent(getContext(), BloqueoActivity.class));
-
-            } else if (VariablesGenerales.conf_bloqueo == Constantes.PIN_INT) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
-                editor.putBoolean(Constantes.PREFERENCE_PIN, false);
-                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
-                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
-                editor.commit();
-                startActivity(new Intent(getContext(), BloqueoActivity.class));
-
-            } else if (VariablesGenerales.conf_bloqueo == Constantes.SIN_BLOQUEO_INT) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
-                editor.putBoolean(Constantes.PREFERENCE_PIN, false);
-                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
-                editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
-                editor.commit();
-                startActivity(new Intent(getContext(), MainActivity.class));
-            } else if (VariablesGenerales.conf_bloqueo == 1000) {
+            if (valorNull == 0) {
+                if (bloqueoEscogido.equals(Constantes.PREFERENCE_SIN_BLOQUEO)) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_SIN_BLOQUEO);
+                    editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
+                    editor.commit();
+                    startActivity(new Intent(getContext(), MainActivity.class));
+                }
+                if (bloqueoEscogido.equals(Constantes.PREFERENCE_PIN)) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_PIN);
+                    editor.commit();
+                }
+                if (bloqueoEscogido.equals(Constantes.PREFERENCE_HUELLA)) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_HUELLA);
+                    editor.commit();
+                }
+            } else {
                 startActivity(new Intent(getContext(), InicSesionActivity.class));
             }
-
         } else {
-            Toast.makeText(getContext(), "El PIN no coincide con el almacenado", Toast.LENGTH_LONG).show();
+            layoutPin.setError("El PIN no coincide con el almacenado");
         }
     }
 
     public void validarPinNuevo() {
+        etPin.setError(null);
+        etPinRepetir.setError(null);
         String pin = etPin.getText().toString();
         String pinRepetir = etPinRepetir.getText().toString();
 
@@ -255,13 +213,13 @@ public class PINFragment extends Fragment {
 
         if (pin1 && pin2) {
             if (pin.equals(pinRepetir)) {
-                SharedPreferences.Editor editor = preferences.edit();
-                editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
-                editor.putBoolean(Constantes.PREFERENCE_PIN, true);
-                editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, false);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_PIN);
                 editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, pin);
                 editor.commit();
                 startActivity(new Intent(getContext(), MainActivity.class));
+            } else {
+                etPinRepetir.setError("El PIN no coincide");
             }
         }
     }

@@ -3,7 +3,6 @@ package com.skysam.datossegurosFirebaseFinal;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 
@@ -13,7 +12,6 @@ import androidx.fragment.app.FragmentTransaction;
 
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,7 +24,6 @@ import com.skysam.datossegurosFirebaseFinal.Fragments.AddCuentasFragment;
 import com.skysam.datossegurosFirebaseFinal.Fragments.AddNotaFragment;
 import com.skysam.datossegurosFirebaseFinal.Fragments.AddTarjetaFragment;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
         AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {

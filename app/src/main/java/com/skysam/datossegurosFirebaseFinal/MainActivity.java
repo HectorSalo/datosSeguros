@@ -233,9 +233,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     })
                     .show();
             return true;
-        } else if (id == R.id.menu_tema) {
-            startActivity(new Intent(this, TemasActivity.class));
-            return true;
         } else if (id == R.id.menu_eliminar_cuenta) {
             final EliminarCuenta eliminarCuenta = new EliminarCuenta(this);
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);

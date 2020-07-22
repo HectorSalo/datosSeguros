@@ -8,7 +8,6 @@ import android.view.View;
 import com.ajts.androidmads.library.SQLiteToExcel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;

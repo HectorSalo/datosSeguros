@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,7 +17,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -155,19 +153,6 @@ public class PerfilActivity extends AppCompatActivity {
                     validarPass();
                 } else if (rbAlmacenamiento.isChecked()) {
                     actualizarAlmacenamiento();
-                } else if (rbHuella.isChecked()) {
-                    VariablesGenerales.conf_bloqueo = Constantes.HUELLA_INT;
-                    startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
-                } else if (rbPIN.isChecked()) {
-                    VariablesGenerales.conf_bloqueo = Constantes.PIN_INT;
-                    startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
-                } else if (rbSinBloqueo.isChecked()) {
-                    if (sinBloqueo) {
-                        finish();
-                    } else {
-                        VariablesGenerales.conf_bloqueo = Constantes.SIN_BLOQUEO_INT;
-                        startActivity(new Intent(PerfilActivity.this, BloqueoActivity.class));
-                    }
                 }
             }
         });

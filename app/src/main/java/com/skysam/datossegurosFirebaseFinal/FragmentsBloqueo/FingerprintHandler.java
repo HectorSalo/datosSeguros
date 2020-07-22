@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.CancellationSignal;
 import android.os.Handler;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,16 +17,18 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
-import com.skysam.datossegurosFirebaseFinal.Variables.VariablesGenerales;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler extends FingerprintManager.AuthenticationCallback {
     private Context context;
+    private int valorNull;
 
-    public FingerprintHandler (Context context) {
+    public FingerprintHandler (Context context, int valorNull) {
         this.context = context;
+        this.valorNull = valorNull;
     }
 
     public void starAuth (FingerprintManager fingerprintManager, FingerprintManager.CryptoObject cryptoObject) {
@@ -57,6 +60,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
         TextView mensaje = ((Activity)context).findViewById(R.id.textViewHuella);
         final LinearLayout linearHuella = ((Activity) context).findViewById(R.id.linearHuella);
         final LinearLayout linearPin = ((Activity) context).findViewById(R.id.linearPIN);
+        final TextInputLayout tlPinRepetir = ((Activity) context).findViewById(R.id.inputLayoutRepetirPINRespaldo);
+        final EditText etPin = ((Activity) context).findViewById(R.id.etRegistrarPINRespaldo);
+        final EditText etPinRepetir = ((Activity) context).findViewById(R.id.etRegistrarPINRepetirRespaldo);
         LottieAnimationView lottieAnimationView = ((Activity) context).findViewById(R.id.lottieAnimationView);
 
             if (!b) {
@@ -65,7 +71,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                 mensaje.setText(s);
                 mensaje.setTextColor(ContextCompat.getColor(context, R.color.colorRed));
             } else {
-                if (VariablesGenerales.conf_bloqueo == 1000) {
+                if (valorNull == 1) {
                     lottieAnimationView.setAnimation("huellaactivo.json");
                     lottieAnimationView.playAnimation();
                     mensaje.setText(s);
@@ -88,6 +94,9 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                         @Override
                         public void run() {
                             linearPin.setVisibility(View.VISIBLE);
+                            tlPinRepetir.setVisibility(View.VISIBLE);
+                            etPin.setText("");
+                            etPinRepetir.setText("");
                             linearHuella.setVisibility(View.GONE);
                         }
                     }, 1500);
