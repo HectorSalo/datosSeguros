@@ -35,248 +35,28 @@ public class EliminarCuenta {
         this.context = context;
     }
 
-    public void eliminarAlmacenamiento(final String id) {
-        //progressBarCargar.setVisibility(View.VISIBLE);
+    public void eliminarContrasenas(String id) {
+        CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_CONTRASENAS);
 
-        final CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.ALMACENAMIENTO);
-
-        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        reference.document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("Status", "DocumentSnapshot successfully deleted!");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("Status", "Error deleting almacenamiento", e);
-                            }
-                        });
-                    }
-                    eliminarTarjetas(id);
-                    //progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    //progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(context, "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Status", "Error querying almacenamiento", e);
-            }
-        });
-    }
-
-    public void eliminarContrasenas(final String id) {
-        final CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_CONTRASENAS);
-
-        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        reference.document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("Status", "DocumentSnapshot successfully deleted!");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("Status", "Error deleting contraseñas", e);
-                            }
-                        });
-                    }
-                    eliminarCuentas(id);
-                    Log.d("Status", "test");
-                    //progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    //progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(context, "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Status", "Error query contraseñas", e);
-            }
-        });
+        reference.document(id).delete();
 
     }
 
-    public void eliminarCuentas(final String id) {
-        final CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_CUENTAS);
+    public void eliminarCuentas(String id) {
+        CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_CUENTAS);
 
-        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        reference.document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("Status", "DocumentSnapshot successfully deleted!");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("Status", "Error deleting cuentas", e);
-                            }
-                        });
-                    }
-                    eliminarTarjetas(id);
-                    //progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    //progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(context, "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Status", "Error querying cuentas", e);
-            }
-        });
+        reference.document(id).delete();
     }
 
-    public void eliminarTarjetas(final String id) {
-        final CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_TARJETAS);
+    public void eliminarTarjetas(String id) {
+        CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_TARJETAS);
 
-        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        reference.document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("Status", "DocumentSnapshot successfully deleted!");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("Status", "Error deleting tarjetas", e);
-                            }
-                        });
-                    }
-                    eliminarNotas(id);
-                    //progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    //progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(context, "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Status", "Error querying tarjetas", e);
-            }
-        });
+        reference.document(id).delete();
     }
 
-    public void eliminarNotas (final String id) {
-        final CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_NOTAS);
+    public void eliminarNotas (String id) {
+        CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_NOTAS);
 
-        reference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        reference.document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("Status", "DocumentSnapshot successfully deleted!");
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("Status", "Error deleting notas", e);
-                            }
-                        });
-                    }
-                    eliminarPropietario(id);
-                    //progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    //progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(context, "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Status", "Error querying notas", e);
-            }
-        });
-    }
-
-    public void eliminarPropietario(String id) {
-        final DocumentReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id);
-
-        reference.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d("Status", "DocumentSnapshot successfully deleted!");
-                context.deleteDatabase(user.getUid());
-                context.startActivity(new Intent(context, MainActivity.class));
-                //eliminarUsuario();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("Status", "Error deleting propietario", e);
-            }
-        });
-
-    }
-
-
-    public void eliminarUsuario() {
-        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-
-// Get auth credentials from the user for re-authentication. The example below shows
-// email and password credentials but there are multiple possible providers,
-// such as GoogleAuthProvider or FacebookAuthProvider.
-        if (user != null) {
-
-            AuthCredential credential = EmailAuthProvider
-                    .getCredential("test@gmail.com", "123456");
-
-
-// Prompt the user to re-provide their sign-in credentials
-            user.reauthenticate(credential)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Log.d("MSG", "User re-authenticated.");
-                            user.delete()
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Log.d("MSG", "User account deleted.");
-                                                context.startActivity(new Intent(context, InicSesionActivity.class));
-                                            }
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.d("MSG", "User account Error.");
-                                }
-                            });
-                        }
-                    });
-        }
-
+        reference.document(id).delete();
     }
 }

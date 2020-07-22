@@ -154,7 +154,6 @@
 
 
     <string name="explicacion_importar_exportar">Sólo puede importar/exportar los datos almacenados en el Dispositivo.</string>
-    <string name="explicacion_eliminar_cuenta">Se eliminarán todos los datos asociados a su cuenta (en la Nube y Dispositivo). Esta acción no se puede deshacer. \n¿Continuar?</string>
     <string name="explicacion_escoger_almacenamiento">Puede guardar algunos datos en la nube y otros en su dispositivo. \nEscoja con cuál desea inciar</string>
 
     <!-- Tema -->
@@ -181,5 +180,10 @@
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Borrar Datos Preferences -->
+    <string name="text_borrar_datos">Se eliminará la información almacenada en la nube y/o dispositivo. Esta acción no se puede deshacer.</string>
+    <string name="btn_borrar_datos_nube">Borrar Datos en la Nube</string>
+    <string name="btn_borrar_datos_dispositivo">Borrar Datos en el Dispositivo</string>
+    <string name="btn_borrar_datos_todos">Borrar todos los Datos</string>
 </resources>

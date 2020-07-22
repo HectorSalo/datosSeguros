@@ -237,12 +237,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             final EliminarCuenta eliminarCuenta = new EliminarCuenta(this);
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle("¡Advertencia!")
-                    .setMessage(R.string.explicacion_eliminar_cuenta)
                     .setIcon(R.drawable.ic_advertencia)
                     .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            eliminarCuenta.eliminarAlmacenamiento(user.getUid());
+                            //eliminarCuenta.eliminarAlmacenamiento(user.getUid());
 
                         }
                     })

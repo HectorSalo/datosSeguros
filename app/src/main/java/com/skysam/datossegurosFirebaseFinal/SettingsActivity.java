@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,10 +22,28 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.skysam.datossegurosFirebaseFinal.Adpatadores.AdapterTarjeta;
+import com.skysam.datossegurosFirebaseFinal.Adpatadores.BancoAdapter;
+import com.skysam.datossegurosFirebaseFinal.Adpatadores.ContrasenaAdapter;
+import com.skysam.datossegurosFirebaseFinal.Adpatadores.NotaAdapter;
+import com.skysam.datossegurosFirebaseFinal.Clases.EliminarCuenta;
+import com.skysam.datossegurosFirebaseFinal.Constructores.BancoConstructor;
+import com.skysam.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
+import com.skysam.datossegurosFirebaseFinal.Constructores.NotaConstructor;
+import com.skysam.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.Objects;
 
 public class SettingsActivity extends AppCompatActivity implements
@@ -365,6 +384,10 @@ public class SettingsActivity extends AppCompatActivity implements
 
     public static class BorrarDatos extends Fragment {
 
+        private FirebaseUser user;
+        private ArrayList<String> listContrasena, listBancos, listTarjetas, listNota;
+        private EliminarCuenta eliminarCuenta;
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -372,9 +395,9 @@ public class SettingsActivity extends AppCompatActivity implements
 
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.fragment_add_contrasena, container, false);
+            View view = inflater.inflate(R.layout.fragment_borrar_datos, container, false);
 
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            user = FirebaseAuth.getInstance().getCurrentUser();
             SharedPreferences sharedPreferences = getActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
             String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
@@ -393,7 +416,155 @@ public class SettingsActivity extends AppCompatActivity implements
                     break;
             }
 
+            eliminarCuenta = new EliminarCuenta(getContext());
+
+            Button buttonDispositivo = view.findViewById(R.id.button_borrar_dispositivo);
+            Button buttonNube = view.findViewById(R.id.button_borrar_nube);
+            Button buttonTodos = view.findViewById(R.id.button_borrar_todos);
+
+            buttonNube.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recuperarContrasenaNube();
+                }
+            });
+
             return view;
+        }
+
+        private void recuperarContrasenaNube() {
+            //progressBarCargar.setVisibility(View.VISIBLE);
+            String userID = user.getUid();
+            listContrasena = new ArrayList<>();
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS);
+
+            Query query = reference.orderBy(Constantes.BD_SERVICIO, Query.Direction.ASCENDING);
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            String id = doc.getId();
+
+                            listContrasena.add(id);
+                        }
+
+                        recuperarCuentaNube();
+                    } else {
+                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        private void recuperarCuentaNube() {
+            String userID = user.getUid();
+            listBancos = new ArrayList<>();
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS);
+
+            Query query = reference.orderBy(Constantes.BD_BANCO, Query.Direction.ASCENDING);
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                            String id = doc.getId();
+
+                            listBancos.add(id);
+                        }
+
+                        recuperarTarjetaNube();
+                    } else {
+                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        private void recuperarTarjetaNube() {
+            String userID = user.getUid();
+            listTarjetas = new ArrayList<>();
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS);
+
+            Query query = reference.orderBy(Constantes.BD_TITULAR_TARJETA, Query.Direction.ASCENDING);
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                            String id = doc.getId();
+
+                            listTarjetas.add(id);
+                        }
+
+                        recuperarNotaNube();
+                    } else {
+                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        private void recuperarNotaNube() {
+            String userID = user.getUid();
+            listNota = new ArrayList<>();
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS);
+
+            Query query = reference.orderBy(Constantes.BD_TITULO_NOTAS, Query.Direction.ASCENDING);
+            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                            String id = doc.getId();
+
+                            listNota.add(id);
+                        }
+                        validarNube();
+                    } else {
+                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        private void validarNube() {
+            if (listContrasena.isEmpty() && listBancos.isEmpty() && listNota.isEmpty() && listTarjetas.isEmpty()) {
+                Toast.makeText(getContext(), "No hay datos en la Nube para eliminar", Toast.LENGTH_SHORT).show();
+            } else {
+                if (!listContrasena.isEmpty()) {
+                    for (int j = 0; j < listContrasena.size(); j++) {
+                        String id = listContrasena.get(j);
+                        eliminarCuenta.eliminarContrasenas(id);
+                    }
+                }
+                if (!listBancos.isEmpty()) {
+                    for (int j = 0; j < listBancos.size(); j++) {
+                        String id = listBancos.get(j);
+                        eliminarCuenta.eliminarCuentas(id);
+                    }
+                }
+                if (!listTarjetas.isEmpty()) {
+                    for (int j = 0; j < listTarjetas.size(); j++) {
+                        String id = listTarjetas.get(j);
+                        eliminarCuenta.eliminarTarjetas(id);
+                    }
+                }
+                if (!listNota.isEmpty()) {
+                    for (int j = 0; j < listNota.size(); j++) {
+                        String id = listNota.get(j);
+                        eliminarCuenta.eliminarNotas(id);
+                    }
+                }
+            }
         }
     }
 }
