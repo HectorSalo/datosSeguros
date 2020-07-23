@@ -157,10 +157,6 @@
     <string name="explicacion_escoger_almacenamiento">Puede guardar algunos datos en la nube y otros en su dispositivo. \nEscoja con cuál desea inciar</string>
 
     <!-- Tema -->
-    <string name="button_amarillo">Amarillo</string>
-    <string name="button_rojo">Rojo</string>
-    <string name="button_marron">Marrón</string>
-    <string name="button_lila">Lila</string>
     <string name="title_activity_settings">Ajustes</string>
 
     <!-- Preference Titles -->

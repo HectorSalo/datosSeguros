@@ -50,12 +50,10 @@
 
     <style name="Theme.Dialog.MiPerfilMarron" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">@color/colorPrimaryMarron</item>
-
     </style>
 
     <style name="Theme.Dialog.MiPerfilLila" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">@color/colorPrimaryLila</item>
-
     </style>
 
     <style name="CampoTextoBlanco" parent="Theme.AppCompat.Light">

@@ -9,13 +9,13 @@
 
     <PreferenceCategory app:title="Perfil">
         <Preference
-            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$PreferenciasFragment"
+            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$DatosPersonalesFragment"
             app:icon="@drawable/ic_datos_personales_24"
             app:key="datos_personales_header"
             app:title="@string/datos_personales" />
 
         <Preference
-            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$BorrarDatos"
+            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$BorrarDatosFragment"
             app:icon="@drawable/ic_delete_forever_24"
             app:key="borrar_datos_header"
             app:title="@string/eliminar_cuenta" />

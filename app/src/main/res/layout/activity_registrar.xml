@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".InicSesionActivity"
     android:id="@+id/constraintRegistrar"
+    android:background="@color/colorAccent"
     >
 
     <TextView
@@ -109,7 +110,7 @@
 
     <Button
         android:id="@+id/buttonRegistrar"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
@@ -120,7 +121,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/inputLayoutPassRepetirRegistrar"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textColor="@color/md_text_white"
+        android:background="@color/md_grey_800"
+        android:textSize="22sp"/>
 
     <ProgressBar
         android:id="@+id/progressBarRegistrar"

@@ -46,25 +46,6 @@ public class InicSesionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
-
-        switch (tema){
-            case Constantes.PREFERENCE_AMARILLO:
-                setTheme(R.style.AppTheme);
-                break;
-            case Constantes.PREFERENCE_ROJO:
-                setTheme(R.style.AppThemeRojo);
-                break;
-            case Constantes.PREFERENCE_MARRON:
-                setTheme(R.style.AppThemeMarron);
-                break;
-            case Constantes.PREFERENCE_LILA:
-                setTheme(R.style.AppThemeLila);
-                break;
-        }
-
         setContentView(R.layout.activity_inic_sesion);
 
         usuario = (EditText) findViewById(R.id.etInicSesionUsuario);
@@ -74,22 +55,6 @@ public class InicSesionActivity extends AppCompatActivity {
         TextView olvidoPass = (TextView) findViewById(R.id.tvOlvidoPass);
         progressBarInicSesion = findViewById(R.id.progressBarInicSesion);
         ConstraintLayout constraintLayout = findViewById(R.id.constraintInicio);
-
-
-        switch (tema){
-            case Constantes.PREFERENCE_AMARILLO:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
-                break;
-            case Constantes.PREFERENCE_ROJO:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryRojo));
-                break;
-            case Constantes.PREFERENCE_MARRON:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryMarron));
-                break;
-            case Constantes.PREFERENCE_LILA:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryLila));
-                break;
-        }
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -158,7 +123,6 @@ public class InicSesionActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
         user = mAuth.getCurrentUser();
         if (user != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -207,7 +171,7 @@ public class InicSesionActivity extends AppCompatActivity {
                                 // If sign in fails, display a message to the user.
                                 progressBarInicSesion.setVisibility(View.GONE);
                                 Log.w("msg", "signInWithEmail:failure", task.getException());
-                                Toast.makeText(InicSesionActivity.this, "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
+                                Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                         Toast.LENGTH_LONG).show();
 
                             }
@@ -256,7 +220,7 @@ public class InicSesionActivity extends AppCompatActivity {
                             // If sign in fails, display a message to the user.
                             Log.w("msg", "signInWithCredential:failure", task.getException());
                             progressBarInicSesion.setVisibility(View.GONE);
-                            Toast.makeText(InicSesionActivity.this, "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
+                            Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                     Toast.LENGTH_LONG).show();
                         }
 
@@ -280,6 +244,6 @@ public class InicSesionActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this, InicSesionActivity.class));
+        super.onBackPressed();
     }
 }

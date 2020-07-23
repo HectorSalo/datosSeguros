@@ -14,7 +14,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"></activity>
+            android:label="@string/title_activity_settings"/>
         <activity android:name=".BloqueoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,10 +22,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".PerfilActivity"
-            android:label="@string/titleMiPerfil"
-            android:theme="@style/Theme.Dialog.MiPerfil" />
         <activity
             android:name=".AcercaActivity"
             android:theme="@style/Theme.Acerca" />

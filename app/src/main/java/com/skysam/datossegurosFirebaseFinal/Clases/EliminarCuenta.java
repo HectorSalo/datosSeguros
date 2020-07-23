@@ -39,7 +39,6 @@ public class EliminarCuenta {
         CollectionReference reference = dbFirestore.collection(Constantes.BD_PROPIETARIOS).document(id).collection(Constantes.BD_CONTRASENAS);
 
         reference.document(id).delete();
-
     }
 
     public void eliminarCuentas(String id) {

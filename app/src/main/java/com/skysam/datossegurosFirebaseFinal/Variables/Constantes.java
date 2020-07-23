@@ -43,8 +43,6 @@ public class Constantes {
 
     public static final String AGREGAR = "agregar";
 
-    public static final String ALMACENAMIENTO = "almacenamientos";
-    public static final String ALMACENAMIENTO_DOC = "almacenamientoDoc";
     public static final String ALMACENAMIENTO_ESCOGIDO = "escogido";
 
     public static final String PREFERENCE_TIPO_BLOQUEO = "tipoBloqueo";

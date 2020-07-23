@@ -201,13 +201,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_acerca) {
-            startActivity(new Intent(getApplicationContext(), AcercaActivity.class));
-            return true;
-        } else if (id == R.id.menu_perfil) {
-            startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
-            return  true;
-        } else if (id == R.id.menu_exportar_importar) {
+        if (id == R.id.menu_exportar_importar) {
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
             dialog.setTitle("¿Qué desea hacer?")
                     .setMessage(R.string.explicacion_importar_exportar)
@@ -226,26 +220,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         }
                     })
                     .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-            return true;
-        } else if (id == R.id.menu_eliminar_cuenta) {
-            final EliminarCuenta eliminarCuenta = new EliminarCuenta(this);
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle("¡Advertencia!")
-                    .setIcon(R.drawable.ic_advertencia)
-                    .setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            //eliminarCuenta.eliminarAlmacenamiento(user.getUid());
-
-                        }
-                    })
-                    .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -815,9 +789,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void configurarSinBloqueo() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(Constantes.PREFERENCE_HUELLA, false);
-        editor.putBoolean(Constantes.PREFERENCE_PIN, false);
-        editor.putBoolean(Constantes.PREFERENCE_SIN_BLOQUEO, true);
+        editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_SIN_BLOQUEO);
+        editor.putString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+        editor.putBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, false);
         editor.putString(Constantes.PREFERENCE_PIN_RESPALDO, "0000");
         editor.commit();
     }
@@ -879,4 +853,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     };
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

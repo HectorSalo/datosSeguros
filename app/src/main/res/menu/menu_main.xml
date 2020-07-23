@@ -3,11 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:title="@string/perfil"
-        android:id="@+id/menu_perfil"
-        />
-
-    <item
         android:title="@string/menu_ajustes"
         android:id="@+id/menu_ajustes"
         />
@@ -20,16 +15,6 @@
     <item
         android:title="@string/cerrarSesion"
         android:id="@+id/menu_cerrar_sesion"
-        />
-
-    <item
-        android:title="@string/eliminar_cuenta"
-        android:id="@+id/menu_eliminar_cuenta"
-        />
-
-    <item
-        android:title="@string/acerca"
-        android:id="@+id/menu_acerca"
         />
 
     <item
