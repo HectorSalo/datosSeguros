@@ -29,6 +29,10 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.firebase.auth.UserInfo;
 import com.skysam.datossegurosFirebaseFinal.Adpatadores.AdapterTarjeta;
 import com.skysam.datossegurosFirebaseFinal.Adpatadores.BancoAdapter;
 import com.skysam.datossegurosFirebaseFinal.Adpatadores.ContrasenaAdapter;
@@ -230,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         } else if (id == R.id.menu_ajustes) {
             startActivity(new Intent(this, SettingsActivity.class));
         }else if (id == R.id.menu_cerrar_sesion) {
-            cerrarSesion();
+            confirmarCerrarSesion();
             return true;
         } else if (id == R.id.menu_buscar) {
             return true;
@@ -240,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void onBackPressed() {
-        cerrarSesion();
+        confirmarCerrarSesion();
     }
 
 
@@ -644,7 +648,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
-    public void cerrarSesion() {
+    public void confirmarCerrarSesion() {
         AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this);
         dialog.setTitle("Confirmar");
         dialog.setMessage("¿Desea cerrar sesión?");
@@ -652,9 +656,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                FirebaseAuth.getInstance().signOut();
-                configurarSinBloqueo();
-                startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
+                cerrarSesion();
             }
         });
         dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -664,6 +666,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         });
         dialog.show();
+    }
+
+    private void cerrarSesion() {
+        FirebaseAuth.getInstance().signOut();
+        configurarPreferenciasDeafault();
+
+        String providerId = "";
+
+        if (user != null) {
+            for (UserInfo profile : user.getProviderData()) {
+                providerId = profile.getProviderId();
+            }
+        }
+
+        if (providerId.equals("google.com")) {
+            GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build();
+
+            GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+
+            mGoogleSignInClient.signOut().addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
+                }
+            });
+        } else {
+            startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
+        }
     }
 
     @Override
@@ -787,7 +820,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
 
-    public void configurarSinBloqueo() {
+    public void configurarPreferenciasDeafault() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_SIN_BLOQUEO);
         editor.putString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);

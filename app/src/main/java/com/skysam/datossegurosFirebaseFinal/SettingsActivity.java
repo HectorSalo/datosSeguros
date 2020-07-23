@@ -103,6 +103,7 @@ public class SettingsActivity extends AppCompatActivity implements
                         .beginTransaction()
                         .replace(R.id.settings, preferenciasFragment)
                         .commit();
+                setTitle(R.string.preferencias);
             }
         } else {
             setTitle(savedInstanceState.getCharSequence(TITLE_TAG));

@@ -14,13 +14,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
@@ -31,19 +36,26 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class AddContrasenaFragment extends Fragment {
 
-    private EditText etServicio, etUsuario, etContrasena, etOtroDias;
+    private TextInputEditText etServicio, etUsuario, etContrasena;
+    private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
+    private EditText etOtroDias;
     private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
     private int duracionVigencia;
     private FirebaseUser user;
-    private ProgressBar progressBarAdd;
+    private ProgressBar progressBar;
     private Date fechaActual;
 
 
@@ -69,20 +81,43 @@ public class AddContrasenaFragment extends Fragment {
 
         SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+        boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
-        etServicio = (EditText) vista.findViewById(R.id.etServicio);
-        etUsuario = (EditText) vista.findViewById(R.id.etUsuario);
-        etContrasena = (EditText) vista.findViewById(R.id.etContrasena);
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+
+        etServicio = vista.findViewById(R.id.et_servicio);
+        etUsuario = vista.findViewById(R.id.et_usuario);
+        etContrasena = vista.findViewById(R.id.et_pass);
         etOtroDias = (EditText) vista.findViewById(R.id.etIngreseOtro);
-        RadioGroup radioGroup = (RadioGroup) vista.findViewById(R.id.radioDias);
-        rbdias30 = (RadioButton) vista.findViewById(R.id.radioButton30);
+        inputLayoutUsuario = vista.findViewById(R.id.outlined_usuario);
+        inputLayoutPass = vista.findViewById(R.id.outlined_pass);
+        inputLayoutServicio = vista.findViewById(R.id.outlined_servicio);
+        /*rbdias30 = (RadioButton) vista.findViewById(R.id.radioButton30);
         rbdias60 = (RadioButton) vista.findViewById(R.id.radioButton60);
         rbdias90 = (RadioButton) vista.findViewById(R.id.radioButton90);
         rbdias120 = (RadioButton) vista.findViewById(R.id.radioButton120);
         rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminado);
-        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);
-        progressBarAdd = vista.findViewById(R.id.progressBarAddContrasena);
+        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);*/
+        final RadioButton rbNube = vista.findViewById(R.id.radioButton_nube);
+        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+        progressBar = vista.findViewById(R.id.progressBar);
+        Spinner spinner = vista.findViewById(R.id.spinner);
+        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarContrasena);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkRojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkMarron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkLila));
+                break;
+        }
 
         Calendar almanaque = Calendar.getInstance();
         int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
@@ -91,46 +126,57 @@ public class AddContrasenaFragment extends Fragment {
         almanaque.set(anualActual, mesActual, diaActual);
         fechaActual = almanaque.getTime();
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        List<String> listaCaducidad = Arrays.asList(getResources().getStringArray(R.array.tiempo_vigencia));
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_opciones, listaCaducidad);
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioButton30:
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position != 5) {
+                    etOtroDias.setVisibility(View.GONE);
+                } else {
+                    etOtroDias.setVisibility(View.VISIBLE);
+                }
+
+                switch (position) {
+                    case 1:
                         duracionVigencia = 30;
-                        etOtroDias.setVisibility(View.GONE);
                         break;
-
-                    case R.id.radioButton60:
+                    case 2:
                         duracionVigencia = 60;
-                        etOtroDias.setVisibility(View.GONE);
                         break;
-
-                    case R.id.radioButton90:
+                    case 3:
                         duracionVigencia = 90;
-                        etOtroDias.setVisibility(View.GONE);
                         break;
-
-                    case R.id.radioButton120:
+                    case 4:
                         duracionVigencia = 120;
-                        etOtroDias.setVisibility(View.GONE);
                         break;
-
-                    case R.id.radioButtonIndeterminado:
-                        etOtroDias.setVisibility(View.GONE);
+                    case 5:
+                        duracionVigencia = 0;
                         break;
-
                     case R.id.radioButtonOtro:
-                        etOtroDias.setVisibility(View.VISIBLE);
+                        duracionVigencia = 1;
                         break;
                 }
             }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
 
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarContrasena);
+        if (almacenamientoNube) {
+            rbNube.setChecked(true);
+        } else {
+            rbDispositivo.setChecked(true);
+        }
+
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (almacenamientoNube) {
+                if (rbNube.isChecked()) {
                     guardarContrasenaFirebase();
                 } else {
                     guardarContrasenaSQLite();
@@ -164,6 +210,31 @@ public class AddContrasenaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
+
+    private void validarDatos () {
+        String servicio = etServicio.getText().toString();
+        String usuario = etUsuario.getText().toString();
+        String contrasena = etContrasena.getText().toString();
+
+        boolean usuarioValido;
+        boolean passwordValido;
+
+        if (!usuario.isEmpty()) {
+
+        } else {
+            inputLayoutUsuario.setError("El campo no puede estar vacío");
+            usuarioValido = false;
+        }
+
+        if (password.isEmpty() || (password.length() < 6)) {
+            passwordValido = false;
+            contrasena.setError("Mínimo 6 caracteres");
+        } else {
+            passwordValido = true;
+
+        }
+    }
+
     public void guardarContrasenaFirebase() {
         String servicio = etServicio.getText().toString();
         String usuario = etUsuario.getText().toString();
@@ -176,7 +247,7 @@ public class AddContrasenaFragment extends Fragment {
             if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
                 Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
             } else {
-                progressBarAdd.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
 
                 String vigencia = "";
                 if (rbIndeterminado.isChecked()) {
@@ -200,7 +271,7 @@ public class AddContrasenaFragment extends Fragment {
                 db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        progressBarAdd.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
                         requireActivity().finish();
 
@@ -209,7 +280,7 @@ public class AddContrasenaFragment extends Fragment {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("msg", "Error adding document", e);
-                        progressBarAdd.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     }
                 });

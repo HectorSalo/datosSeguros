@@ -25,4 +25,13 @@
         <item>Marron</item>
         <item>Lila</item>
     </string-array>
+
+    <string-array name="tiempo_vigencia">
+        <item>Caducidad de la contraseña</item>
+        <item>30 días</item>
+        <item>60 días</item>
+        <item>90 días</item>
+        <item>120 días</item>
+        <item>Otro</item>
+    </string-array>
 </resources>

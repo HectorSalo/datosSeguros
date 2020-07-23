@@ -4,10 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 
@@ -15,6 +19,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,18 +34,17 @@ import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 public class AddActivity extends AppCompatActivity implements AddContrasenaFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
         AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {
 
-    private Spinner spinnerOpciones;
     private AddContrasenaFragment addContrasenaFragment;
     private AddCuentasFragment addCuentasFragment;
     private AddTarjetaFragment addTarjetaFragment;
     private AddNotaFragment addNotaFragment;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    private SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
         String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
@@ -61,11 +66,28 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
 
         setContentView(R.layout.activity_add);
 
-        spinnerOpciones = (Spinner) findViewById(R.id.spinnerOpciones);
+        RadioGroup radioGroup = findViewById(R.id.radioGroup);
+        RadioButton radioButtonContrasena = findViewById(R.id.radioButton_nueva_contrasena);
+        RadioButton radioButtonCuenta = findViewById(R.id.radioButton_nueva_cuenta);
+        RadioButton radioButtonTarjeta = findViewById(R.id.radioButton_nueva_tarjeta);
+        RadioButton radioButtonNota = findViewById(R.id.radioButton_nueva_nota);
 
-        String [] spOpciones = {"Cambiar opción", "Contraseña", "Cuenta Bancaria", "Tarjeta Bancaria", "Nota"};
-        ArrayAdapter<String> adapterOpciones = new ArrayAdapter<String>(this, R.layout.spinner_opciones, spOpciones);
-        spinnerOpciones.setAdapter(adapterOpciones);
+        ConstraintLayout constraintLayout = findViewById(R.id.constraint_layout);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentRojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentMarron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentLila));
+                break;
+        }
 
         addContrasenaFragment = new AddContrasenaFragment();
         addCuentasFragment = new AddCuentasFragment();
@@ -79,46 +101,43 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
             switch (add) {
                 case 0:
                     getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addContrasenaFragment).commit();
+                    radioButtonContrasena.setChecked(true);
                     break;
                 case 1:
                     getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addCuentasFragment).commit();
+                    radioButtonCuenta.setChecked(true);
                     break;
                 case 2:
                     getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addTarjetaFragment).commit();
+                    radioButtonTarjeta.setChecked(true);
                     break;
                 case 3:
                     getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragments, addNotaFragment).commit();
+                    radioButtonNota.setChecked(true);
                     break;
             }
         }
 
 
-        spinnerOpciones.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                int seleccion = spinnerOpciones.getSelectedItemPosition();
-
-                switch (seleccion) {
-                    case 1:
+                switch (checkedId) {
+                    case R.id.radioButton_nueva_contrasena:
                         transaction.replace(R.id.contenedorFragments, addContrasenaFragment);
                         break;
-                    case 2:
+                    case R.id.radioButton_nueva_cuenta:
                         transaction.replace(R.id.contenedorFragments, addCuentasFragment);
                         break;
-                    case 3:
+                    case R.id.radioButton_nueva_tarjeta:
                         transaction.replace(R.id.contenedorFragments, addTarjetaFragment);
                         break;
-                    case 4:
+                    case R.id.radioButton_nueva_nota:
                         transaction.replace(R.id.contenedorFragments, addNotaFragment);
                         break;
                 }
                 transaction.commit();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
     }
