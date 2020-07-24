@@ -52,11 +52,11 @@ public class AddContrasenaFragment extends Fragment {
     private TextInputEditText etServicio, etUsuario, etContrasena;
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
     private EditText etOtroDias;
-    private RadioButton rbdias30, rbdias60, rbdias90, rbdias120, rbIndeterminado, rbOtro;
-    private int duracionVigencia;
+    private RadioButton rbNube;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private Date fechaActual;
+    private Spinner spinner;
 
 
     private OnFragmentInteractionListener mListener;
@@ -88,21 +88,15 @@ public class AddContrasenaFragment extends Fragment {
         etServicio = vista.findViewById(R.id.et_servicio);
         etUsuario = vista.findViewById(R.id.et_usuario);
         etContrasena = vista.findViewById(R.id.et_pass);
-        etOtroDias = (EditText) vista.findViewById(R.id.etIngreseOtro);
+        etOtroDias = vista.findViewById(R.id.etIngreseOtro);
         inputLayoutUsuario = vista.findViewById(R.id.outlined_usuario);
         inputLayoutPass = vista.findViewById(R.id.outlined_pass);
         inputLayoutServicio = vista.findViewById(R.id.outlined_servicio);
-        /*rbdias30 = (RadioButton) vista.findViewById(R.id.radioButton30);
-        rbdias60 = (RadioButton) vista.findViewById(R.id.radioButton60);
-        rbdias90 = (RadioButton) vista.findViewById(R.id.radioButton90);
-        rbdias120 = (RadioButton) vista.findViewById(R.id.radioButton120);
-        rbIndeterminado = (RadioButton) vista.findViewById(R.id.radioButtonIndeterminado);
-        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtro);*/
-        final RadioButton rbNube = vista.findViewById(R.id.radioButton_nube);
+        rbNube = vista.findViewById(R.id.radioButton_nube);
         RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         progressBar = vista.findViewById(R.id.progressBar);
-        Spinner spinner = vista.findViewById(R.id.spinner);
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarContrasena);
+        spinner = vista.findViewById(R.id.spinner);
+        Button buttonGuardar = vista.findViewById(R.id.guardarContrasena);
 
         switch (tema){
             case Constantes.PREFERENCE_AMARILLO:
@@ -133,31 +127,10 @@ public class AddContrasenaFragment extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position != 5) {
+                if (position != 6) {
                     etOtroDias.setVisibility(View.GONE);
                 } else {
                     etOtroDias.setVisibility(View.VISIBLE);
-                }
-
-                switch (position) {
-                    case 1:
-                        duracionVigencia = 30;
-                        break;
-                    case 2:
-                        duracionVigencia = 60;
-                        break;
-                    case 3:
-                        duracionVigencia = 90;
-                        break;
-                    case 4:
-                        duracionVigencia = 120;
-                        break;
-                    case 5:
-                        duracionVigencia = 0;
-                        break;
-                    case R.id.radioButtonOtro:
-                        duracionVigencia = 1;
-                        break;
                 }
             }
 
@@ -176,12 +149,7 @@ public class AddContrasenaFragment extends Fragment {
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (rbNube.isChecked()) {
-                    guardarContrasenaFirebase();
-                } else {
-                    guardarContrasenaSQLite();
-                }
-
+                validarDatos();
             }
         });
 
@@ -212,126 +180,134 @@ public class AddContrasenaFragment extends Fragment {
 
 
     private void validarDatos () {
+        inputLayoutServicio.setError(null);
+        inputLayoutPass.setError(null);
+        inputLayoutUsuario.setError(null);
+        etOtroDias.setError(null);
         String servicio = etServicio.getText().toString();
         String usuario = etUsuario.getText().toString();
         String contrasena = etContrasena.getText().toString();
+        String vigencia = "";
 
-        boolean usuarioValido;
-        boolean passwordValido;
+        boolean datoValido;
 
         if (!usuario.isEmpty()) {
-
+            datoValido = true;
         } else {
             inputLayoutUsuario.setError("El campo no puede estar vacío");
-            usuarioValido = false;
+            datoValido = false;
         }
 
-        if (password.isEmpty() || (password.length() < 6)) {
-            passwordValido = false;
-            contrasena.setError("Mínimo 6 caracteres");
+        if (!contrasena.isEmpty()) {
+            datoValido = true;
         } else {
-            passwordValido = true;
-
+            datoValido = false;
+            inputLayoutPass.setError("El campo no puede estar vacío");
         }
-    }
 
-    public void guardarContrasenaFirebase() {
-        String servicio = etServicio.getText().toString();
-        String usuario = etUsuario.getText().toString();
-        String contrasena = etContrasena.getText().toString();
-        String userID = user.getUid();
-
-        if (servicio.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        if (!servicio.isEmpty()) {
+            datoValido = true;
         } else {
-            if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
-            } else {
-                progressBar.setVisibility(View.VISIBLE);
+            datoValido = false;
+            inputLayoutServicio.setError("El campo no puede estar vacío");
+        }
 
-                String vigencia = "";
-                if (rbIndeterminado.isChecked()) {
-                    vigencia = "0";
-                } else if (rbOtro.isChecked()) {
-                    vigencia = etOtroDias.getText().toString();
-                } else if (rbdias30.isChecked() || rbdias60.isChecked() || rbdias90.isChecked() || rbdias120.isChecked()) {
-                    vigencia = String.valueOf(duracionVigencia);
+        if (spinner.getSelectedItemPosition() > 0) {
+            if (spinner.getSelectedItemPosition() == 6) {
+                vigencia = etOtroDias.getText().toString();
+                if (!vigencia.isEmpty()) {
+                    datoValido = true;
+                } else {
+                    datoValido = false;
+                    etOtroDias.setError("El campo no puede estar vacío");
                 }
+            } else {
+                switch (spinner.getSelectedItemPosition()) {
+                    case 1:
+                        vigencia = "30";
+                        break;
+                    case 2:
+                        vigencia = "60";
+                        break;
+                    case 3:
+                        vigencia = "90";
+                        break;
+                    case 4:
+                        vigencia = "120";
+                        break;
+                    case 5:
+                        vigencia = "0";
+                        break;
+                }
+                datoValido = true;
+            }
+        } else {
+            datoValido = false;
+            Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
+        }
 
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                Map<String, Object> contrasenaM = new HashMap<>();
-                contrasenaM.put(Constantes.BD_SERVICIO, servicio);
-                contrasenaM.put(Constantes.BD_USUARIO, usuario);
-                contrasenaM.put(Constantes.BD_PASSWORD, contrasena);
-                contrasenaM.put(Constantes.BD_VIGENCIA, vigencia);
-                contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
-                contrasenaM.put(Constantes.BD_FECHA_CREACION, fechaActual);
-
-                db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                        requireActivity().finish();
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("msg", "Error adding document", e);
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        if (datoValido) {
+            if (rbNube.isChecked()) {
+                guardarContrasenaFirebase(servicio, contrasena, usuario, vigencia);
+            } else {
+                guardarContrasenaSQLite(servicio, contrasena, usuario, vigencia);
             }
         }
-
     }
 
-    public void guardarContrasenaSQLite() {
-        String servicio = etServicio.getText().toString();
-        String usuario = etUsuario.getText().toString();
-        String contrasena = etContrasena.getText().toString();
+    public void guardarContrasenaFirebase(String servicio, String contrasena, String usuario, String vigencia) {
+        progressBar.setVisibility(View.VISIBLE);
 
+        String userID = user.getUid();
+
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> contrasenaM = new HashMap<>();
+        contrasenaM.put(Constantes.BD_SERVICIO, servicio);
+        contrasenaM.put(Constantes.BD_USUARIO, usuario);
+        contrasenaM.put(Constantes.BD_PASSWORD, contrasena);
+        contrasenaM.put(Constantes.BD_VIGENCIA, vigencia);
+        contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
+        contrasenaM.put(Constantes.BD_FECHA_CREACION, fechaActual);
+
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void guardarContrasenaSQLite(String servicio, String contrasena, String usuario, String vigencia) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String fechaS = sdf.format(fechaActual);
 
         ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        if (servicio.isEmpty() || usuario.isEmpty() || contrasena.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rbdias30.isChecked() && !rbdias60.isChecked() && !rbdias90.isChecked() && !rbdias120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
-            } else {
+        ContentValues values = new ContentValues();
+        values.put(Constantes.BD_SERVICIO, servicio);
+        values.put(Constantes.BD_USUARIO, usuario);
+        values.put(Constantes.BD_PASSWORD, contrasena);
+        values.put(Constantes.BD_VIGENCIA, vigencia);
+        values.put(Constantes.BD_FECHA_CREACION, fechaS);
 
-                String vigencia = "";
-                if (rbIndeterminado.isChecked()) {
-                    vigencia = "0";
-                } else if (rbOtro.isChecked()) {
-                    vigencia = etOtroDias.getText().toString();
-                } else if (rbdias30.isChecked() || rbdias60.isChecked() || rbdias90.isChecked() || rbdias120.isChecked()) {
-                    vigencia = String.valueOf(duracionVigencia);
-                }
+        db.insert(Constantes.BD_CONTRASENAS, null, values);
+        db.close();
 
-                ContentValues values = new ContentValues();
-                values.put(Constantes.BD_SERVICIO, servicio);
-                values.put(Constantes.BD_USUARIO, usuario);
-                values.put(Constantes.BD_PASSWORD, contrasena);
-                values.put(Constantes.BD_VIGENCIA, vigencia);
-                values.put(Constantes.BD_FECHA_CREACION, fechaS);
-
-                db.insert(Constantes.BD_CONTRASENAS, null, values);
-                db.close();
-
-                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
-        }
-
-
+        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+        requireActivity().finish();
     }
 
 }

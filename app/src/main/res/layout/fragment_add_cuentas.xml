@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.AddCuentasFragment"
-    android:background="#9E9E9E">
+    tools:context=".Fragments.AddCuentasFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,40 +13,66 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_titular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/titular"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="?attr/textInputStyle">
 
-        <EditText
-            android:id="@+id/etTitular"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/titular"
-            android:inputType="textPersonName" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_titular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
 
-        <EditText
-            android:id="@+id/etBanco"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etTitular"
-            android:ems="10"
-            android:hint="@string/banco"
-            android:inputType="textPersonName" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etnumeroCuenta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etBanco"
-            android:ems="10"
-            android:hint="@string/numeroCuenta"
-            android:inputType="number"
-            android:maxLength="20" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_banco"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/banco"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_titular"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_banco"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_numero_cuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/numeroCuenta"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_banco"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_numero_cuenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="20"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <ProgressBar
                 android:id="@+id/progressBarAddCuenta"
                 style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_below="@id/etnumeroCuenta"
+                android:layout_below="@id/outlined_numero_cuenta"
                 android:indeterminateTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
 
@@ -56,48 +81,80 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@id/etnumeroCuenta">
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_below="@id/outlined_numero_cuenta">
 
             <Spinner
                 android:id="@+id/spinnerTipoDocumento"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"></Spinner>
+                android:layout_height="match_parent"/>
 
-            <EditText
-                android:id="@+id/etCedulaCuenta"
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_documento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
                 android:hint="@string/documentoNumero"
-                android:inputType="number" />
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_documento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="10"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/etTelefono"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutDocumento"
-            android:ems="10"
-            android:hint="@string/telefono"
-            android:inputType="number"
-            android:maxLength="11" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_telefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/telefono"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/layoutDocumento"
+                style="?attr/textInputStyle">
 
-        <EditText
-            android:id="@+id/etCorreoCuenta"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etTelefono"
-            android:ems="10"
-            android:hint="@string/correoCuenta"
-            android:inputType="textEmailAddress" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_telefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="11"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/usuarioCorreo"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_telefono"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_correo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/etTipo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/etCorreoCuenta"
+            android:layout_below="@id/outlined_correo"
             android:ems="10"
             android:text="@string/tipodeCuenta"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:textSize="18sp"
             android:paddingTop="24dp"/>
 
@@ -106,7 +163,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/etTipo"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
 
             <RadioButton
                 android:id="@+id/radioButtonAhorro"
@@ -124,14 +183,49 @@
 
         </RadioGroup>
 
+            <RadioGroup
+                android:id="@+id/radio_almacenamiento"
+                android:layout_width="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="16dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_below="@id/radioTipoCuenta">
+
+                <TextView
+                    android:id="@+id/textView10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Guardar en:"
+                    android:paddingEnd="4dp"/>
+
+                <RadioButton
+                    android:id="@+id/radioButton_nube"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/radioNube"/>
+
+                <RadioButton
+                    android:id="@+id/radioButton_dispositivo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/radioDispositivo"/>
+            </RadioGroup>
+
         <Button
             android:id="@+id/guardarCuenta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/radioTipoCuenta"
+            android:layout_below="@id/radio_almacenamiento"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
-            android:text="@string/buttonGuardar" />
+            android:text="@string/buttonGuardar"
+            android:textSize="20sp"
+            android:textAllCaps="false"
+            android:textColor="@color/md_text_white"/>
 
 
         </RelativeLayout>

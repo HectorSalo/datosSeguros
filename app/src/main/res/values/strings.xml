@@ -10,7 +10,6 @@
     <string name="sin_lista">No tiene información almacenada</string>
     <string name="perfil">Actualizar Perfil</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
-    <string name="exportar_importar">Exportar/Importar Datos</string>
     <string name="menu_ajustes">Ajustes</string>
     <string name="eliminar_cuenta">Borrar Datos</string>
     <string name="tema">Cambiar Tema</string>
@@ -171,8 +170,8 @@
     <string name="almacenamiento_summary_off">La información se almacenará en su dispositivo</string>
     <string name="tema_summary">Escoja el tema de la aplicación</string>
 
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
+    <!-- Exportar Importar Preferences -->
+    <string name="exportar_importar_title">Exportar/Importar Datos</string>
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>

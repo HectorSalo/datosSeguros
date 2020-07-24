@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
@@ -36,9 +37,10 @@ import java.util.Objects;
 
 public class AddNotaFragment extends Fragment {
 
-    private EditText titulo, contenido;
+    private EditText etTitulo, etContenido;
     private FirebaseUser user;
-    private ProgressBar progressBarAdd;
+    private RadioButton rbNube;
+    private ProgressBar progressBar;
 
 
     private OnFragmentInteractionListener mListener;
@@ -60,24 +62,44 @@ public class AddNotaFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+        boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
-        titulo = (EditText) vista.findViewById(R.id.etTitulo);
-        contenido = (EditText) vista.findViewById(R.id.etContenido);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        progressBarAdd = vista.findViewById(R.id.progressBarAddNota);
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
+        etTitulo = vista.findViewById(R.id.etTitulo);
+        etContenido = vista.findViewById(R.id.etContenido);
+        progressBar = vista.findViewById(R.id.progressBarAddNota);
+        rbNube = vista.findViewById(R.id.radioButton_nube);
+        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkRojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkMarron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkLila));
+                break;
+        }
+
+        if (almacenamientoNube) {
+            rbNube.setChecked(true);
+        } else {
+            rbDispositivo.setChecked(true);
+        }
+
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (almacenamientoNube) {
-                    guardarNotaFirebase();
-                } else {
-                    guardarNotaSQLite();
-                }
+                validarDatos();
             }
         });
         return vista;
@@ -107,26 +129,45 @@ public class AddNotaFragment extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
-    public void guardarNotaFirebase() {
-        String userID = user.getUid();
-        String tituloS = titulo.getText().toString();
-        String contenidoS = contenido.getText().toString();
+    private void validarDatos () {
+        String titulo = etTitulo.getText().toString();
+        String contenido = etContenido.getText().toString();
 
-        progressBarAdd.setVisibility(View.VISIBLE);
+        boolean datoValido;
+
+        if (!titulo.isEmpty() && !contenido.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            Toast.makeText(getContext(), "No se puede guardar una nota vacía", Toast.LENGTH_SHORT).show();
+        }
+
+        if (datoValido) {
+            if (rbNube.isChecked()) {
+                guardarNotaFirebase(titulo, contenido);
+            } else {
+                guardarNotaSQLite(titulo, contenido);
+            }
+        }
+    }
+
+    public void guardarNotaFirebase(String titulo, String contenido) {
+        String userID = user.getUid();
+
+        progressBar.setVisibility(View.VISIBLE);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
-        nota.put(Constantes.BD_TITULO_NOTAS, tituloS);
-        nota.put(Constantes.BD_CONTENIDO_NOTAS, contenidoS);
+        nota.put(Constantes.BD_TITULO_NOTAS, titulo);
+        nota.put(Constantes.BD_CONTENIDO_NOTAS, contenido);
 
         db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS).add(nota).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
             @Override
             public void onSuccess(DocumentReference documentReference) {
-                progressBarAdd.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
                 requireActivity().finish();
 
@@ -135,22 +176,19 @@ public class AddNotaFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w("msg", "Error adding document", e);
-                progressBarAdd.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    public void guardarNotaSQLite() {
-        String tituloS = titulo.getText().toString();
-        String contenidoS = contenido.getText().toString();
-
+    public void guardarNotaSQLite(String titulo, String contenido) {
         ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(Constantes.BD_TITULO_NOTAS, tituloS);
-        values.put(Constantes.BD_CONTENIDO_NOTAS, contenidoS);
+        values.put(Constantes.BD_TITULO_NOTAS, titulo);
+        values.put(Constantes.BD_CONTENIDO_NOTAS, contenido);
 
         db.insert(Constantes.BD_NOTAS, null, values);
         db.close();

@@ -79,13 +79,13 @@ public class AddActivity extends AppCompatActivity implements AddContrasenaFragm
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar));
                 break;
             case Constantes.PREFERENCE_ROJO:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentRojo));
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar_rojo));
                 break;
             case Constantes.PREFERENCE_MARRON:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentMarron));
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar_marron));
                 break;
             case Constantes.PREFERENCE_LILA:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentLila));
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar_lila));
                 break;
         }
 

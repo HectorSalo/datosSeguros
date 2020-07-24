@@ -19,6 +19,12 @@
             app:icon="@drawable/ic_delete_forever_24"
             app:key="borrar_datos_header"
             app:title="@string/eliminar_cuenta" />
+
+        <Preference
+            app:fragment="com.skysam.datossegurosFirebaseFinal.SettingsActivity$BorrarDatosFragment"
+            app:icon="@drawable/ic_import_export_24"
+            app:key="exportar_importar_header"
+            app:title="@string/exportar_importar_title" />
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/acerca">

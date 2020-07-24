@@ -22,6 +22,8 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
@@ -39,10 +41,11 @@ import java.util.Objects;
 
 public class AddCuentasFragment extends Fragment {
 
-    private EditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
-    private RadioButton rbAhorro, rbCorriente;
+    private TextInputLayout inputLayoutTitular, inputLayoutBanco, inputLayoutNumero, inputLayoutCedula;
+    private TextInputEditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
+    private RadioButton rbAhorro, rbCorriente, rbNube;
     private FirebaseUser user;
-    private ProgressBar progressBarAdd;
+    private ProgressBar progressBar;
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
 
@@ -67,38 +70,63 @@ public class AddCuentasFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+        boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
-        etTitular = (EditText) vista.findViewById(R.id.etTitular);
-        etBanco = (EditText) vista.findViewById(R.id.etBanco);
-        etNumeroCuenta = (EditText) vista.findViewById(R.id.etnumeroCuenta);
-        etCedula = (EditText) vista.findViewById(R.id.etCedulaCuenta);
-        etTelefono = (EditText) vista.findViewById(R.id.etTelefono);
-        etCorreo = (EditText) vista.findViewById(R.id.etCorreoCuenta);
-        rbAhorro = (RadioButton) vista.findViewById(R.id.radioButtonAhorro);
-        rbCorriente = (RadioButton) vista.findViewById(R.id.radioButtonCorriente);
-        spinnerDocumento = (Spinner) vista.findViewById(R.id.spinnerTipoDocumento);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        progressBarAdd = vista.findViewById(R.id.progressBarAddCuenta);
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
+
+        Button buttonGuardar = vista.findViewById(R.id.guardarCuenta);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkRojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkMarron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkLila));
+                break;
+        }
+
+        etTitular = vista.findViewById(R.id.et_titular);
+        etBanco = vista.findViewById(R.id.et_banco);
+        etNumeroCuenta = vista.findViewById(R.id.et_numero_cuenta);
+        etCedula = vista.findViewById(R.id.et_documento);
+        etTelefono = vista.findViewById(R.id.et_telefono);
+        inputLayoutTitular = vista.findViewById(R.id.outlined_titular);
+        inputLayoutBanco = vista.findViewById(R.id.outlined_banco);
+        inputLayoutCedula = vista.findViewById(R.id.outlined_documento);
+        inputLayoutNumero = vista.findViewById(R.id.outlined_numero_cuenta);
+        etCorreo = vista.findViewById(R.id.et_correo);
+        rbAhorro = vista.findViewById(R.id.radioButtonAhorro);
+        rbCorriente = vista.findViewById(R.id.radioButtonCorriente);
+        spinnerDocumento = vista.findViewById(R.id.spinnerTipoDocumento);
+        progressBar = vista.findViewById(R.id.progressBarAddCuenta);
+        rbNube = vista.findViewById(R.id.radioButton_nube);
+        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+
+        rbAhorro.setChecked(true);
+
+        if (almacenamientoNube) {
+            rbNube.setChecked(true);
+        } else {
+            rbDispositivo.setChecked(true);
+        }
 
 
         String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
-        ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(getContext(), R.layout.spinner_opciones, spDocumentos);
+        ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(requireContext(), R.layout.spinner_opciones, spDocumentos);
         spinnerDocumento.setAdapter(adapterDocumentos);
 
-
-
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarCuenta);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (almacenamientoNube) {
-                    guardarCuentaFirebase();
-                } else {
-                    guardarCuentaSQLite();
-                }
+                validarDatos();
             }
         });
 
@@ -127,17 +155,76 @@ public class AddCuentasFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void guardarCuentaFirebase() {
-        String userID = user.getUid();
+
+    private void validarDatos () {
+        inputLayoutTitular.setError(null);
+        inputLayoutBanco.setError(null);
+        inputLayoutNumero.setError(null);
+        inputLayoutCedula.setError(null);
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
-        String cuentaNumero = etNumeroCuenta.getText().toString();
-        String cedula = etCedula.getText().toString();
+        String documento = etCedula.getText().toString();
+        String numeroCuenta = etNumeroCuenta.getText().toString();
         String telefono = etTelefono.getText().toString();
         String correo = etCorreo.getText().toString();
+
+        boolean datoValido;
+
+        if (!titular.isEmpty()) {
+            datoValido = true;
+        } else {
+            inputLayoutTitular.setError("El campo no puede estar vacío");
+            datoValido = false;
+        }
+
+        if (!banco.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutBanco.setError("El campo no puede estar vacío");
+        }
+
+        if (!documento.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutCedula.setError("El campo no puede estar vacío");
+        }
+
+        if (!numeroCuenta.isEmpty()) {
+            if (numeroCuenta.length() != 20) {
+                datoValido = true;
+            } else {
+                datoValido = false;
+                inputLayoutNumero.setError("El número debe ser de 20 dígitos");
+            }
+        } else {
+            datoValido = false;
+            inputLayoutNumero.setError("El campo no puede estar vacío");
+        }
+
+        if (telefono.isEmpty()) {
+            telefono = "";
+        }
+
+        if (correo.isEmpty()) {
+            correo = "";
+        }
+
+        if (datoValido) {
+            if (rbNube.isChecked()) {
+                guardarCuentaFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
+            } else {
+                guardarCuentaSQLite(titular, banco, documento, numeroCuenta, telefono, correo);
+            }
+        }
+    }
+
+    public void guardarCuentaFirebase(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
+        progressBar.setVisibility(View.VISIBLE);
+        String userID = user.getUid();
         spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
-
 
         if (rbAhorro.isChecked()) {
             tipo = "Ahorro";
@@ -145,67 +232,37 @@ public class AddCuentasFragment extends Fragment {
             tipo = "Corriente";
         }
 
-        if (titular.isEmpty() || banco.isEmpty() || cuentaNumero.isEmpty() || cedula.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rbCorriente.isChecked() && !rbAhorro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar un tipo de cuenta", Toast.LENGTH_SHORT).show();
-            } else {
-                if (cuentaNumero.length() != 20) {
-                    Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
-                } else {
-                    progressBarAdd.setVisibility(View.VISIBLE);
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                    Map<String, Object> cuentaBancaria = new HashMap<>();
-                    cuentaBancaria.put(Constantes.BD_TITULAR_BANCO, titular);
-                    cuentaBancaria.put(Constantes.BD_BANCO, banco);
-                    cuentaBancaria.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
-                    cuentaBancaria.put(Constantes.BD_CEDULA_BANCO, cedula);
-                    cuentaBancaria.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
-                    cuentaBancaria.put(Constantes.BD_TIPO_CUENTA, tipo);
+        Map<String, Object> cuentaBancaria = new HashMap<>();
+        cuentaBancaria.put(Constantes.BD_TITULAR_BANCO, titular);
+        cuentaBancaria.put(Constantes.BD_BANCO, banco);
+        cuentaBancaria.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
+        cuentaBancaria.put(Constantes.BD_CEDULA_BANCO, cedula);
+        cuentaBancaria.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+        cuentaBancaria.put(Constantes.BD_TIPO_CUENTA, tipo);
+        cuentaBancaria.put(Constantes.BD_TELEFONO, telefono);
+        cuentaBancaria.put(Constantes.BD_CORREO_CUENTA, correo);
 
-                    if (telefono.isEmpty()) {
-                        cuentaBancaria.put(Constantes.BD_TELEFONO, "");
-                    } else {
-                        cuentaBancaria.put(Constantes.BD_TELEFONO, telefono);
-                    }
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS).add(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
 
-                    if (correo.isEmpty()) {
-                        cuentaBancaria.put(Constantes.BD_CORREO_CUENTA,"");
-                    } else {
-                        cuentaBancaria.put(Constantes.BD_CORREO_CUENTA, correo);
-                    }
-
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS).add(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                            progressBarAdd.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                            requireActivity().finish();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progressBarAdd.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
             }
-        }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    public void guardarCuentaSQLite() {
-
-        String titular = etTitular.getText().toString();
-        String banco = etBanco.getText().toString();
-        String cuentaNumero = etNumeroCuenta.getText().toString();
-        String cedula = etCedula.getText().toString();
-        String telefono = etTelefono.getText().toString();
-        String correo = etCorreo.getText().toString();
+    public void guardarCuentaSQLite(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
         spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
@@ -218,43 +275,18 @@ public class AddCuentasFragment extends Fragment {
         ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        if (titular.isEmpty() || banco.isEmpty() || cuentaNumero.isEmpty() || cedula.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rbCorriente.isChecked() && !rbAhorro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar un tipo de cuenta", Toast.LENGTH_SHORT).show();
-            } else {
-                if (cuentaNumero.length() != 20) {
-                    Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
-                } else {
+        ContentValues values = new ContentValues();
+        values.put(Constantes.BD_TITULAR_BANCO, titular);
+        values.put(Constantes.BD_BANCO, banco);
+        values.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
+        values.put(Constantes.BD_CEDULA_BANCO, cedula);
+        values.put(Constantes.BD_TIPO_CUENTA, tipo);
+        values.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
 
-                    ContentValues values = new ContentValues();
-                    values.put(Constantes.BD_TITULAR_BANCO, titular);
-                    values.put(Constantes.BD_BANCO, banco);
-                    values.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
-                    values.put(Constantes.BD_CEDULA_BANCO, cedula);
-                    values.put(Constantes.BD_TIPO_CUENTA, tipo);
-                    values.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+        db.insert(Constantes.BD_CUENTAS, null, values);
+        db.close();
 
-                    if (telefono.isEmpty()) {
-                        values.put(Constantes.BD_TELEFONO, "");
-                    } else {
-                        values.put(Constantes.BD_TELEFONO, telefono);
-                    }
-
-                    if (correo.isEmpty()) {
-                        values.put(Constantes.BD_CORREO_CUENTA, "");
-                    } else {
-                        values.put(Constantes.BD_CORREO_CUENTA, correo);
-                    }
-
-                    db.insert(Constantes.BD_CUENTAS, null, values);
-                    db.close();
-
-                    Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-                }
-            }
-        }
+        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+        requireActivity().finish();
     }
 }

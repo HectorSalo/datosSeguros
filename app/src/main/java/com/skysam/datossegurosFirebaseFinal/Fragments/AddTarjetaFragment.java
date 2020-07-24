@@ -24,6 +24,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
@@ -41,10 +43,13 @@ import java.util.Objects;
 
 public class AddTarjetaFragment extends Fragment {
 
-    private EditText etTitular, etTarjeta, etCVV, etCedula, etOtroTarjeta, etBanco, etVencimiento, etClave;
-    private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro;
+    private TextInputLayout inputLayoutTitular, inputLayoutTarjeta, inputLayoutCVV, inputLayoutCedula, inputLayoutBanco, inputLayoutVencimiento;
+    private TextInputEditText etTitular, etTarjeta, etCVV, etCedula, etBanco, etVencimiento, etClave;
+    private EditText etOtroTarjeta;
+    private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro, rbNube;
     private FirebaseUser user;
-    private ProgressBar progressBarAdd;
+    private ProgressBar progressBar;
+    private String tipo;
 
 
     private OnFragmentInteractionListener mListener;
@@ -66,45 +71,66 @@ public class AddTarjetaFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
-        etTitular = (EditText) vista.findViewById(R.id.etTitularTarjeta);
-        etCedula = (EditText) vista.findViewById(R.id.etCedulaTarjeta);
-        etTarjeta = (EditText) vista.findViewById(R.id.etTarjeta);
-        etCVV = (EditText) vista.findViewById(R.id.etnumeroCVV);
-        etOtroTarjeta = (EditText) vista.findViewById(R.id.editTextOtroTarjeta);
-        etBanco = (EditText) vista.findViewById(R.id.etBancoTarjeta);
-        etClave = (EditText) vista.findViewById(R.id.etClaveTarjeta);
-        etVencimiento = (EditText) vista.findViewById(R.id.etVencimientoTarjeta);
-        rbMaestro = (RadioButton) vista.findViewById(R.id.radioButtonMaestro);
-        rbMastercard = (RadioButton)vista.findViewById(R.id.radioButtonMaster);
-        rbVisa = (RadioButton) vista.findViewById(R.id.radioButtonVisa);
-        rbOtro = (RadioButton) vista.findViewById(R.id.radioButtonOtroTarjeta);
-        RadioGroup radioTarjeta = (RadioGroup) vista.findViewById(R.id.radioTarjeta);
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        progressBarAdd = vista.findViewById(R.id.progressBarAddTarjeta);
+        boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+
+        etTitular = vista.findViewById(R.id.et_titular);
+        etCedula = vista.findViewById(R.id.et_cedula);
+        etTarjeta = vista.findViewById(R.id.et_tarjeta);
+        etCVV = vista.findViewById(R.id.et_cvv);
+        inputLayoutTitular = vista.findViewById(R.id.outlined_titular);
+        inputLayoutTarjeta = vista.findViewById(R.id.outlined_tarjeta);
+        inputLayoutCVV = vista.findViewById(R.id.outlined_cvv);
+        inputLayoutCedula = vista.findViewById(R.id.outlined_cedula);
+        inputLayoutBanco = vista.findViewById(R.id.outlined_banco);
+        inputLayoutVencimiento = vista.findViewById(R.id.outlined_vencimiento);
+        etOtroTarjeta = vista.findViewById(R.id.editTextOtroTarjeta);
+        etBanco = vista.findViewById(R.id.et_banco);
+        etClave = vista.findViewById(R.id.et_clave);
+        etVencimiento = vista.findViewById(R.id.et_vencimiento);
+        rbMaestro = vista.findViewById(R.id.radioButtonMaestro);
+        rbMastercard = vista.findViewById(R.id.radioButtonMaster);
+        rbVisa = vista.findViewById(R.id.radioButtonVisa);
+        rbOtro = vista.findViewById(R.id.radioButtonOtroTarjeta);
+        RadioGroup radioTarjeta = vista.findViewById(R.id.radioTarjeta);
+        rbNube = vista.findViewById(R.id.radioButton_nube);
+        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+        Button buttonGuardar = vista.findViewById(R.id.guardarTarjeta);
+        progressBar = vista.findViewById(R.id.progressBarAddTarjeta);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkRojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkMarron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                buttonGuardar.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkLila));
+                break;
+        }
+
+        rbMaestro.setChecked(true);
+
+        if (almacenamientoNube) {
+            rbNube.setChecked(true);
+        } else {
+            rbDispositivo.setChecked(true);
+        }
 
         radioTarjeta.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioButtonMaestro:
-                        etOtroTarjeta.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButtonMaster:
-                        etOtroTarjeta.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButtonVisa:
-                        etOtroTarjeta.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioButtonOtroTarjeta:
-                        etOtroTarjeta.setVisibility(View.VISIBLE);
-                        break;
+                if (checkedId == R.id.radioButtonOtroTarjeta) {
+                    etOtroTarjeta.setVisibility(View.VISIBLE);
+                } else {
+                    etOtroTarjeta.setVisibility(View.GONE);
                 }
             }
         });
@@ -116,15 +142,10 @@ public class AddTarjetaFragment extends Fragment {
             }
         });
 
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarTarjeta);
         buttonGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (almacenamientoNube) {
-                    guardarTarjetaFirebase();
-                } else {
-                    guardarTarjetaSQLite();
-                }
+                validarDatos();
             }
         });
 
@@ -159,148 +180,162 @@ public class AddTarjetaFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    public void guardarTarjetaFirebase() {
-        String userID = user.getUid();
+    private void validarDatos () {
+        inputLayoutTitular.setError(null);
+        inputLayoutBanco.setError(null);
+        inputLayoutTarjeta.setError(null);
+        inputLayoutCVV.setError(null);
+        inputLayoutVencimiento.setError(null);
+        inputLayoutCedula.setError(null);
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
-        String numeroTarjeta = etTarjeta.getText().toString();
+        String tarjeta = etTarjeta.getText().toString();
         String cvv = etCVV.getText().toString();
         String vencimiento = etVencimiento.getText().toString();
         String cedula = etCedula.getText().toString();
         String clave = etClave.getText().toString();
-        String tipo = "";
 
-        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty() || banco.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos importantes vacíos", Toast.LENGTH_SHORT).show();
+        boolean datoValido;
+
+        if (!titular.isEmpty()) {
+            datoValido = true;
         } else {
-            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked() && !rbMaestro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar un tipo de tarjeta", Toast.LENGTH_SHORT).show();
+            inputLayoutTitular.setError("El campo no puede estar vacío");
+            datoValido = false;
+        }
+
+        if (!banco.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutBanco.setError("El campo no puede estar vacío");
+        }
+
+        if (!tarjeta.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutTarjeta.setError("El campo no puede estar vacío");
+        }
+
+        if (!cvv.isEmpty()) {
+            if (cvv.length() != 3) {
+                datoValido = true;
             } else {
-                if (numeroTarjeta.length() > 24) {
-                        Toast.makeText(getContext(), "La longitud del número de tarjeta no debe ser mayor a 24 dígitos", Toast.LENGTH_LONG).show();
-                } else {
-                    if (cvv.length() != 3) {
-                        Toast.makeText(getContext(), "La longitud del número de CVV debe ser 3 dígitos", Toast.LENGTH_LONG).show();
-                    } else {
-                        if (rbMaestro.isChecked()) {
-                            tipo = "Maestro";
-                        } else if (rbMastercard.isChecked()) {
-                            tipo = "Mastercard";
-                        } else if (rbVisa.isChecked()) {
-                            tipo = "Visa";
-                        } else if (rbOtro.isChecked()) {
-                            tipo = etOtroTarjeta.getText().toString();
-                        }
+                datoValido = false;
+                inputLayoutCVV.setError("La longitus debe ser 3 dígitos");
+            }
+        } else {
+            datoValido = false;
+            inputLayoutCVV.setError("El campo no puede estar vacío");
+        }
 
+        if (!vencimiento.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutVencimiento.setError("Debe escoger la fecha de vencimiento");
+        }
 
-                        progressBarAdd.setVisibility(View.VISIBLE);
-                        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        if (rbOtro.isChecked()) {
+            tipo = etOtroTarjeta.getText().toString();
+            if (!tipo.isEmpty()) {
+                datoValido = true;
+            } else {
+                datoValido = false;
+                etOtroTarjeta.setError("El campo no puede estar vacío");
+            }
+        }
 
-                        Map<String, Object> tarjeta = new HashMap<>();
-                        tarjeta.put(Constantes.BD_TITULAR_TARJETA, titular);
-                        tarjeta.put(Constantes.BD_BANCO_TARJETA, banco);
-                        tarjeta.put(Constantes.BD_NUMERO_TARJETA, numeroTarjeta);
-                        tarjeta.put(Constantes.BD_CVV, cvv);
-                        tarjeta.put(Constantes.BD_CEDULA_TARJETA, cedula);
-                        tarjeta.put(Constantes.BD_TIPO_TARJETA, tipo);
+        if (!cedula.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutCedula.setError("El campo no puede estar vacío");
+        }
 
-                        if (vencimiento.isEmpty()) {
-                            tarjeta.put(Constantes.BD_VENCIMIENTO_TARJETA, "");
-                        } else {
-                            tarjeta.put(Constantes.BD_VENCIMIENTO_TARJETA, vencimiento);
-                        }
+        if (clave.isEmpty()) {
+            clave = "";
+        }
 
-                        if (clave.isEmpty()) {
-                            tarjeta.put(Constantes.BD_CLAVE_TARJETA, "");
-                        } else {
-                            tarjeta.put(Constantes.BD_CLAVE_TARJETA, clave);
-                        }
-
-                        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                            @Override
-                            public void onSuccess(DocumentReference documentReference) {
-                                progressBarAdd.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                                requireActivity().finish();
-
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.w("msg", "Error adding document", e);
-                                progressBarAdd.setVisibility(View.GONE);
-                                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                }
+        if (datoValido) {
+            if (rbNube.isChecked()) {
+                guardarTarjetaFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
+            } else {
+                guardarTarjetaSQLite(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
             }
         }
     }
 
-    public void guardarTarjetaSQLite() {
-        String titular = etTitular.getText().toString();
-        String banco = etBanco.getText().toString();
-        String numeroTarjeta = etTarjeta.getText().toString();
-        String cvv = etCVV.getText().toString();
-        String cedula = etCedula.getText().toString();
-        String vencimiento = etVencimiento.getText().toString();
-        String clave = etClave.getText().toString();
-        String tipo = "";
+    public void guardarTarjetaFirebase(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
+        progressBar.setVisibility(View.VISIBLE);
+        String userID = user.getUid();
 
+        if (rbMaestro.isChecked()) {
+            tipo = "Maestro";
+        } else if (rbMastercard.isChecked()) {
+            tipo = "Mastercard";
+        } else if (rbVisa.isChecked()) {
+            tipo = "Visa";
+        }
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        Map<String, Object> tarjeta = new HashMap<>();
+        tarjeta.put(Constantes.BD_TITULAR_TARJETA, titular);
+        tarjeta.put(Constantes.BD_BANCO_TARJETA, banco);
+        tarjeta.put(Constantes.BD_NUMERO_TARJETA, numeroTarjeta);
+        tarjeta.put(Constantes.BD_CVV, cvv);
+        tarjeta.put(Constantes.BD_CEDULA_TARJETA, cedula);
+        tarjeta.put(Constantes.BD_TIPO_TARJETA, tipo);
+        tarjeta.put(Constantes.BD_VENCIMIENTO_TARJETA, vencimiento);
+        tarjeta.put(Constantes.BD_CLAVE_TARJETA, clave);
+
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+            @Override
+            public void onSuccess(DocumentReference documentReference) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void guardarTarjetaSQLite(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
         ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
-        if (titular.isEmpty() || numeroTarjeta.isEmpty() || cvv.isEmpty() || cedula.isEmpty() || banco.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos importantes vacíos", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rbMastercard.isChecked() && !rbVisa.isChecked() && !rbOtro.isChecked() && !rbMaestro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar un tipo de tarjeta", Toast.LENGTH_SHORT).show();
-            } else {
-                if (numeroTarjeta.length() > 24) {
-                    Toast.makeText(getContext(), "La longitud del número de tarjeta no debe ser mayor a 24 dígitos", Toast.LENGTH_LONG).show();
-                } else {
-                    if (cvv.length() != 3) {
-                        Toast.makeText(getContext(), "La longitud del número de CVV debe ser 3 dígitos", Toast.LENGTH_LONG).show();
-                    } else {
-                        if (rbMaestro.isChecked()) {
-                            tipo = "Maestro";
-                        } else if (rbMastercard.isChecked()) {
-                            tipo = "Mastercard";
-                        } else if (rbVisa.isChecked()) {
-                            tipo = "Visa";
-                        } else if (rbOtro.isChecked()) {
-                            tipo = etOtroTarjeta.getText().toString();
-                        }
-
-                        ContentValues values = new ContentValues();
-                        values.put(Constantes.BD_TITULAR_TARJETA, titular);
-                        values.put(Constantes.BD_NUMERO_TARJETA, numeroTarjeta);
-                        values.put(Constantes.BD_CVV, cvv);
-                        values.put(Constantes.BD_CEDULA_TARJETA, cedula);
-                        values.put(Constantes.BD_TIPO_TARJETA, tipo);
-
-                        if (vencimiento.isEmpty()) {
-                            values.put(Constantes.BD_VENCIMIENTO_TARJETA, "");
-                        } else {
-                            values.put(Constantes.BD_VENCIMIENTO_TARJETA, vencimiento);
-                        }
-
-                        if (clave.isEmpty()) {
-                            values.put(Constantes.BD_CLAVE_TARJETA, "");
-                        } else {
-                            values.put(Constantes.BD_CLAVE_TARJETA, clave);
-                        }
-
-                        db.insert(Constantes.BD_TARJETAS, null, values);
-                        db.close();
-
-                        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                        requireActivity().finish();
-                    }
-                }
-            }
+        if (rbMaestro.isChecked()) {
+            tipo = "Maestro";
+        } else if (rbMastercard.isChecked()) {
+            tipo = "Mastercard";
+        } else if (rbVisa.isChecked()) {
+            tipo = "Visa";
         }
+
+        ContentValues values = new ContentValues();
+        values.put(Constantes.BD_TITULAR_TARJETA, titular);
+        values.put(Constantes.BD_BANCO_TARJETA, banco);
+        values.put(Constantes.BD_NUMERO_TARJETA, numeroTarjeta);
+        values.put(Constantes.BD_CVV, cvv);
+        values.put(Constantes.BD_CEDULA_TARJETA, cedula);
+        values.put(Constantes.BD_TIPO_TARJETA, tipo);
+        values.put(Constantes.BD_VENCIMIENTO_TARJETA, vencimiento);
+        values.put(Constantes.BD_CLAVE_TARJETA, clave);
+
+        db.insert(Constantes.BD_TARJETAS, null, values);
+        db.close();
+
+        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+        requireActivity().finish();
     }
 
     public void escogerVencimiento() {

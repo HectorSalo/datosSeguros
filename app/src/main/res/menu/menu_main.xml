@@ -8,7 +8,7 @@
         />
 
     <item
-        android:title="@string/exportar_importar"
+        android:title="@string/exportar_importar_title"
         android:id="@+id/menu_exportar_importar"
         />
 
