@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -41,13 +42,15 @@ import java.util.Objects;
 
 public class AddCuentasFragment extends Fragment {
 
-    private TextInputLayout inputLayoutTitular, inputLayoutBanco, inputLayoutNumero, inputLayoutCedula;
+    private TextInputLayout inputLayoutTitular, inputLayoutBanco, inputLayoutNumero, inputLayoutCedula, inputLayoutTelefono, inputLayoutCorreo;
     private TextInputEditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente, rbNube;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
+    private RadioGroup radioGroupTipo, radioGroupAlmacenamiento;
+    private Button buttonGuardar;
 
 
     private OnFragmentInteractionListener mListener;
@@ -76,7 +79,7 @@ public class AddCuentasFragment extends Fragment {
 
         String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
-        Button buttonGuardar = vista.findViewById(R.id.guardarCuenta);
+        buttonGuardar = vista.findViewById(R.id.guardarCuenta);
 
         switch (tema){
             case Constantes.PREFERENCE_AMARILLO:
@@ -102,6 +105,8 @@ public class AddCuentasFragment extends Fragment {
         inputLayoutBanco = vista.findViewById(R.id.outlined_banco);
         inputLayoutCedula = vista.findViewById(R.id.outlined_documento);
         inputLayoutNumero = vista.findViewById(R.id.outlined_numero_cuenta);
+        inputLayoutTelefono = vista.findViewById(R.id.outlined_telefono);
+        inputLayoutCorreo = vista.findViewById(R.id.outlined_correo);
         etCorreo = vista.findViewById(R.id.et_correo);
         rbAhorro = vista.findViewById(R.id.radioButtonAhorro);
         rbCorriente = vista.findViewById(R.id.radioButtonCorriente);
@@ -109,6 +114,8 @@ public class AddCuentasFragment extends Fragment {
         progressBar = vista.findViewById(R.id.progressBarAddCuenta);
         rbNube = vista.findViewById(R.id.radioButton_nube);
         RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+        radioGroupAlmacenamiento = vista.findViewById(R.id.radio_almacenamiento);
+        radioGroupTipo = vista.findViewById(R.id.radioTipoCuenta);
 
         rbAhorro.setChecked(true);
 
@@ -192,7 +199,7 @@ public class AddCuentasFragment extends Fragment {
         }
 
         if (!numeroCuenta.isEmpty()) {
-            if (numeroCuenta.length() != 20) {
+            if (numeroCuenta.length() == 20) {
                 datoValido = true;
             } else {
                 datoValido = false;
@@ -232,6 +239,17 @@ public class AddCuentasFragment extends Fragment {
             tipo = "Corriente";
         }
 
+        inputLayoutTitular.setEnabled(false);
+        inputLayoutBanco.setEnabled(false);
+        inputLayoutNumero.setEnabled(false);
+        inputLayoutCedula.setEnabled(false);
+        inputLayoutTelefono.setEnabled(false);
+        inputLayoutCorreo.setEnabled(false);
+        spinnerDocumento.setEnabled(false);
+        radioGroupTipo.setEnabled(false);
+        radioGroupAlmacenamiento.setEnabled(false);
+        buttonGuardar.setEnabled(false);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> cuentaBancaria = new HashMap<>();
@@ -258,6 +276,16 @@ public class AddCuentasFragment extends Fragment {
                 Log.w("msg", "Error adding document", e);
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                inputLayoutTitular.setEnabled(true);
+                inputLayoutBanco.setEnabled(true);
+                inputLayoutNumero.setEnabled(true);
+                inputLayoutCedula.setEnabled(true);
+                inputLayoutTelefono.setEnabled(true);
+                inputLayoutCorreo.setEnabled(true);
+                spinnerDocumento.setEnabled(true);
+                radioGroupTipo.setEnabled(true);
+                radioGroupAlmacenamiento.setEnabled(true);
+                buttonGuardar.setEnabled(true);
             }
         });
     }

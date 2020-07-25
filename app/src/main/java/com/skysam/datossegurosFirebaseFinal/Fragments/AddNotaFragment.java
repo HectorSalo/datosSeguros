@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
@@ -41,6 +42,8 @@ public class AddNotaFragment extends Fragment {
     private FirebaseUser user;
     private RadioButton rbNube;
     private ProgressBar progressBar;
+    private RadioGroup radioGroup;
+    private Button buttonGuardar;
 
 
     private OnFragmentInteractionListener mListener;
@@ -73,7 +76,8 @@ public class AddNotaFragment extends Fragment {
         progressBar = vista.findViewById(R.id.progressBarAddNota);
         rbNube = vista.findViewById(R.id.radioButton_nube);
         RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
-        Button buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
+        radioGroup = vista.findViewById(R.id.radio_almacenamiento);
+        buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
 
         switch (tema){
             case Constantes.PREFERENCE_AMARILLO:
@@ -158,6 +162,11 @@ public class AddNotaFragment extends Fragment {
         String userID = user.getUid();
 
         progressBar.setVisibility(View.VISIBLE);
+        etTitulo.setEnabled(false);
+        etContenido.setEnabled(false);
+        radioGroup.setEnabled(false);
+        buttonGuardar.setEnabled(false);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();

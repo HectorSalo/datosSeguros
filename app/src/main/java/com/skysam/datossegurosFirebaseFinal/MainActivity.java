@@ -1,6 +1,5 @@
 package com.skysam.datossegurosFirebaseFinal;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,7 +23,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -37,9 +35,6 @@ import com.skysam.datossegurosFirebaseFinal.Adpatadores.AdapterTarjeta;
 import com.skysam.datossegurosFirebaseFinal.Adpatadores.BancoAdapter;
 import com.skysam.datossegurosFirebaseFinal.Adpatadores.ContrasenaAdapter;
 import com.skysam.datossegurosFirebaseFinal.Adpatadores.NotaAdapter;
-import com.skysam.datossegurosFirebaseFinal.Clases.EliminarCuenta;
-import com.skysam.datossegurosFirebaseFinal.Clases.ExportarSQLite;
-import com.skysam.datossegurosFirebaseFinal.Clases.ImportarSQLite;
 import com.skysam.datossegurosFirebaseFinal.Constructores.BancoConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
 import com.skysam.datossegurosFirebaseFinal.Constructores.NotaConstructor;
@@ -80,15 +75,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private FloatingActionButton fabAdd;
     private TextView sinLista;
     private Date fechaMomento;
-    private int listaBuscar, add;
+    private int listaBuscar, add, ultMetodo;
     private ConexionSQLite conect;
     private ProgressBar progressBarCargar;
     private SharedPreferences sharedPreferences;
-    private ConstraintLayout constraintLayout;
-    private ExportarSQLite exportarSQLite;
-    private ImportarSQLite importarSQLite;
-    private boolean exportar;
-    private boolean almacenamientoNube;
+    private boolean almacenamientoNube, creado;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
         getSupportActionBar().setIcon(R.mipmap.ic_launcher);
 
         Calendar almanaque = Calendar.getInstance();
@@ -130,12 +121,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         sinLista = (TextView) findViewById(R.id.tvSinLista);
         progressBarCargar = findViewById(R.id.progressBarCargar);
-        constraintLayout = findViewById(R.id.containerMain);
+        ConstraintLayout constraintLayout = findViewById(R.id.containerMain);
 
         conect = new ConexionSQLite(getApplicationContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
-
-        exportarSQLite = new ExportarSQLite(this, constraintLayout);
-        importarSQLite = new ImportarSQLite(this, constraintLayout);
 
         recycler = (RecyclerView) findViewById(R.id.recycler);
         recycler.setLayoutManager(new LinearLayoutManager(this));
@@ -205,33 +193,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.menu_exportar_importar) {
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setTitle("¿Qué desea hacer?")
-                    .setMessage(R.string.explicacion_importar_exportar)
-                    .setPositiveButton("Importar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            verificarPermisos();
-                            exportar = false;
-                        }
-                    })
-                    .setNegativeButton("Exportar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            verificarPermisos();
-                            exportar = true;
-                        }
-                    })
-                    .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
-            return true;
-        } else if (id == R.id.menu_ajustes) {
+        if (id == R.id.menu_ajustes) {
             startActivity(new Intent(this, SettingsActivity.class));
         }else if (id == R.id.menu_cerrar_sesion) {
             confirmarCerrarSesion();
@@ -249,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
 
     public void validarEscogencia() {
+        creado = true;
         boolean escogerAlmacenamiento = sharedPreferences.getBoolean(Constantes.ALMACENAMIENTO_ESCOGIDO, false);
         if (!escogerAlmacenamiento) {
             seleccionarAlmacenamiento();
@@ -295,6 +258,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         listContrasena = new ArrayList<>();
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
         recycler.setAdapter(adapterContrasena);
+
+        ultMetodo = 0;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS);
@@ -360,6 +325,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterBanco = new BancoAdapter(listBancos, this);
         recycler.setAdapter(adapterBanco);
 
+        ultMetodo = 1;
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS);
 
@@ -408,6 +375,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterTarjeta = new AdapterTarjeta(listTarjetas, this);
         recycler.setAdapter(adapterTarjeta);
 
+        ultMetodo = 2;
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_TARJETAS);
 
@@ -455,6 +424,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         adapterNota = new NotaAdapter(listNota, this);
         recycler.setAdapter(adapterNota);
 
+        ultMetodo = 3;
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS);
 
@@ -490,6 +461,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void verContrasenasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);
+
+        ultMetodo = 4;
 
         listContrasena = new ArrayList<>();
         adapterContrasena = new ContrasenaAdapter(listContrasena, this);
@@ -550,6 +523,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public void verCuentasBancariasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);
 
+        ultMetodo = 5;
+
         listBancos = new ArrayList<>();
         adapterBanco = new BancoAdapter(listBancos, this);
         recycler.setAdapter(adapterBanco);
@@ -584,6 +559,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void verTarjetasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);
+
+        ultMetodo = 6;
 
         listTarjetas = new ArrayList<>();
         adapterTarjeta = new AdapterTarjeta(listTarjetas, this);
@@ -620,6 +597,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public void verNotasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);
+
+        ultMetodo = 7;
 
         listNota = new ArrayList<>();
         adapterNota = new NotaAdapter(listNota, this);
@@ -777,49 +756,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         return false;
     }
 
-    public void verificarPermisos() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        } else {
-            if (exportar) {
-                exportarSQLite.crearCarpeta();
-            } else {
-                importarSQLite.importarBD();
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case 1: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    if (exportar) {
-                        exportarSQLite.crearCarpeta();
-                    } else {
-                        importarSQLite.importarBD();
-                    }
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-                } else {
-                    final Snackbar snackbar = Snackbar.make(constraintLayout, "Permiso Denegado. No se puede completar la tarea", Snackbar.LENGTH_LONG);
-                    snackbar.show();
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request.
-        }
-    }
-
-
-
     public void configurarPreferenciasDeafault() {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constantes.PREFERENCE_TIPO_BLOQUEO, Constantes.PREFERENCE_SIN_BLOQUEO);
@@ -885,9 +821,42 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     };
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        creado = false;
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (!creado) {
+            switch (ultMetodo) {
+                case 0:
+                    verContrasenaFirebase();
+                    break;
+                case 1:
+                    verCuentasBancariasFirebase();
+                    break;
+                case 2:
+                    verTarjetasFirebase();
+                    break;
+                case 3:
+                    verNotasFirebase();
+                    break;
+                case 4:
+                    verContrasenasSQLite();
+                    break;
+                case 5:
+                    verCuentasBancariasSQLite();
+                    break;
+                case 6:
+                    verTarjetasSQLite();
+                    break;
+                case 7:
+                    verNotasSQLite();
+                    break;
+            }
+        }
     }
 }

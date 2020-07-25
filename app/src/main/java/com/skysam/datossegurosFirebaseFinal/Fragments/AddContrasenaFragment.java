@@ -53,10 +53,12 @@ public class AddContrasenaFragment extends Fragment {
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
     private EditText etOtroDias;
     private RadioButton rbNube;
+    private RadioGroup radioGroup;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private Date fechaActual;
     private Spinner spinner;
+    private Button buttonGuardar;
 
 
     private OnFragmentInteractionListener mListener;
@@ -96,7 +98,8 @@ public class AddContrasenaFragment extends Fragment {
         RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         progressBar = vista.findViewById(R.id.progressBar);
         spinner = vista.findViewById(R.id.spinner);
-        Button buttonGuardar = vista.findViewById(R.id.guardarContrasena);
+        radioGroup = vista.findViewById(R.id.radio_almacenamiento);
+        buttonGuardar = vista.findViewById(R.id.guardarContrasena);
 
         switch (tema){
             case Constantes.PREFERENCE_AMARILLO:
@@ -257,6 +260,12 @@ public class AddContrasenaFragment extends Fragment {
 
     public void guardarContrasenaFirebase(String servicio, String contrasena, String usuario, String vigencia) {
         progressBar.setVisibility(View.VISIBLE);
+        inputLayoutServicio.setEnabled(false);
+        inputLayoutUsuario.setEnabled(false);
+        inputLayoutPass.setEnabled(false);
+        spinner.setEnabled(false);
+        radioGroup.setEnabled(false);
+        buttonGuardar.setEnabled(false);
 
         String userID = user.getUid();
 
@@ -284,6 +293,12 @@ public class AddContrasenaFragment extends Fragment {
             public void onFailure(@NonNull Exception e) {
                 Log.w("msg", "Error adding document", e);
                 progressBar.setVisibility(View.GONE);
+                inputLayoutServicio.setEnabled(true);
+                inputLayoutUsuario.setEnabled(true);
+                inputLayoutPass.setEnabled(true);
+                spinner.setEnabled(true);
+                radioGroup.setEnabled(true);
+                buttonGuardar.setEnabled(true);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });

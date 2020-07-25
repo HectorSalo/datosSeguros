@@ -170,12 +170,6 @@
     <string name="almacenamiento_summary_off">La información se almacenará en su dispositivo</string>
     <string name="tema_summary">Escoja el tema de la aplicación</string>
 
-    <!-- Exportar Importar Preferences -->
-    <string name="exportar_importar_title">Exportar/Importar Datos</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-
     <!-- Borrar Datos Preferences -->
     <string name="text_borrar_datos">Se eliminará la información almacenada en la nube y/o dispositivo. Esta acción no se puede deshacer.</string>
     <string name="btn_borrar_datos_nube">Borrar Datos en la Nube</string>

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarContrasenaFragment"
-    android:background="@color/colorBackgroundEditar">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.AddContrasenaFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,142 +14,106 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/etServicioEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/servicio"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_servicio"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/servicio"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="?attr/textInputStyle">
 
-        <EditText
-            android:id="@+id/etUsuarioEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etServicioEditar"
-            android:ems="10"
-            android:hint="@string/usuario"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_servicio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
 
-        <EditText
-            android:id="@+id/etContrasenaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etUsuarioEditar"
-            android:ems="10"
-            android:hint="@string/contrasena"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_usuario"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/outlined_servicio"
+                android:hint="@string/usuario"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_usuario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/outlined_usuario"
+                android:hint="@string/contrasena"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:passwordToggleEnabled="true"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_pass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
 
             <ProgressBar
-                android:id="@+id/progressBarEditarContrasena"
+                android:id="@+id/progressBar"
                 style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_below="@id/etContrasenaEditar"
+                android:layout_below="@id/outlined_pass"
+                android:layout_centerHorizontal="true"
                 android:indeterminateTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etContrasenaEditar"
-            android:text="@string/caducidad"
-            android:textSize="18sp"
-            android:paddingTop="24dp"
-            android:textColor="#fff"
-            android:textColorHint="#fff"/>
 
-        <RadioGroup
-            android:id="@+id/radioDiasEditar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/textView2">
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_pass"/>
 
-            <RadioButton
-                android:id="@+id/radioButton30Editar"
+            <EditText
+                android:id="@+id/etIngreseOtro"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/treinta"
+                android:layout_below="@id/spinner"
+                android:ems="10"
+                android:hint="@string/ingreseTiempo"
+                android:inputType="number"
+                android:visibility="gone" />
 
-                android:textColor="#fff"
-                android:textColorHighlight="#fff"
-                android:textColorLink="@color/colorAccent" />
-
-            <RadioButton
-                android:id="@+id/radioButton60Editar"
+            <Button
+                android:id="@+id/guardarContrasena"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/sesenta"
-                android:textColor="#fff" />
-
-            <RadioButton
-                android:id="@+id/radioButton90Editar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/noventa"
-                android:textColor="#fff" />
-
-            <RadioButton
-                android:id="@+id/radioButton120Editar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/cientoVeinte"
-                android:textColor="#fff" />
-
-            <RadioButton
-                android:id="@+id/radioButtonIndeterminadoEditar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/indeterminado"
-                android:textColor="#fff" />
-
-            <RadioButton
-                android:id="@+id/radioButtonOtroEditar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/otro"
-                android:textColor="#fff" />
-        </RadioGroup>
-
-        <EditText
-            android:id="@+id/etIngreseOtroEditar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/radioDiasEditar"
-            android:ems="10"
-            android:hint="@string/ingreseTiempo"
-            android:inputType="number"
-            android:visibility="gone"
-            android:textColor="#fff"
-            android:textColorHint="#fff"/>
-
-        <Button
-            android:id="@+id/editarContrasena"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etIngreseOtroEditar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="48dp"
-            android:text="@string/buttonGuardar" />
+                android:layout_below="@id/etIngreseOtro"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/buttonGuardar"
+                android:textColor="@color/md_text_white"
+                android:textAllCaps="false"
+                android:textSize="20sp"/>
 
 
         </RelativeLayout>

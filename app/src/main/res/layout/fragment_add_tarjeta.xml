@@ -75,6 +75,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_below="@id/outlined_tarjeta"
+                android:layout_centerHorizontal="true"
                 android:indeterminateTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
 
@@ -146,7 +147,8 @@
                     android:id="@+id/et_cedula"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"/>
+                    android:inputType="number"
+                    android:maxLength="10"/>
             </com.google.android.material.textfield.TextInputLayout>
 
 
