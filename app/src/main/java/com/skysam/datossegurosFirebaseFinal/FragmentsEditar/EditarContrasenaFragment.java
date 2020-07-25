@@ -61,9 +61,8 @@ public class EditarContrasenaFragment extends Fragment {
     private Button button;
     private Spinner spinner;
     private int position;
-    private String contrasenaNueva, contrasenaVieja, vigencia, pass1, pass2, pass3, pass4, pass5, fechaActualS, fechaEnviarS, idDoc;
-    private Date fechaActual, fechaCreacion, fechaEnviar;
-    private int vigenciaAnterior, vigenciaNueva;
+    private String contrasenaVieja, pass1, pass2, pass3, pass4, fechaEnviarS, idDoc;
+    private Date fechaActual, fechaEnviar;
     private boolean almacenamientoNube;
 
 
@@ -131,7 +130,6 @@ public class EditarContrasenaFragment extends Fragment {
         pass2 = null;
         pass3 = null;
         pass4 = null;
-        pass5 = null;
 
         List<String> listaCaducidad = Arrays.asList(getResources().getStringArray(R.array.tiempo_vigencia));
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_opciones, listaCaducidad);
@@ -162,7 +160,7 @@ public class EditarContrasenaFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                validarDatos();
             }
         });
         return vista;
@@ -206,14 +204,10 @@ public class EditarContrasenaFragment extends Fragment {
                     etServicio.setText(doc.getString(Constantes.BD_SERVICIO));
                     etUsuario.setText(doc.getString(Constantes.BD_USUARIO));
                     etContrasena.setText(doc.getString(Constantes.BD_PASSWORD));
-                    fechaCreacion = doc.getDate(Constantes.BD_FECHA_CREACION);
 
                     contrasenaVieja = doc.getString(Constantes.BD_PASSWORD);
 
                     String vigencia = doc.getString(Constantes.BD_VIGENCIA);
-                    if (vigencia != null) {
-                        vigenciaAnterior = Integer.parseInt(vigencia);
-                    }
 
                     if (vigencia.equals("0")) {
                         spinner.setSelection(5);
@@ -274,7 +268,6 @@ public class EditarContrasenaFragment extends Fragment {
             etUsuario.setText(cursor.getString(2));
             etContrasena.setText((cursor.getString(3)));
             contrasenaVieja = cursor.getString(3);
-            vigenciaAnterior = Integer.parseInt(cursor.getString(4));
 
             String vigencia = cursor.getString(4);
 
@@ -378,7 +371,6 @@ public class EditarContrasenaFragment extends Fragment {
                 datoValido = true;
             }
 
-            if ()
         } else {
             datoValido = false;
             Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
@@ -388,7 +380,7 @@ public class EditarContrasenaFragment extends Fragment {
             if (almacenamientoNube) {
                 guardarDataFirebase(servicio, contrasena, usuario, vigencia);
             } else {
-                guardarContrasenaSQLite(servicio, contrasena, usuario, vigencia);
+                guardarDataSQLite(servicio, contrasena, usuario, vigencia);
             }
         }
     }
@@ -402,17 +394,13 @@ public class EditarContrasenaFragment extends Fragment {
         String userID = user.getUid();
         progressBar.setVisibility(View.VISIBLE);
 
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        Map<String, Object> contrasenaM = new HashMap<>();
 
 
-
-                if (!contrasenaNueva.equals(contrasenaVieja) && !rbIndeterminado.isChecked()) {
-
-
+                if (!contrasenaNueva.equals(contrasenaVieja)) {
                     fechaEnviar = fechaActual;
 
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                    Map<String, Object> contrasenaM = new HashMap<>();
                     contrasenaM.put(Constantes.BD_SERVICIO, servicio);
                     contrasenaM.put(Constantes.BD_USUARIO, usuario);
                     contrasenaM.put(Constantes.BD_PASSWORD, contrasenaNueva);
@@ -424,135 +412,59 @@ public class EditarContrasenaFragment extends Fragment {
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_3, pass2);
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_4, pass3);
                     contrasenaM.put(Constantes.BD_ULTIMO_PASS_5, pass4);
-
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                        public void onSuccess(Void aVoid) {
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            requireActivity().finish();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
-
-                    fechaEnviar = fechaActual;
-
-
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                    Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(Constantes.BD_SERVICIO, servicio);
-                    contrasenaM.put(Constantes.BD_USUARIO, usuario);
-                    contrasenaM.put(Constantes.BD_PASSWORD, contrasenaNueva);
-                    contrasenaM.put(Constantes.BD_VIGENCIA, vigencia);
-                    contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
-                    contrasenaM.put(Constantes.BD_FECHA_CREACION, fechaEnviar);
-                    contrasenaM.put(Constantes.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    contrasenaM.put(Constantes.BD_ULTIMO_PASS_2, pass1);
-                    contrasenaM.put(Constantes.BD_ULTIMO_PASS_3, pass2);
-                    contrasenaM.put(Constantes.BD_ULTIMO_PASS_4, pass3);
-                    contrasenaM.put(Constantes.BD_ULTIMO_PASS_5, pass4);
-
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).set(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                        public void onSuccess(Void aVoid) {
-                            progressBarEditar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            requireActivity().finish();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progressBarEditar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else if (contrasenaNueva.equals(contrasenaVieja) && vigenciaAnterior != duracionVigencia){
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                    dialog.setTitle("Aviso");
-                    dialog.setMessage("No puede cambiar la vigencia si no se ha cambiado la contraseña");
-                    dialog.setIcon(R.drawable.ic_advertencia);
-                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
                 } else {
-                    progressBarEditar.setVisibility(View.VISIBLE);
+                    if (spinner.getSelectedItemPosition() != position) {
+                        fechaEnviar = fechaActual;
 
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                    Map<String, Object> contrasenaM = new HashMap<>();
-                    contrasenaM.put(Constantes.BD_SERVICIO, servicio);
-                    contrasenaM.put(Constantes.BD_USUARIO, usuario);
-                    contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
-
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                        public void onSuccess(Void aVoid) {
-                            progressBarEditar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            requireActivity().finish();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progressBarEditar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                        contrasenaM.put(Constantes.BD_SERVICIO, servicio);
+                        contrasenaM.put(Constantes.BD_USUARIO, usuario);
+                        contrasenaM.put(Constantes.BD_PASSWORD, contrasenaNueva);
+                        contrasenaM.put(Constantes.BD_VIGENCIA, vigencia);
+                        contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
+                        contrasenaM.put(Constantes.BD_FECHA_CREACION, fechaEnviar);
+                    } else {
+                        contrasenaM.put(Constantes.BD_SERVICIO, servicio);
+                        contrasenaM.put(Constantes.BD_USUARIO, usuario);
+                        contrasenaM.put(Constantes.BD_VIGENCIA, vigencia);
+                        contrasenaM.put(Constantes.BD_PROPIETARIO, userID);
+                    }
                 }
+
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CONTRASENAS).document(idDoc).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
+            public void onSuccess(Void aVoid) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                inputLayoutServicio.setEnabled(true);
+                inputLayoutPass.setEnabled(true);
+                inputLayoutUsuario.setEnabled(true);
+                spinner.setEnabled(true);
+                button.setEnabled(true);
+            }
+        });
 
 
     }
 
-    public void guardarDataSQLite() {
-        String servicio = etServicio.getText().toString();
-        String usuario = etUsuario.getText().toString();
-        contrasenaNueva = etContrasena.getText().toString();
-        vigencia = "";
-
+    public void guardarDataSQLite(String servicio, String contrasenaNueva, String usuario, String vigencia) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        fechaActualS = sdf.format(fechaActual);
+        String fechaActualS = sdf.format(fechaActual);
 
+        ConexionSQLite conect = new ConexionSQLite(getContext(), idDoc, null, Constantes.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
 
-        if (servicio.isEmpty() || usuario.isEmpty() || contrasenaNueva.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rb30.isChecked() && !rb60.isChecked() && !rb90.isChecked() && !rb120.isChecked() && !rbIndeterminado.isChecked() && !rbOtro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
-            } else {
+        ContentValues values = new ContentValues();
 
-                if (!contrasenaNueva.equals(contrasenaVieja) && !rbIndeterminado.isChecked()) {
-                    if (rbOtro.isChecked()) {
-                        vigencia = etOtro.getText().toString();
-
-                    } else if (rb30.isChecked() || rb60.isChecked() || rb90.isChecked() || rb120.isChecked()) {
-                        vigencia = String.valueOf(duracionVigencia);
-
-                    }
-
+                if (!contrasenaNueva.equals(contrasenaVieja)) {
                     fechaEnviarS = fechaActualS;
 
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), idDoc, null, Constantes.VERSION_SQLITE);
-                    SQLiteDatabase db = conect.getWritableDatabase();
-
-                    ContentValues values = new ContentValues();
                     values.put(Constantes.BD_SERVICIO, servicio);
                     values.put(Constantes.BD_USUARIO, usuario);
                     values.put(Constantes.BD_PASSWORD, contrasenaNueva);
@@ -563,67 +475,26 @@ public class EditarContrasenaFragment extends Fragment {
                     values.put(Constantes.BD_ULTIMO_PASS_3, pass2);
                     values.put(Constantes.BD_ULTIMO_PASS_4, pass3);
                     values.put(Constantes.BD_ULTIMO_PASS_5, pass4);
-
-                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
-                    db.close();
-
-                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-
-                } else if (!contrasenaNueva.equals(contrasenaVieja) && rbIndeterminado.isChecked()) {
-
-                    fechaEnviarS = fechaActualS;
-                    vigencia = "0";
-
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
-                    SQLiteDatabase db = conect.getWritableDatabase();
-
-                    ContentValues values = new ContentValues();
-                    values.put(Constantes.BD_SERVICIO, servicio);
-                    values.put(Constantes.BD_USUARIO, usuario);
-                    values.put(Constantes.BD_PASSWORD, contrasenaNueva);
-                    values.put(Constantes.BD_VIGENCIA, vigencia);
-                    values.put(Constantes.BD_FECHA_CREACION, fechaEnviarS);
-                    values.put(Constantes.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    values.put(Constantes.BD_ULTIMO_PASS_2, pass1);
-                    values.put(Constantes.BD_ULTIMO_PASS_3, pass2);
-                    values.put(Constantes.BD_ULTIMO_PASS_4, pass3);
-                    values.put(Constantes.BD_ULTIMO_PASS_5, pass4);
-
-                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
-                    db.close();
-
-                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-
-                } else if (contrasenaNueva.equals(contrasenaVieja) && vigenciaAnterior != duracionVigencia){
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-                    dialog.setTitle("Aviso");
-                    dialog.setMessage("No puede cambiar la vigencia si no se ha cambiado la contraseña");
-                    dialog.setIcon(R.drawable.ic_advertencia);
-                    dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    dialog.show();
                 } else {
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), Constantes.BD_PROPIETARIOS, null, Constantes.VERSION_SQLITE);
-                    SQLiteDatabase db = conect.getWritableDatabase();
+                    if (spinner.getSelectedItemPosition() != position) {
+                        fechaEnviar = fechaActual;
 
-                    ContentValues values = new ContentValues();
-                    values.put(Constantes.BD_SERVICIO, servicio);
-                    values.put(Constantes.BD_USUARIO, usuario);
-
-                    db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
-                    db.close();
-
-                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-
+                        values.put(Constantes.BD_SERVICIO, servicio);
+                        values.put(Constantes.BD_USUARIO, usuario);
+                        values.put(Constantes.BD_VIGENCIA, vigencia);
+                        values.put(Constantes.BD_FECHA_CREACION, fechaEnviarS);
+                    } else {
+                        values.put(Constantes.BD_SERVICIO, servicio);
+                        values.put(Constantes.BD_USUARIO, usuario);
+                        values.put(Constantes.BD_VIGENCIA, vigencia);
+                    }
                 }
-            }
-        }
+
+        db.update(Constantes.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
+        db.close();
+
+        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+        requireActivity().finish();
+
     }
 }

@@ -1,6 +1,8 @@
 package com.skysam.datossegurosFirebaseFinal;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -47,6 +49,23 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
         }
 
         setContentView(R.layout.activity_editar);
+
+        ConstraintLayout constraintLayout = findViewById(R.id.constraint_layout);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar_rojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar_marron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar_lila));
+                break;
+        }
 
         EditarContrasenaFragment editarContrasenaFragment = new EditarContrasenaFragment();
         EditarCuentasFragment editarCuentasFragment = new EditarCuentasFragment();

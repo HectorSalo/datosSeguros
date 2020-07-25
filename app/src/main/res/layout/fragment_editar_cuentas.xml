@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarCuentasFragment"
-    android:background="@color/colorBackgroundEditar">
+    tools:context=".Fragments.AddCuentasFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -14,142 +13,190 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/etTitularEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/titular"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_titular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/titular"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="?attr/textInputStyle">
 
-        <EditText
-            android:id="@+id/etBancoEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etTitularEditar"
-            android:ems="10"
-            android:hint="@string/banco"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_titular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
 
-        <EditText
-            android:id="@+id/etnumeroCuentaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etBancoEditar"
-            android:ems="10"
-            android:hint="@string/numeroCuenta"
-            android:inputType="number"
-            android:maxLength="20"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_banco"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/banco"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_titular"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_banco"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_numero_cuenta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/numeroCuenta"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_banco"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_numero_cuenta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="20"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <ProgressBar
-                android:id="@+id/progressBarEditarCuenta"
+                android:id="@+id/progressBarAddCuenta"
                 style="?android:attr/progressBarStyle"
-                android:layout_width="match_parent"
+                android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_below="@id/etnumeroCuentaEditar"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/outlined_numero_cuenta"
                 android:indeterminateTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
 
-        <LinearLayout
-            android:id="@+id/layoutEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etnumeroCuentaEditar"
-            android:orientation="horizontal">
-
-            <Spinner
-                android:id="@+id/spinnerTipoDocumentoEditar"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"></Spinner>
-
-            <EditText
-                android:id="@+id/etCedulaCuentaEditar"
+            <LinearLayout
+                android:id="@+id/layoutDocumento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_numero_cuenta">
+
+                <Spinner
+                    android:id="@+id/spinnerTipoDocumento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"/>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlined_documento"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/documentoNumero"
+                    style="?attr/textInputStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_documento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="10"/>
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_telefono"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/telefono"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/layoutDocumento"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_telefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="11"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_correo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/usuarioCorreo"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_telefono"
+                style="?attr/textInputStyle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_correo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textEmailAddress"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/etTipo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/outlined_correo"
                 android:ems="10"
-                android:hint="@string/documentoNumero"
-                android:inputType="number"
-                android:textColor="#fff"
-                android:textColorHint="#fff" />
-        </LinearLayout>
+                android:text="@string/tipodeCuenta"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:textSize="18sp"
+                android:paddingTop="24dp"/>
 
+            <RadioGroup
+                android:id="@+id/radioTipoCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/etTipo"
+                android:orientation="horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp">
 
-        <EditText
-            android:id="@+id/etTelefonoEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/layoutEditar"
-            android:ems="10"
-            android:hint="@string/telefono"
-            android:inputType="number"
-            android:maxLength="11"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+                <RadioButton
+                    android:id="@+id/radioButtonAhorro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cuentaAhorro" />
 
-        <EditText
-            android:id="@+id/etCorreoCuentaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etTelefonoEditar"
-            android:ems="10"
-            android:hint="@string/correoCuenta"
-            android:inputType="textEmailAddress"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+                <RadioButton
+                    android:id="@+id/radioButtonCorriente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cuentaCorriente" />
 
-        <TextView
-            android:id="@+id/etTipoEditar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etCorreoCuentaEditar"
-            android:ems="10"
-            android:text="@string/tipodeCuenta"
-            android:textSize="18sp"
-            android:paddingTop="24dp"
-            android:textColor="#fff"
-            android:textColorHint="#fff"/>
+            </RadioGroup>
 
-        <RadioGroup
-            android:id="@+id/radioEditar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/etTipoEditar"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/radioButtonAhorroEditar"
+            <Button
+                android:id="@+id/guardarCuenta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/cuentaAhorro"
-                android:textColor="#fff" />
+                android:layout_below="@id/radioTipoCuenta"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:text="@string/buttonGuardar"
+                android:textSize="20sp"
+                android:textAllCaps="false"
+                android:textColor="@color/md_text_white"/>
 
-            <RadioButton
-                android:id="@+id/radioButtonCorrienteEditar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/cuentaCorriente"
-                android:textColor="#fff" />
 
-        </RadioGroup>
-
-        <Button
-            android:id="@+id/guardarCuentaEditar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/radioEditar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="48dp"
-            android:text="@string/buttonGuardar" />
         </RelativeLayout>
     </ScrollView>
 
