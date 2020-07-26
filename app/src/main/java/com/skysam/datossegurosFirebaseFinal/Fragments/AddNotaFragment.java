@@ -40,9 +40,8 @@ public class AddNotaFragment extends Fragment {
 
     private EditText etTitulo, etContenido;
     private FirebaseUser user;
-    private RadioButton rbNube;
+    private RadioButton rbNube, rbDispositivo;
     private ProgressBar progressBar;
-    private RadioGroup radioGroup;
     private Button buttonGuardar;
 
 
@@ -75,8 +74,7 @@ public class AddNotaFragment extends Fragment {
         etContenido = vista.findViewById(R.id.etContenido);
         progressBar = vista.findViewById(R.id.progressBarAddNota);
         rbNube = vista.findViewById(R.id.radioButton_nube);
-        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
-        radioGroup = vista.findViewById(R.id.radio_almacenamiento);
+        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         buttonGuardar = (Button) vista.findViewById(R.id.guardarNota);
 
         switch (tema){
@@ -142,8 +140,14 @@ public class AddNotaFragment extends Fragment {
 
         boolean datoValido;
 
-        if (!titulo.isEmpty() && !contenido.isEmpty()) {
+        if (!titulo.isEmpty() || !contenido.isEmpty()) {
             datoValido = true;
+            if (titulo.isEmpty()) {
+                titulo = "";
+            }
+            if (contenido.isEmpty()) {
+                contenido = "";
+            }
         } else {
             datoValido = false;
             Toast.makeText(getContext(), "No se puede guardar una nota vacía", Toast.LENGTH_SHORT).show();
@@ -164,7 +168,8 @@ public class AddNotaFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         etTitulo.setEnabled(false);
         etContenido.setEnabled(false);
-        radioGroup.setEnabled(false);
+        rbNube.setEnabled(false);
+        rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -187,6 +192,11 @@ public class AddNotaFragment extends Fragment {
                 Log.w("msg", "Error adding document", e);
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                etTitulo.setEnabled(true);
+                etContenido.setEnabled(true);
+                rbNube.setEnabled(true);
+                rbDispositivo.setEnabled(true);
+                buttonGuardar.setEnabled(true);
             }
         });
     }

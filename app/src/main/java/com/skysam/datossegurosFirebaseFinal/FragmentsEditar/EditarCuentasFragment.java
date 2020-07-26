@@ -53,7 +53,6 @@ public class EditarCuentasFragment extends Fragment {
     private FirebaseUser user;
     private String spinnerSeleccion, idDoc;
     private Spinner spinnerDocumento;
-    private RadioGroup radioGroup;
     private Button button;
     private boolean almacenamientoNube;
 
@@ -116,7 +115,6 @@ public class EditarCuentasFragment extends Fragment {
         rbCorriente = vista.findViewById(R.id.radioButtonCorriente);
         spinnerDocumento = vista.findViewById(R.id.spinnerTipoDocumento);
         progressBar = vista.findViewById(R.id.progressBarAddCuenta);
-        radioGroup = vista.findViewById(R.id.radioTipoCuenta);
 
         idDoc = getArguments().getString("id");
 
@@ -135,7 +133,7 @@ public class EditarCuentasFragment extends Fragment {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                validarDatos();
             }
         });
 
@@ -242,87 +240,75 @@ public class EditarCuentasFragment extends Fragment {
 
     }
 
-    public void guardarDataFirebase () {
-        String userID = user.getUid();
+
+    private void validarDatos () {
+        inputLayoutTitular.setError(null);
+        inputLayoutBanco.setError(null);
+        inputLayoutNumero.setError(null);
+        inputLayoutCedula.setError(null);
         String titular = etTitular.getText().toString();
         String banco = etBanco.getText().toString();
-        String cuentaNumero = etNumeroCuenta.getText().toString();
-        String cedula = etCedula.getText().toString();
+        String documento = etCedula.getText().toString();
+        String numeroCuenta = etNumeroCuenta.getText().toString();
         String telefono = etTelefono.getText().toString();
         String correo = etCorreo.getText().toString();
-        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
-        String tipo = "";
 
+        boolean datoValido;
 
-        if (rbAhorro.isChecked()) {
-            tipo = "Ahorro";
-        } else if (rbCorriente.isChecked()) {
-            tipo = "Corriente";
+        if (!titular.isEmpty()) {
+            datoValido = true;
+        } else {
+            inputLayoutTitular.setError("El campo no puede estar vacío");
+            datoValido = false;
         }
 
-        if (titular.isEmpty() || banco.isEmpty() || cuentaNumero.isEmpty() || cedula.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
+        if (!banco.isEmpty()) {
+            datoValido = true;
         } else {
-            if (!rbCorriente.isChecked() && !rbAhorro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar un tipo de cuenta", Toast.LENGTH_SHORT).show();
+            datoValido = false;
+            inputLayoutBanco.setError("El campo no puede estar vacío");
+        }
+
+        if (!documento.isEmpty()) {
+            datoValido = true;
+        } else {
+            datoValido = false;
+            inputLayoutCedula.setError("El campo no puede estar vacío");
+        }
+
+        if (!numeroCuenta.isEmpty()) {
+            if (numeroCuenta.length() == 20) {
+                datoValido = true;
             } else {
-                if (cuentaNumero.length() != 20) {
-                    Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
-                } else {
-                    progressBar.setVisibility(View.VISIBLE);
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                datoValido = false;
+                inputLayoutNumero.setError("El número debe ser de 20 dígitos");
+            }
+        } else {
+            datoValido = false;
+            inputLayoutNumero.setError("El campo no puede estar vacío");
+        }
 
-                    Map<String, Object> cuentaBancaria = new HashMap<>();
-                    cuentaBancaria.put(Constantes.BD_TITULAR_BANCO, titular);
-                    cuentaBancaria.put(Constantes.BD_BANCO, banco);
-                    cuentaBancaria.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
-                    cuentaBancaria.put(Constantes.BD_CEDULA_BANCO, cedula);
-                    cuentaBancaria.put(Constantes.BD_TIPO_CUENTA, tipo);
-                    cuentaBancaria.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+        if (telefono.isEmpty()) {
+            telefono = "";
+        }
 
-                    if (telefono.isEmpty()) {
-                        cuentaBancaria.put(Constantes.BD_TELEFONO, "0");
-                    } else {
-                        cuentaBancaria.put(Constantes.BD_TELEFONO, telefono);
-                    }
+        if (correo.isEmpty()) {
+            correo = "";
+        }
 
-                    if (correo.isEmpty()) {
-                        cuentaBancaria.put(Constantes.BD_CORREO_CUENTA, "");
-                    } else {
-                        cuentaBancaria.put(Constantes.BD_CORREO_CUENTA, correo);
-                    }
-
-                    db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS).document(idDoc).set(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
-
-                        public void onSuccess(Void aVoid) {
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                            requireActivity().finish();
-
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Log.w("msg", "Error adding document", e);
-                            progressBar.setVisibility(View.GONE);
-                            Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
+        if (datoValido) {
+            if (almacenamientoNube) {
+                guardarDataFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
+            } else {
+                guardarDataSQLite(titular, banco, documento, numeroCuenta, telefono, correo);
             }
         }
     }
 
-    public void guardarDataSQLite() {
-        String titular = etTitular.getText().toString();
-        String banco = etBanco.getText().toString();
-        String cuentaNumero = etNumeroCuenta.getText().toString();
-        String cedula = etCedula.getText().toString();
-        String telefono = etTelefono.getText().toString();
-        String correo = etCorreo.getText().toString();
+    public void guardarDataFirebase (String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
+        String userID = user.getUid();
         spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
-
 
         if (rbAhorro.isChecked()) {
             tipo = "Ahorro";
@@ -330,45 +316,83 @@ public class EditarCuentasFragment extends Fragment {
             tipo = "Corriente";
         }
 
-        if (titular.isEmpty() || banco.isEmpty() || cuentaNumero.isEmpty() || cedula.isEmpty()) {
-            Toast.makeText(getContext(), "Hay campos vacíos", Toast.LENGTH_SHORT).show();
-        } else {
-            if (!rbCorriente.isChecked() && !rbAhorro.isChecked()) {
-                Toast.makeText(getContext(), "Debe seleccionar un tipo de cuenta", Toast.LENGTH_SHORT).show();
-            } else {
-                if (cuentaNumero.length() != 20) {
-                    Toast.makeText(getContext(), "La longitud del número de cuenta debe ser 20 dígitos", Toast.LENGTH_LONG).show();
-                } else {
-                    ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
-                    SQLiteDatabase db = conect.getWritableDatabase();
+        inputLayoutTitular.setEnabled(false);
+        inputLayoutBanco.setEnabled(false);
+        inputLayoutNumero.setEnabled(false);
+        inputLayoutCedula.setEnabled(false);
+        inputLayoutTelefono.setEnabled(false);
+        inputLayoutCorreo.setEnabled(false);
+        spinnerDocumento.setEnabled(false);
+        rbAhorro.setEnabled(false);
+        rbCorriente.setEnabled(false);
+        button.setEnabled(false);
 
-                    ContentValues values = new ContentValues();
-                    values.put(Constantes.BD_TITULAR_TARJETA, titular);
-                    values.put(Constantes.BD_BANCO, banco);
-                    values.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
-                    values.put(Constantes.BD_CEDULA_BANCO, cedula);
-                    values.put(Constantes.BD_TIPO_CUENTA, tipo);
-                    values.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+        progressBar.setVisibility(View.VISIBLE);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                    if (telefono.isEmpty()) {
-                        values.put(Constantes.BD_TELEFONO, "0");
-                    } else {
-                        values.put(Constantes.BD_TELEFONO, telefono);
-                    }
+        Map<String, Object> cuentaBancaria = new HashMap<>();
+        cuentaBancaria.put(Constantes.BD_TITULAR_BANCO, titular);
+        cuentaBancaria.put(Constantes.BD_BANCO, banco);
+        cuentaBancaria.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
+        cuentaBancaria.put(Constantes.BD_CEDULA_BANCO, cedula);
+        cuentaBancaria.put(Constantes.BD_TIPO_CUENTA, tipo);
+        cuentaBancaria.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+        cuentaBancaria.put(Constantes.BD_TELEFONO, telefono);
+        cuentaBancaria.put(Constantes.BD_CORREO_CUENTA, correo);
 
-                    if (correo.isEmpty()) {
-                        values.put(Constantes.BD_CORREO_CUENTA, "");
-                    } else {
-                        values.put(Constantes.BD_CORREO_CUENTA, correo);
-                    }
-
-                    db.update(Constantes.BD_CUENTAS, values, "idCuenta=" + idDoc, null);
-                    db.close();
-
-                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
-                }
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_CUENTAS).document(idDoc).update(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
+            public void onSuccess(Void aVoid) {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("msg", "Error adding document", e);
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                inputLayoutTitular.setEnabled(true);
+                inputLayoutBanco.setEnabled(true);
+                inputLayoutNumero.setEnabled(true);
+                inputLayoutCedula.setEnabled(true);
+                inputLayoutTelefono.setEnabled(true);
+                inputLayoutCorreo.setEnabled(true);
+                spinnerDocumento.setEnabled(true);
+                rbAhorro.setEnabled(true);
+                rbCorriente.setEnabled(true);
+                button.setEnabled(true);
+            }
+        });
+    }
+
+    public void guardarDataSQLite(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
+        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
+        String tipo = "";
+
+        if (rbAhorro.isChecked()) {
+            tipo = "Ahorro";
+        } else if (rbCorriente.isChecked()) {
+            tipo = "Corriente";
         }
+
+        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
+        SQLiteDatabase db = conect.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Constantes.BD_TITULAR_TARJETA, titular);
+        values.put(Constantes.BD_BANCO, banco);
+        values.put(Constantes.BD_NUMERO_CUENTA, cuentaNumero);
+        values.put(Constantes.BD_CEDULA_BANCO, cedula);
+        values.put(Constantes.BD_TIPO_CUENTA, tipo);
+        values.put(Constantes.BD_TIPO_DOCUMENTO, spinnerSeleccion);
+        values.put(Constantes.BD_TELEFONO, telefono);
+        values.put(Constantes.BD_CORREO_CUENTA, correo);
+
+        db.update(Constantes.BD_CUENTAS, values, "idCuenta=" + idDoc, null);
+        db.close();
+
+        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+        requireActivity().finish();
     }
 }

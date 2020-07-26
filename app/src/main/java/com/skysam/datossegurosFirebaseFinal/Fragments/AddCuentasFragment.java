@@ -44,12 +44,11 @@ public class AddCuentasFragment extends Fragment {
 
     private TextInputLayout inputLayoutTitular, inputLayoutBanco, inputLayoutNumero, inputLayoutCedula, inputLayoutTelefono, inputLayoutCorreo;
     private TextInputEditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
-    private RadioButton rbAhorro, rbCorriente, rbNube;
+    private RadioButton rbAhorro, rbCorriente, rbNube, rbDispositivo;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
-    private RadioGroup radioGroupTipo, radioGroupAlmacenamiento;
     private Button buttonGuardar;
 
 
@@ -113,9 +112,7 @@ public class AddCuentasFragment extends Fragment {
         spinnerDocumento = vista.findViewById(R.id.spinnerTipoDocumento);
         progressBar = vista.findViewById(R.id.progressBarAddCuenta);
         rbNube = vista.findViewById(R.id.radioButton_nube);
-        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
-        radioGroupAlmacenamiento = vista.findViewById(R.id.radio_almacenamiento);
-        radioGroupTipo = vista.findViewById(R.id.radioTipoCuenta);
+        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
 
         rbAhorro.setChecked(true);
 
@@ -246,8 +243,10 @@ public class AddCuentasFragment extends Fragment {
         inputLayoutTelefono.setEnabled(false);
         inputLayoutCorreo.setEnabled(false);
         spinnerDocumento.setEnabled(false);
-        radioGroupTipo.setEnabled(false);
-        radioGroupAlmacenamiento.setEnabled(false);
+        rbAhorro.setEnabled(false);
+        rbCorriente.setEnabled(false);
+        rbNube.setEnabled(false);
+        rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -283,8 +282,10 @@ public class AddCuentasFragment extends Fragment {
                 inputLayoutTelefono.setEnabled(true);
                 inputLayoutCorreo.setEnabled(true);
                 spinnerDocumento.setEnabled(true);
-                radioGroupTipo.setEnabled(true);
-                radioGroupAlmacenamiento.setEnabled(true);
+                rbAhorro.setEnabled(true);
+                rbCorriente.setEnabled(true);
+                rbNube.setEnabled(true);
+                rbDispositivo.setEnabled(true);
                 buttonGuardar.setEnabled(true);
             }
         });

@@ -52,8 +52,7 @@ public class AddContrasenaFragment extends Fragment {
     private TextInputEditText etServicio, etUsuario, etContrasena;
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
     private EditText etOtroDias;
-    private RadioButton rbNube;
-    private RadioGroup radioGroup;
+    private RadioButton rbNube, rbDispositivo;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private Date fechaActual;
@@ -95,10 +94,9 @@ public class AddContrasenaFragment extends Fragment {
         inputLayoutPass = vista.findViewById(R.id.outlined_pass);
         inputLayoutServicio = vista.findViewById(R.id.outlined_servicio);
         rbNube = vista.findViewById(R.id.radioButton_nube);
-        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         progressBar = vista.findViewById(R.id.progressBar);
         spinner = vista.findViewById(R.id.spinner);
-        radioGroup = vista.findViewById(R.id.radio_almacenamiento);
         buttonGuardar = vista.findViewById(R.id.guardarContrasena);
 
         switch (tema){
@@ -264,7 +262,8 @@ public class AddContrasenaFragment extends Fragment {
         inputLayoutUsuario.setEnabled(false);
         inputLayoutPass.setEnabled(false);
         spinner.setEnabled(false);
-        radioGroup.setEnabled(false);
+        rbNube.setEnabled(false);
+        rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
         String userID = user.getUid();
@@ -297,7 +296,8 @@ public class AddContrasenaFragment extends Fragment {
                 inputLayoutUsuario.setEnabled(true);
                 inputLayoutPass.setEnabled(true);
                 spinner.setEnabled(true);
-                radioGroup.setEnabled(true);
+                rbNube.setEnabled(true);
+                rbDispositivo.setEnabled(true);
                 buttonGuardar.setEnabled(true);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }

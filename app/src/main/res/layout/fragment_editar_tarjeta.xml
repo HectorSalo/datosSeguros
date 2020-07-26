@@ -3,182 +3,251 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FragmentsEditar.EditarTarjetaFragment"
-    android:background="@color/colorBackgroundEditar">
+    tools:context=".Fragments.AddTarjetaFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-
-        <EditText
-            android:id="@+id/etTitularTarjetaEditar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/titular"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/etBancoTarjetaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etTitularTarjetaEditar"
-            android:ems="10"
-            android:hint="@string/banco"
-            android:inputType="textPersonName"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
 
-        <EditText
-            android:id="@+id/etTarjetaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etBancoTarjetaEditar"
-            android:ems="10"
-            android:hint="@string/numeroTarjeta"
-            android:inputType="number"
-            android:maxLength="16"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_titular"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/titular"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="?attr/textInputStyle">
 
-        <ProgressBar
-            android:id="@+id/progressBarEditarTarjeta"
-            style="?android:attr/progressBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_below="@id/etTarjetaEditar"
-            android:indeterminateTint="@color/colorPrimaryDark"
-            android:visibility="gone" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_titular"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
 
-        <EditText
-            android:id="@+id/etnumeroCVVEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etTarjetaEditar"
-            android:ems="10"
-            android:hint="@string/numeroCVV"
-            android:inputType="number"
-            android:maxLength="3"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etVencimientoEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etnumeroCVVEditar"
-            android:ems="10"
-            android:hint="@string/vencimiento"
-            android:textColor="#fff"
-            android:textColorHint="#fff"
-            android:focusable="false"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_banco"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/banco"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_below="@id/outlined_titular"
+                style="?attr/textInputStyle">
 
-        <EditText
-            android:id="@+id/etCedulaTarjetaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etVencimientoEditar"
-            android:ems="10"
-            android:hint="@string/cedula"
-            android:inputType="number"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_banco"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords" />
 
-        <EditText
-            android:id="@+id/etClaveTarjetaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etCedulaTarjetaEditar"
-            android:ems="10"
-            android:hint="@string/clavedeTarjeta"
-            android:inputType="number"
-            android:maxLength="6"
-            android:textColor="#fff"
-            android:textColorHint="#fff" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/etTipoEditar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/etClaveTarjetaEditar"
-            android:ems="10"
-            android:text="@string/tipodeCuenta"
-            android:textSize="18sp"
-            android:paddingTop="24dp"
-            android:textColor="#fff"
-            android:textColorHint="#fff"/>
 
-        <RadioGroup
-            android:id="@+id/radioTarjetaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/etTipoEditar">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/outlined_tarjeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/numeroTarjeta"
+                android:layout_below="@id/outlined_banco"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                style="?attr/textInputStyle">
 
-            <RadioButton
-                android:id="@+id/radioButtonMaestroEditar"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_tarjeta"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="24"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ProgressBar
+                android:id="@+id/progressBarAddTarjeta"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/outlined_tarjeta"
+                android:layout_centerHorizontal="true"
+                android:indeterminateTint="@color/colorPrimaryDark"
+                android:visibility="gone" />
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal"
+                android:baselineAligned="false"
+                android:layout_below="@id/outlined_tarjeta">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlined_cvv"
+                    style="?attr/textInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:hint="@string/numeroCVV">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_cvv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="3" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlined_vencimiento"
+                    style="?attr/textInputStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:hint="@string/vencimiento">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_vencimiento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:inputType="number" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/linearLayout"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal">
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlined_cedula"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/cedula"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    style="?attr/textInputStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_cedula"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="10"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlined_clave"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/clavedeTarjeta"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    style="?attr/textInputStyle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_clave"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="6"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/etTipo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/tarjetaMaestro"
-                android:textColor="#fff" />
+                android:layout_below="@id/linearLayout2"
+                android:ems="10"
+                android:text="@string/tipodeCuenta"
+                android:layout_marginStart="16dp"
+                android:textSize="18sp"
+                android:paddingTop="24dp"/>
 
-            <RadioButton
-                android:id="@+id/radioButtonVisaEditar"
+            <RadioGroup
+                android:id="@+id/radioTarjeta"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/etTipo"
+                android:orientation="horizontal"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                >
+
+                <RadioButton
+                    android:id="@+id/radioButtonMaestro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/tarjetaMaestro" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonVisa"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/tarjetaVisa" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonMaster"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/tarjetaMaster" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonOtroTarjeta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/otro" />
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/editTextOtroTarjeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/radioTarjeta"
+                android:ems="10"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:inputType="textPersonName"
+                android:hint="@string/otroTarjeta"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/guardarTarjeta"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/tarjetaVisa"
-                android:textColor="#fff" />
+                android:layout_below="@id/editTextOtroTarjeta"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:text="@string/buttonGuardar"
+                android:textAllCaps="false"
+                android:textSize="20sp"
+                android:textColor="@color/md_text_white"/>
 
-            <RadioButton
-                android:id="@+id/radioButtonMasterEditar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/tarjetaMaster"
-                android:textColor="#fff" />
 
-            <RadioButton
-                android:id="@+id/radioButtonOtroTarjetaEditar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:buttonTint="#fff"
-                android:text="@string/otro"
-                android:textColor="#fff" />
-        </RadioGroup>
 
-        <EditText
-            android:id="@+id/editTextOtroTarjetaEditar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/radioTarjetaEditar"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="@string/otroTarjeta"
-            android:visibility="gone"
-            android:textColor="#fff"
-            android:textColorHint="#fff"/>
+        </RelativeLayout>
 
-        <Button
-            android:id="@+id/guardarTarjetaEditar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/editTextOtroTarjetaEditar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="48dp"
-            android:text="@string/buttonGuardar" />
-
-    </RelativeLayout>
     </ScrollView>
 
 </FrameLayout>

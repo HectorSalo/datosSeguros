@@ -46,12 +46,11 @@ public class AddTarjetaFragment extends Fragment {
     private TextInputLayout inputLayoutTitular, inputLayoutTarjeta, inputLayoutCVV, inputLayoutCedula, inputLayoutBanco, inputLayoutVencimiento, inputLayoutClave;
     private TextInputEditText etTitular, etTarjeta, etCVV, etCedula, etBanco, etVencimiento, etClave;
     private EditText etOtroTarjeta;
-    private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro, rbNube;
+    private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro, rbNube, rbDispositivo;
     private FirebaseUser user;
     private ProgressBar progressBar;
     private String tipo;
     private Button buttonGuardar;
-    private RadioGroup radioGroupAlmacenamiento, radioGroupTipo;
 
 
     private OnFragmentInteractionListener mListener;
@@ -100,10 +99,8 @@ public class AddTarjetaFragment extends Fragment {
         rbOtro = vista.findViewById(R.id.radioButtonOtroTarjeta);
         RadioGroup radioTarjeta = vista.findViewById(R.id.radioTarjeta);
         rbNube = vista.findViewById(R.id.radioButton_nube);
-        RadioButton rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         buttonGuardar = vista.findViewById(R.id.guardarTarjeta);
-        radioGroupAlmacenamiento = vista.findViewById(R.id.radio_almacenamiento);
-        radioGroupTipo = vista.findViewById(R.id.radioTarjeta);
         progressBar = vista.findViewById(R.id.progressBarAddTarjeta);
 
         switch (tema){
@@ -281,8 +278,13 @@ public class AddTarjetaFragment extends Fragment {
         inputLayoutVencimiento.setEnabled(false);
         inputLayoutCedula.setEnabled(false);
         inputLayoutClave.setEnabled(false);
-        radioGroupTipo.setEnabled(false);
-        radioGroupAlmacenamiento.setEnabled(false);
+        rbOtro.setEnabled(false);
+        rbMaestro.setEnabled(false);
+        rbNube.setEnabled(false);
+        rbDispositivo.setEnabled(false);
+        rbMastercard.setEnabled(false);
+        rbVisa.setEnabled(false);
+        buttonGuardar.setEnabled(false);
 
         String userID = user.getUid();
 
@@ -326,8 +328,13 @@ public class AddTarjetaFragment extends Fragment {
                 inputLayoutVencimiento.setEnabled(true);
                 inputLayoutCedula.setEnabled(true);
                 inputLayoutClave.setEnabled(true);
-                radioGroupTipo.setEnabled(true);
-                radioGroupAlmacenamiento.setEnabled(true);
+                rbOtro.setEnabled(true);
+                rbMaestro.setEnabled(true);
+                rbNube.setEnabled(true);
+                rbDispositivo.setEnabled(true);
+                rbMastercard.setEnabled(true);
+                rbVisa.setEnabled(true);
+                buttonGuardar.setEnabled(true);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
             }
         });

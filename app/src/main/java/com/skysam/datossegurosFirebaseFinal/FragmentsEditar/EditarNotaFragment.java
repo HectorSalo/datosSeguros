@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
 import android.widget.Toast;
 
 import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
@@ -42,8 +43,11 @@ public class EditarNotaFragment extends Fragment {
 
     private EditText etTitulo, etContenido;
     private FirebaseUser user;
-    private ProgressBar progressBarEditar;
+    private RadioButton rbNube, rbDispositivo;
+    private ProgressBar progressBar;
+    private Button button;
     private String idDoc;
+    private boolean almacenamientoNube;
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,15 +67,35 @@ public class EditarNotaFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        SharedPreferences sharedPreferences = Objects.requireNonNull(getContext()).getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
 
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+        almacenamientoNube = sharedPreferences.getBoolean(Constantes.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+
+        String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         idDoc = getArguments().getString("id");
 
-        etTitulo = (EditText) vista.findViewById(R.id.etTituloEditar);
-        etContenido = (EditText) vista.findViewById(R.id.etContenidoEditar);
-        progressBarEditar = vista.findViewById(R.id.progressBarEditarNota);
+        etTitulo = vista.findViewById(R.id.etTitulo);
+        etContenido = vista.findViewById(R.id.etContenido);
+        progressBar = vista.findViewById(R.id.progressBarAddNota);
+        rbNube = vista.findViewById(R.id.radioButton_nube);
+        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
+        button = (Button) vista.findViewById(R.id.guardarNota);
+
+        switch (tema){
+            case Constantes.PREFERENCE_AMARILLO:
+                button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+                break;
+            case Constantes.PREFERENCE_ROJO:
+                button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkRojo));
+                break;
+            case Constantes.PREFERENCE_MARRON:
+                button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkMarron));
+                break;
+            case Constantes.PREFERENCE_LILA:
+                button.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDarkLila));
+                break;
+        }
 
         if (almacenamientoNube) {
             cargarDataFirebase();
@@ -79,15 +103,10 @@ public class EditarNotaFragment extends Fragment {
             cargarDataSQLite();
         }
 
-        Button button = (Button) vista.findViewById(R.id.guardarNotaEditar);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (almacenamientoNube) {
-                    guardarDataFirebase();
-                } else {
-                    guardarDataSQLite();
-                }
+                validarDatos();
             }
         });
 
@@ -117,7 +136,7 @@ public class EditarNotaFragment extends Fragment {
     }
 
     public void cargarDataFirebase() {
-        progressBarEditar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
@@ -131,12 +150,11 @@ public class EditarNotaFragment extends Fragment {
                     etTitulo.setText(doc.getString(Constantes.BD_TITULO_NOTAS));
                     etContenido.setText(doc.getString(Constantes.BD_CONTENIDO_NOTAS));
 
-                    progressBarEditar.setVisibility(View.GONE);
-
+                    progressBar.setVisibility(View.GONE);
                 } else {
-                    progressBarEditar.setVisibility(View.GONE);
+                    progressBar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-
+                    requireActivity().finish();
                 }
             }
         });
@@ -151,45 +169,74 @@ public class EditarNotaFragment extends Fragment {
         if(cursor.moveToFirst()) {
             etTitulo.setText(cursor.getString(1));
             etContenido.setText(cursor.getString(2));
-
         }
 
     }
 
-    public void guardarDataFirebase() {
-        String userID = user.getUid();
+
+    private void validarDatos () {
         String titulo = etTitulo.getText().toString();
         String contenido = etContenido.getText().toString();
 
-        progressBarEditar.setVisibility(View.VISIBLE);
+        boolean datoValido;
+
+        if (!titulo.isEmpty() || !contenido.isEmpty()) {
+            datoValido = true;
+            if (titulo.isEmpty()) {
+                titulo = "";
+            }
+            if (contenido.isEmpty()) {
+                contenido = "";
+            }
+        } else {
+            datoValido = false;
+            Toast.makeText(getContext(), "No se puede guardar una nota vacía", Toast.LENGTH_SHORT).show();
+        }
+
+        if (datoValido) {
+            if (almacenamientoNube) {
+                guardarDataFirebase(titulo, contenido);
+            } else {
+                guardarDataSQLite(titulo, contenido);
+            }
+        }
+    }
+
+    public void guardarDataFirebase(String titulo, String contenido) {
+        String userID = user.getUid();
+
+        progressBar.setVisibility(View.VISIBLE);
+        etTitulo.setEnabled(false);
+        etContenido.setEnabled(false);
+        button.setEnabled(false);
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> nota = new HashMap<>();
         nota.put(Constantes.BD_TITULO_NOTAS, titulo);
         nota.put(Constantes.BD_CONTENIDO_NOTAS, contenido);
 
-        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS).document(idDoc).set(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
+        db.collection(Constantes.BD_PROPIETARIOS).document(userID).collection(Constantes.BD_NOTAS).document(idDoc).update(nota).addOnSuccessListener(new OnSuccessListener<Void>() {
 
             public void onSuccess(Void aVoid) {
-                progressBarEditar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
                 requireActivity().finish();
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.w("msg", "Error adding document", e);
-                progressBarEditar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                etTitulo.setEnabled(true);
+                etContenido.setEnabled(true);
+                button.setEnabled(true);
             }
         });
     }
 
-    public void guardarDataSQLite() {
-        String titulo = etTitulo.getText().toString();
-        String contenido = etContenido.getText().toString();
-
+    public void guardarDataSQLite(String titulo, String contenido) {
         ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constantes.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
 
@@ -202,6 +249,5 @@ public class EditarNotaFragment extends Fragment {
 
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
         requireActivity().finish();
-
     }
 }
