@@ -175,4 +175,7 @@
     <string name="btn_borrar_datos_nube">Borrar Datos en la Nube</string>
     <string name="btn_borrar_datos_dispositivo">Borrar Datos en el Dispositivo</string>
     <string name="btn_borrar_datos_todos">Borrar todos los Datos</string>
+    <string name="error_campo_vacio">El campo no puede estar vacío</string>
+    <string name="formato_email_incorrecto">Formato incorrecto para el correo</string>
+    <string name="error_longitud_pass">Mínimo 6 caracteres</string>
 </resources>

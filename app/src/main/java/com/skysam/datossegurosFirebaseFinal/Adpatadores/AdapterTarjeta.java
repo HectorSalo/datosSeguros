@@ -22,9 +22,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skysam.datossegurosFirebaseFinal.ConexionSQLite;
+import com.skysam.datossegurosFirebaseFinal.Clases.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.Constructores.TarjetaConstructor;
-import com.skysam.datossegurosFirebaseFinal.EditarActivity;
+import com.skysam.datossegurosFirebaseFinal.ui.general.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 import com.google.android.gms.tasks.OnFailureListener;

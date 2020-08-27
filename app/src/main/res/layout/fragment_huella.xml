@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccent"
     android:visibility="visible"
-    tools:context=".FragmentsBloqueo.HuellaFragment">
+    tools:context=".ui.ajustes.HuellaFragment">
 
 
     <LinearLayout

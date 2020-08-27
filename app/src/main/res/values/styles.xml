@@ -33,6 +33,13 @@
         <item name="android:textColor">#fff</item>
     </style>
 
+    <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
     <style name="Theme.Acerca" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">#000000</item>
 
