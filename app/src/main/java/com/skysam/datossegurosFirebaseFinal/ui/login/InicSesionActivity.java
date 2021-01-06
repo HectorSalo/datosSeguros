@@ -31,9 +31,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.skysam.datossegurosFirebaseFinal.ui.interfaces.InicSesion;
 
-public class InicSesionActivity extends AppCompatActivity implements InicSesion {
+public class InicSesionActivity extends AppCompatActivity{
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -84,7 +83,7 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
         activityInicSesionBinding.button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //validarInciarSesion();
+                validarInciarSesion();
             }
         });
 
@@ -124,8 +123,8 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
     }
 
     public void validarInciarSesion() {
-        String email = usuario.getText().toString();
-        String password = contrasena.getText().toString();
+        String email = activityInicSesionBinding.etInicSesionUsuario.getText().toString();
+        String password = activityInicSesionBinding.etInicSesionContrasena.getText().toString();
         boolean emailValido;
         boolean passwordValido;
 
@@ -133,24 +132,24 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
             if (email.contains("@")) {
                 emailValido = true;
             } else {
-                usuario.setError("Formato incorrecto para correo");
+                activityInicSesionBinding.etInicSesionUsuario.setError("Formato incorrecto para correo");
                 emailValido = false;
             }
         } else {
-            usuario.setError("El campo no puede estar vacío");
+            activityInicSesionBinding.etInicSesionUsuario.setError("El campo no puede estar vacío");
             emailValido = false;
         }
 
         if (password.isEmpty() || (password.length() < 6)) {
             passwordValido = false;
-            contrasena.setError("Mínimo 6 caracteres");
+            activityInicSesionBinding.etInicSesionContrasena.setError("Mínimo 6 caracteres");
         } else {
             passwordValido = true;
 
         }
 
         if (passwordValido && emailValido) {
-            progressBarInicSesion.setVisibility(View.VISIBLE);
+            activityInicSesionBinding.progressBar.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -158,11 +157,11 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
                             if (task.isSuccessful()) {
                                 Log.d("msg", "signInWithEmail:success");
                                 user = mAuth.getCurrentUser();
-                                progressBarInicSesion.setVisibility(View.GONE);
+                                activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             } else {
                                 // If sign in fails, display a message to the user.
-                                progressBarInicSesion.setVisibility(View.GONE);
+                                activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                                 Log.w("msg", "signInWithEmail:failure", task.getException());
                                 Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                         Toast.LENGTH_LONG).show();
@@ -194,7 +193,7 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
     }
 
     public void autenticarFirebaseGoogle (GoogleSignInAccount acct) {
-        progressBarInicSesion.setVisibility(View.VISIBLE);
+        activityInicSesionBinding.progressBar.setVisibility(View.VISIBLE);
         Log.d("msg", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
@@ -206,13 +205,13 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("msg", "signInWithCredential:success");
                             user = mAuth.getCurrentUser();
-                            progressBarInicSesion.setVisibility(View.GONE);
+                            activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("msg", "signInWithCredential:failure", task.getException());
-                            progressBarInicSesion.setVisibility(View.GONE);
+                            activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                     Toast.LENGTH_LONG).show();
                         }
@@ -240,43 +239,4 @@ public class InicSesionActivity extends AppCompatActivity implements InicSesion 
         super.onBackPressed();
     }
 
-    @Override
-    public void showProgress() {
-        activityInicSesionBinding.progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgress() {
-        activityInicSesionBinding.progressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    public void showErrorEmailEmpty() {
-        activityInicSesionBinding.inputLayoutEmail.setError(getString(R.string.error_campo_vacio));
-    }
-
-    @Override
-    public void showErrorPassEmpty() {
-        activityInicSesionBinding.inputLayoutPass.setError(getString(R.string.error_campo_vacio));
-    }
-
-    @Override
-    public void showErrorEmailFormatIncorrect() {
-        activityInicSesionBinding.inputLayoutEmail.setError(getString(R.string.formato_email_incorrecto));
-    }
-
-    @Override
-    public void showErrorPassEmptyLongIncorrect() {
-        activityInicSesionBinding.inputLayoutPass.setError(getString(R.string.error_longitud_pass));
-    }
-
-    @Override
-    public void initSession() {
-
-    }
-
-    @Override
-    public void errorSession() {
-
-    }
 }
