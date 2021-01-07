@@ -36,8 +36,6 @@ public class PINFragment extends Fragment {
     private SharedPreferences sharedPreferences;
 
 
-    private OnFragmentInteractionListener mListener;
-
     public PINFragment() {
         // Required empty public constructor
     }
@@ -118,33 +116,6 @@ public class PINFragment extends Fragment {
         });
 
         return vista;
-    }
-
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     public void validarPinRespaldo() {

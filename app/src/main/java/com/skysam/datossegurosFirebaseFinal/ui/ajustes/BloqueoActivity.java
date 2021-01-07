@@ -15,10 +15,9 @@ import com.skysam.datossegurosFirebaseFinal.ui.ajustes.PINFragment;
 import com.skysam.datossegurosFirebaseFinal.ui.ajustes.SinBloqueoFragment;
 import com.skysam.datossegurosFirebaseFinal.Variables.Constantes;
 
-public class BloqueoActivity extends AppCompatActivity implements HuellaFragment.OnFragmentInteractionListener, SinBloqueoFragment.OnFragmentInteractionListener, PINFragment.OnFragmentInteractionListener {
+public class BloqueoActivity extends AppCompatActivity {
 
     private String bloqueoGuardado;
-    private Bundle myBundle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,72 +59,37 @@ public class BloqueoActivity extends AppCompatActivity implements HuellaFragment
         PINFragment pinFragment = new PINFragment();
 
 
-        myBundle = null;
-
-        if (this.getIntent().getExtras() != null) {
-            myBundle = this.getIntent().getExtras();
-        }
-
+        Bundle myBundle = this.getIntent().getExtras();
         Bundle bundleFragment = new Bundle();
 
-        if (user != null) {
-            if (myBundle != null) {
-                String bloqueoEscogido = myBundle.getString(Constantes.PREFERENCE_TIPO_BLOQUEO);
-                switch (bloqueoEscogido) {
-                    case Constantes.PREFERENCE_SIN_BLOQUEO:
-                        bundleFragment.putInt("null", 0);
-                        bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
-                        bundleFragment.putString("bloqueoEscogido", Constantes.PREFERENCE_SIN_BLOQUEO);
-                        pinFragment.setArguments(bundleFragment);
-                        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, pinFragment).commit();
-                        break;
-                    case Constantes.PREFERENCE_HUELLA:
-                        bundleFragment = new Bundle();
-                        bundleFragment.putInt("null", 0);
-                        bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
-                        bundleFragment.putString("bloqueoEscogido", Constantes.PREFERENCE_HUELLA);
-                        huellaFragment.setArguments(bundleFragment);
-                        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, huellaFragment).commit();
-                        break;
-                    case Constantes.PREFERENCE_PIN:
-                        bundleFragment = new Bundle();
-                        bundleFragment.putInt("null", 0);
-                        bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
-                        bundleFragment.putString("bloqueoEscogido", Constantes.PREFERENCE_PIN);
-                        pinFragment.setArguments(bundleFragment);
-                        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, pinFragment).commit();
-                        break;
-                }
-            } else {
-                switch (bloqueoGuardado) {
-                    case Constantes.PREFERENCE_SIN_BLOQUEO:
-                        bundleFragment.putInt("null", 1);
-                        bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
-                        sinBloqueoFragment.setArguments(bundleFragment);
-                        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, sinBloqueoFragment).commit();
-                        break;
-                    case Constantes.PREFERENCE_HUELLA:
-                        bundleFragment.putInt("null", 1);
-                        bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
-                        huellaFragment.setArguments(bundleFragment);
-                        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, huellaFragment).commit();
-                        break;
-                    case Constantes.PREFERENCE_PIN:
-                        bundleFragment.putInt("null", 1);
-                        bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
-                        pinFragment.setArguments(bundleFragment);
-                        getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, pinFragment).commit();
-                        break;
-                }
+        if (myBundle != null) {
+            String bloqueoEscogido = myBundle.getString(Constantes.PREFERENCE_TIPO_BLOQUEO);
+            switch (bloqueoEscogido) {
+                case Constantes.PREFERENCE_SIN_BLOQUEO:
+                    bundleFragment.putInt("null", 0);
+                    bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
+                    bundleFragment.putString("bloqueoEscogido", Constantes.PREFERENCE_SIN_BLOQUEO);
+                    pinFragment.setArguments(bundleFragment);
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, pinFragment).commit();
+                    break;
+                case Constantes.PREFERENCE_HUELLA:
+                    bundleFragment = new Bundle();
+                    bundleFragment.putInt("null", 0);
+                    bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
+                    bundleFragment.putString("bloqueoEscogido", Constantes.PREFERENCE_HUELLA);
+                    huellaFragment.setArguments(bundleFragment);
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, huellaFragment).commit();
+                    break;
+                case Constantes.PREFERENCE_PIN:
+                    bundleFragment = new Bundle();
+                    bundleFragment.putInt("null", 0);
+                    bundleFragment.putString("bloqueoGuardado", bloqueoGuardado);
+                    bundleFragment.putString("bloqueoEscogido", Constantes.PREFERENCE_PIN);
+                    pinFragment.setArguments(bundleFragment);
+                    getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, pinFragment).commit();
+                    break;
             }
-        } else {
-            getSupportFragmentManager().beginTransaction().add(R.id.contenedorFragmentsBloqueo, sinBloqueoFragment).commit();
         }
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
