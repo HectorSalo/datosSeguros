@@ -1,5 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.ui.login;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,15 @@ public class InicSesionActivity extends AppCompatActivity{
         activityInicSesionBinding = ActivityInicSesionBinding.inflate(getLayoutInflater());
         View view = activityInicSesionBinding.getRoot();
         setContentView(view);
+
+        OnBackPressedCallback callback = new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                finishAffinity();
+            }
+        };
+
+        getOnBackPressedDispatcher().addCallback(this, callback);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -233,10 +243,4 @@ public class InicSesionActivity extends AppCompatActivity{
             }
         });
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
 }

@@ -19,6 +19,7 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -82,6 +83,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private ProgressBar progressBarCargar;
     private SharedPreferences sharedPreferences;
     private boolean almacenamientoNube, creado;
+    private static final int INTERVALO = 2500;
+    private long tiempoPrimerClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         setContentView(R.layout.activity_main);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         navView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         Objects.requireNonNull(getSupportActionBar()).setDisplayShowHomeEnabled(true);
@@ -208,7 +212,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     @Override
     public void onBackPressed() {
-        confirmarCerrarSesion();
+        if (tiempoPrimerClick + INTERVALO > System.currentTimeMillis()) {
+            finishAffinity();
+        } else {
+            Toast.makeText(this, "Vuelve a presionar para salir", Toast.LENGTH_SHORT).show();
+        }
+        tiempoPrimerClick = System.currentTimeMillis();
     }
 
 
@@ -861,4 +870,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
     }
+
+
 }

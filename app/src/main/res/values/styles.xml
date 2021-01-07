@@ -1,28 +1,28 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="AppThemeRojo" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeRojo" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/md_red_900</item>
         <item name="colorPrimaryDark">@color/md_red_500_75</item>
         <item name="colorAccent">@color/md_grey_900</item>
     </style>
 
-    <style name="AppThemeMarron" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeMarron" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryMarron</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkMarron</item>
         <item name="colorAccent">@color/colorAccentMarron</item>
     </style>
 
-    <style name="AppThemeLila" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppThemeLila" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimaryLila</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDarkLila</item>
@@ -33,14 +33,14 @@
         <item name="android:textColor">#fff</item>
     </style>
 
-    <style name="Theme.NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Theme.Acerca" parent="Theme.AppCompat.NoActionBar">
+    <style name="Theme.Acerca" parent="Theme.MaterialComponents.NoActionBar">
         <item name="colorPrimary">#000000</item>
 
     </style>
@@ -62,11 +62,4 @@
     <style name="Theme.Dialog.MiPerfilLila" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="colorPrimary">@color/colorPrimaryLila</item>
     </style>
-
-    <style name="CampoTextoBlanco" parent="Theme.AppCompat.Light">
-        <item name="colorControlNormal">#fff</item>
-        <item name="colorControlActivated">#fff</item>
-        <item name="android:textColorHighlight">#fff</item>
-    </style>
-
 </resources>

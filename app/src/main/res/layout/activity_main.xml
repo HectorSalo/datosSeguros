@@ -50,7 +50,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="64dp"
-        >
+        android:tintMode="@color/md_text_white">
 
     </com.google.android.material.floatingactionbutton.FloatingActionButton>
 

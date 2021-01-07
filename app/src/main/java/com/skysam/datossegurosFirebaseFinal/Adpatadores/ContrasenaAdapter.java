@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
@@ -24,7 +25,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import com.skysam.datossegurosFirebaseFinal.Clases.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.Constructores.ContrasenaConstructor;
@@ -177,6 +181,8 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
 
         TextView servicio, usuario, contrasena, vencimiento, menu;
         CardView cardView;
+        ImageButton arrow;
+        ConstraintLayout constraintExpandable;
 
         public ViewHolderContrasena(@NonNull View itemView) {
             super(itemView);
@@ -187,6 +193,23 @@ public class ContrasenaAdapter extends RecyclerView.Adapter<ContrasenaAdapter.Vi
             vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
             menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
             cardView = itemView.findViewById(R.id.cardviewListas);
+            arrow = itemView.findViewById(R.id.ib_arrow);
+            constraintExpandable = itemView.findViewById(R.id.expandable);
+
+            arrow.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (constraintExpandable.getVisibility() == View.GONE) {
+                        TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
+                        constraintExpandable.setVisibility(View.VISIBLE);
+                        arrow.setImageResource(R.drawable.ic_keyboard_arrow_up_24);
+                    } else {
+                        TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
+                        constraintExpandable.setVisibility(View.GONE);
+                        arrow.setImageResource(R.drawable.ic_keyboard_arrow_down_24);
+                    }
+                }
+            });
         }
     }
 

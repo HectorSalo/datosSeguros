@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.nota.AddNotaFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -26,13 +31,14 @@
             <EditText
                 android:id="@+id/etContenido"
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/etTitulo"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:gravity="top"
                 android:hint="@string/contenidoNota"
+                android:maxLines="10"
                 android:inputType="textMultiLine|textCapSentences"
                 android:paddingTop="24dp" />
 
@@ -41,8 +47,8 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/etTitulo"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="128dp"
                 android:indeterminateTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
@@ -51,11 +57,11 @@
             <RadioGroup
                 android:id="@+id/radio_almacenamiento"
                 android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/etContenido"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_below="@id/etContenido">
+                android:orientation="horizontal">
 
 
                 <TextView
@@ -63,38 +69,38 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Guardar en:"
-                    android:paddingEnd="4dp"/>
+                    android:paddingEnd="4dp"
+                    android:text="Guardar en:" />
 
                 <RadioButton
                     android:id="@+id/radioButton_nube"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/radioNube"/>
+                    android:text="@string/radioNube" />
 
                 <RadioButton
                     android:id="@+id/radioButton_dispositivo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/radioDispositivo"/>
+                    android:text="@string/radioDispositivo" />
             </RadioGroup>
 
-        <Button
-            android:id="@+id/guardarNota"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/radio_almacenamiento"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:textAllCaps="false"
-            android:textColor="@color/md_text_white"
-            android:textSize="20sp"
-            android:text="@string/buttonGuardar" />
+            <Button
+                android:id="@+id/guardarNota"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/radio_almacenamiento"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="24dp"
+                android:text="@string/buttonGuardar"
+                android:textAllCaps="false"
+                android:textColor="@color/md_text_white"
+                android:textSize="20sp" />
 
 
         </RelativeLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
