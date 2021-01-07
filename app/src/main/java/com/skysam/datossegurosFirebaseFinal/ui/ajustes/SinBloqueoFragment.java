@@ -56,34 +56,34 @@ public class SinBloqueoFragment extends Fragment {
         } else {
             usuario = "default";
         }
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(usuario, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(usuario, Context.MODE_PRIVATE);
 
         String tema = sharedPreferences.getString(Constantes.PREFERENCE_TEMA, Constantes.PREFERENCE_AMARILLO);
 
         switch (tema){
             case Constantes.PREFERENCE_AMARILLO:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorAccent));
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDark));
                 break;
             case Constantes.PREFERENCE_ROJO:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentRojo));
-                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkRojo));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorAccentRojo));
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDarkRojo));
                 break;
             case Constantes.PREFERENCE_MARRON:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentMarron));
-                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkMarron));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorAccentMarron));
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDarkMarron));
                 break;
             case Constantes.PREFERENCE_LILA:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorAccentLila));
-                textView.setTextColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDarkLila));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorAccentLila));
+                textView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorPrimaryDarkLila));
                 break;
         }
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(getContext(), InicSesionActivity.class);
-                Objects.requireNonNull(getActivity()).startActivity(intent);
+                Intent intent = new Intent(requireContext(), InicSesionActivity.class);
+                requireActivity().startActivity(intent);
 
             }
         }, 1000);
