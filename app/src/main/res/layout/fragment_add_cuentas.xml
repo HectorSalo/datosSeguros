@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.cuenta.AddCuentasFragment">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -15,12 +20,12 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlined_titular"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/titular"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                style="?attr/textInputStyle">
+                android:hint="@string/titular">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_titular"
@@ -32,13 +37,13 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlined_banco"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/banco"
+                android:layout_below="@id/outlined_titular"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_below="@id/outlined_titular"
-                style="?attr/textInputStyle">
+                android:hint="@string/banco">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_banco"
@@ -50,20 +55,20 @@
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlined_numero_cuenta"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/numeroCuenta"
+                android:layout_below="@id/outlined_banco"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_below="@id/outlined_banco"
-                style="?attr/textInputStyle">
+                android:hint="@string/numeroCuenta">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_numero_cuenta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:maxLength="20"/>
+                    android:maxLength="20" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,164 +77,164 @@
                 style="?android:attr/progressBarStyle"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:layout_centerHorizontal="true"
                 android:layout_below="@id/outlined_numero_cuenta"
+                android:layout_centerHorizontal="true"
                 android:indeterminateTint="@color/colorPrimaryDark"
                 android:visibility="gone" />
 
-        <LinearLayout
-            android:id="@+id/layoutDocumento"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_below="@id/outlined_numero_cuenta">
-
-            <Spinner
-                android:id="@+id/spinnerTipoDocumento"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"/>
-
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/outlined_documento"
+            <LinearLayout
+                android:id="@+id/layoutDocumento"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/documentoNumero"
-                style="?attr/textInputStyle">
+                android:layout_below="@id/outlined_numero_cuenta"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_documento"
+                <Spinner
+                    android:id="@+id/spinnerTipoDocumento"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/outlined_documento"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLength="10"/>
+                    android:hint="@string/documentoNumero">
 
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_documento"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="number"
+                        android:maxLength="10" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlined_telefono"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/telefono"
+                android:layout_below="@id/layoutDocumento"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_below="@id/layoutDocumento"
-                style="?attr/textInputStyle">
+                android:hint="@string/telefono">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_telefono"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
-                    android:maxLength="11"/>
+                    android:maxLength="11" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/outlined_correo"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/usuarioCorreo"
+                android:layout_below="@id/outlined_telefono"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
-                android:layout_below="@id/outlined_telefono"
-                style="?attr/textInputStyle">
+                android:hint="@string/usuarioCorreo">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/et_correo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textEmailAddress"/>
+                    android:inputType="textEmailAddress" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/etTipo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/outlined_correo"
-            android:ems="10"
-            android:text="@string/tipodeCuenta"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:textSize="18sp"
-            android:paddingTop="24dp"/>
-
-        <RadioGroup
-            android:id="@+id/radioTipoCuenta"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/etTipo"
-            android:orientation="horizontal"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
-
-            <RadioButton
-                android:id="@+id/radioButtonAhorro"
+            <TextView
+                android:id="@+id/etTipo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cuentaAhorro" />
+                android:layout_below="@id/outlined_correo"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:ems="10"
+                android:paddingTop="24dp"
+                android:text="@string/tipodeCuenta"
+                android:textSize="18sp" />
 
-            <RadioButton
-                android:id="@+id/radioButtonCorriente"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/cuentaCorriente" />
+            <RadioGroup
+                android:id="@+id/radioTipoCuenta"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/etTipo"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:orientation="horizontal">
 
-        </RadioGroup>
+                <RadioButton
+                    android:id="@+id/radioButtonAhorro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cuentaAhorro" />
+
+                <RadioButton
+                    android:id="@+id/radioButtonCorriente"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/cuentaCorriente" />
+
+            </RadioGroup>
 
             <RadioGroup
                 android:id="@+id/radio_almacenamiento"
                 android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/radioTipoCuenta"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="16dp"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_below="@id/radioTipoCuenta">
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/textView10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Guardar en:"
-                    android:paddingEnd="4dp"/>
+                    android:paddingEnd="4dp"
+                    android:text="Guardar en:" />
 
                 <RadioButton
                     android:id="@+id/radioButton_nube"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/radioNube"/>
+                    android:text="@string/radioNube" />
 
                 <RadioButton
                     android:id="@+id/radioButton_dispositivo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/radioDispositivo"/>
+                    android:text="@string/radioDispositivo" />
             </RadioGroup>
 
-        <Button
-            android:id="@+id/guardarCuenta"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/radio_almacenamiento"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:text="@string/buttonGuardar"
-            android:textSize="20sp"
-            android:textAllCaps="false"
-            android:textColor="@color/md_text_white"/>
+            <Button
+                android:id="@+id/guardarCuenta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/radio_almacenamiento"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="32dp"
+                android:text="@string/buttonGuardar"
+                android:textAllCaps="false"
+                android:textColor="@color/md_text_white"
+                android:textSize="20sp" />
 
 
         </RelativeLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

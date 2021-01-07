@@ -33,16 +33,21 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView">
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:hintTextColor="@color/md_brown_500_75"
+        app:boxStrokeColor="@color/md_brown_500_75"
+        >
 
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etInicSesionUsuario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/usuarioCorreo"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textCursorDrawable="@null"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -55,15 +60,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/input_layout_email"
-        app:passwordToggleEnabled="true">
+        app:passwordToggleEnabled="true"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:hintTextColor="@color/md_brown_500_75"
+        app:boxStrokeColor="@color/md_brown_500_75">
 
-        <EditText
+        <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etInicSesionContrasena"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/contrasena"
             android:inputType="textPassword"
+            android:textCursorDrawable="@null"
             />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -76,7 +85,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="64dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/md_brown_500_75"
+        android:backgroundTint="@color/md_brown_500_75"
         android:elevation="4dp"
         android:text="@string/inicSesion"
         android:textAllCaps="false"
