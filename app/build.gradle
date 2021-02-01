@@ -9,8 +9,8 @@ android {
         applicationId 'com.skysam.datossegurosFirebaseFinal'
         minSdkVersion 22
         targetSdkVersion 30
-        versionCode 6
-        versionName "4.2"
+        versionCode 7
+        versionName "5.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
