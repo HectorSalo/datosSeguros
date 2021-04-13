@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.cuenta.AddCuentasFragment">
+    tools:context=".accounts.ui.AddCuentasFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
@@ -79,7 +79,7 @@
                 android:layout_height="80dp"
                 android:layout_below="@id/outlined_numero_cuenta"
                 android:layout_centerHorizontal="true"
-                android:indeterminateTint="@color/colorPrimaryDark"
+                android:indeterminateTint="@color/color_yellow_dark"
                 android:visibility="gone" />
 
             <LinearLayout

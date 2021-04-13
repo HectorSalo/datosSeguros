@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.ajustes.AcercaActivity"
+    tools:context=".settings.AcercaActivity"
     android:background="#2c2b2b">
 
 

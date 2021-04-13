@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.InicSesionActivity"
+    tools:context=".launcher.ui.InicSesionActivity"
     android:id="@+id/constraintRegistrar"
-    android:background="@color/colorAccent"
+    android:background="@color/color_blue_grey"
     >
 
     <TextView

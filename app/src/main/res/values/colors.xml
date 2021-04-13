@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#FFC107</color>
-    <color name="colorPrimaryDark">#FFA000</color>
-    <color name="colorAccent">#607D8B</color>
+    <color name="color_yellow_ligth">#FFC107</color>
+    <color name="color_yellow_dark">#FFA000</color>
+    <color name="color_blue_grey">#607D8B</color>
     <color name="color_fondo_ajustes">#90a4ae</color>
     <color name="color_fondo_agregar">#99BED1</color>
 
 
-    <color name="colorPrimaryRojo">#b71c1c</color>
-    <color name="colorPrimaryDarkRojo">#c0f44336</color>
-    <color name="colorAccentRojo">#212121</color>
+    <color name="color_red">#b71c1c</color>
+    <color name="color_red_ligth">#c0f44336</color>
+    <color name="color_black_ligth">#212121</color>
     <color name="color_fondo_ajustes_rojo">#A67676</color>
     <color name="color_fondo_agregar_rojo">#BFA7A7</color>
 
 
-    <color name="colorPrimaryMarron">#FFCC80</color>
-    <color name="colorPrimaryDarkMarron">#AD6D3F</color>
-    <color name="colorAccentMarron">#3e2723</color>
+    <color name="color_beige">#FFCC80</color>
+    <color name="color_camel">#AD6D3F</color>
+    <color name="color_brown">#3e2723</color>
     <color name="color_fondo_ajustes_marron">#987E79</color>
     <color name="color_fondo_agregar_marron">#D1B7B2</color>
 
-    <color name="colorPrimaryLila">#ba68c8</color>
-    <color name="colorPrimaryDarkLila">#8e24aa</color>
-    <color name="colorAccentLila">#3B0250</color>
+    <color name="color_rose">#ba68c8</color>
+    <color name="color_fucsia">#8e24aa</color>
+    <color name="color_purple">#3B0250</color>
     <color name="color_fondo_ajustes_lila">#7D5F88</color>
     <color name="color_fondo_agregar_lila">#B899C3</color>
 
-    <color name="colorRed">#b71c1c</color>
+    <color name="color_red_error">#b71c1c</color>
     <color name="colorBackgroundEditar">#455A64</color>
 
 

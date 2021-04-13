@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_lists">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardviewCuenta"
@@ -20,8 +20,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/tvTitular"
@@ -66,10 +65,10 @@
                 android:id="@+id/expandable"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tvBanco"
-                android:visibility="gone">
+                app:layout_constraintTop_toBottomOf="@id/tvBanco">
 
                 <TextView
                     android:id="@+id/textView9"
@@ -149,7 +148,7 @@
                     android:textColor="#fff"
                     android:textSize="18sp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/textView15"/>
+                    app:layout_constraintTop_toBottomOf="@id/textView15" />
 
                 <TextView
                     android:id="@+id/tvTelefono"
@@ -197,8 +196,8 @@
             android:gravity="center"
             android:paddingEnd="16dp"
             android:text="&#8942;"
-            android:textSize="18sp"
-            android:textColor="#fff"/>
+            android:textColor="#fff"
+            android:textSize="18sp" />
     </com.google.android.material.card.MaterialCardView>
 
 </RelativeLayout>

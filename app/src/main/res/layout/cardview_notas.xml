@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_lists">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardviewNota"
@@ -21,8 +21,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            >
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -36,9 +35,9 @@
                     android:layout_weight="1"
                     android:hint="@string/tituloNota"
                     android:paddingStart="16dp"
-                    android:textSize="30sp"
                     android:textColor="#fff"
-                    android:textColorHint="#fff"/>
+                    android:textColorHint="#fff"
+                    android:textSize="30sp" />
 
                 <TextView
                     android:id="@+id/tvcontenidoNota"
@@ -50,9 +49,9 @@
                     android:inputType="textMultiLine"
                     android:paddingStart="16dp"
                     android:paddingTop="32dp"
-                    android:textSize="22sp"
                     android:textColor="#fff"
-                    android:textColorHint="#fff"/>
+                    android:textColorHint="#fff"
+                    android:textSize="22sp" />
             </LinearLayout>
 
 
@@ -66,8 +65,8 @@
             android:gravity="center"
             android:paddingEnd="16dp"
             android:text="&#8942;"
-            android:textSize="18dp"
-            android:textColor="#fff"/>
+            android:textColor="#fff"
+            android:textSize="18dp" />
     </androidx.cardview.widget.CardView>
 
 </RelativeLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_navigation"
+    app:startDestination="@id/nav_passwords">
+
+    <fragment
+        android:id="@+id/nav_passwords"
+        android:name="com.skysam.datossegurosFirebaseFinal.passwords.ui.PasswordsFragment"
+        tools:layout="@layout/passwords_fragment" />
+    <fragment
+        android:id="@+id/nav_accounts"
+        android:name="com.skysam.datossegurosFirebaseFinal.accounts.ui.AccountsFragment"
+        tools:layout="@layout/account_fragment" />
+    <fragment
+        android:id="@+id/nav_cards"
+        android:name="com.skysam.datossegurosFirebaseFinal.cards.ui.CardsFragment"
+        tools:layout="@layout/cards_fragment" />
+    <fragment
+        android:id="@+id/nav_notes"
+        android:name="com.skysam.datossegurosFirebaseFinal.notes.ui.NotesFragment"
+        tools:layout="@layout/notes_fragment" />
+</navigation>

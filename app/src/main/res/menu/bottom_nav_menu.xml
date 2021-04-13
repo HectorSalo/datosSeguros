@@ -2,22 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_contrasena"
+        android:id="@+id/nav_passwords"
         android:icon="@drawable/ic_contrasena"
         android:title="@string/title_contrasenas" />
 
     <item
-        android:id="@+id/navigation_cuentas"
+        android:id="@+id/nav_accounts"
         android:icon="@drawable/ic_banco"
         android:title="@string/title_cuentas" />
 
     <item
-        android:id="@+id/navigation_tarjetas"
+        android:id="@+id/nav_cards"
         android:icon="@drawable/ic_card"
         android:title="@string/title_tarjetas" />
 
     <item
-        android:id="@+id/navigation_notas"
+        android:id="@+id/nav_notes"
         android:icon="@drawable/ic_nota"
         android:title="@string/title_notas" />
 

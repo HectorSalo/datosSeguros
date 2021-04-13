@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.nota.AddNotaFragment">
+    tools:context=".notes.ui.AddNotaFragment">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="0dp"
@@ -50,7 +50,7 @@
                 android:layout_below="@id/etTitulo"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="128dp"
-                android:indeterminateTint="@color/colorPrimaryDark"
+                android:indeterminateTint="@color/color_yellow_dark"
                 android:visibility="gone" />
 
 
