@@ -6,14 +6,6 @@ public class PasswordsModel {
 
     public PasswordsModel() {}
 
-    public PasswordsModel(String servicio, String usuario, String contrasena, int vencimiento, String idContrasena) {
-        this.servicio = servicio;
-        this.usuario = usuario;
-        this.contrasena = contrasena;
-        this.vencimiento = vencimiento;
-        this.idContrasena = idContrasena;
-    }
-
     public String getIdContrasena() {
         return idContrasena;
     }
