@@ -29,6 +29,11 @@ class PasswordsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        viewModel.passwords.observe(viewLifecycleOwner, {
+            val test = it.size
+            val tes = it.size
+        })
+
         fab = requireActivity().findViewById(R.id.fab)
     }
 
