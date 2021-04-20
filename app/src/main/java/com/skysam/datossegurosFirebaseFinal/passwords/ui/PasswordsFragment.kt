@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
+import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel
 import com.skysam.datossegurosFirebaseFinal.databinding.PasswordsFragmentBinding
 
 class PasswordsFragment : Fragment() {
@@ -19,6 +20,8 @@ class PasswordsFragment : Fragment() {
     private var _binding: PasswordsFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
+    private val passwords: MutableList<PasswordsModel> = mutableListOf()
+    private lateinit var adapter: PasswordsAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -29,9 +32,15 @@ class PasswordsFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        adapter = PasswordsAdapter(passwords)
+        binding.recycler.adapter = adapter
+        binding.recycler.setHasFixedSize(true)
         viewModel.passwords.observe(viewLifecycleOwner, {
-            val test = it.size
-            val tes = it.size
+            if (it.isNotEmpty()) {
+                adapter.updateList(it)
+                binding.recycler.visibility = View.VISIBLE
+                binding.progressBar.visibility = View.GONE
+            }
         })
 
         fab = requireActivity().findViewById(R.id.fab)

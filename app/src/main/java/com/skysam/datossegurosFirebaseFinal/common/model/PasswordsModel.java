@@ -3,6 +3,15 @@ package com.skysam.datossegurosFirebaseFinal.common.model;
 public class PasswordsModel {
     private String servicio, usuario, contrasena, idContrasena;
     private int vencimiento;
+    private boolean isExpanded = false;
+
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
+    }
 
     public PasswordsModel() {}
 

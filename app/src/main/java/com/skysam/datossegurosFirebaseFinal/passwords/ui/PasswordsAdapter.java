@@ -1,5 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
+import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -11,6 +12,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -32,6 +35,7 @@ import androidx.transition.TransitionManager;
 
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -47,32 +51,32 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.ViewHolderContrasena> {
 
-    private ArrayList<PasswordsModel> listContrasena;
+    private final List<PasswordsModel> listContrasena;
     private ArrayList<String> selectedItems;
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    private int expandedPosition = -1;
 
-    public PasswordsAdapter(ArrayList<PasswordsModel> listContrasena, Context mCtx) {
+    public PasswordsAdapter(List<PasswordsModel> listContrasena) {
         this.listContrasena = listContrasena;
-        this.mCtx = mCtx;
     }
 
     @NonNull
     @Override
     public PasswordsAdapter.ViewHolderContrasena onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.cardview_contrasena, null, false);
-
+        mCtx = viewGroup.getContext();
         return new ViewHolderContrasena(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final PasswordsAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
 
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
 
 
         final boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
@@ -89,6 +93,12 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                 viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.color_red_error));
 
             }
+        }
+
+        if (i == expandedPosition) {
+            viewHolderContrasena.constraintExpandable.setVisibility(View.VISIBLE);
+        } else {
+            viewHolderContrasena.constraintExpandable.setVisibility(View.GONE);
         }
 
         viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
@@ -178,22 +188,29 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
             contrasena = (TextView) itemView.findViewById(R.id.tvContrasena);
             vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
             menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
-            cardView = itemView.findViewById(R.id.cardviewListas);
+            cardView = itemView.findViewById(R.id.cardview);
             arrow = itemView.findViewById(R.id.ib_arrow);
             constraintExpandable = itemView.findViewById(R.id.expandable);
 
             arrow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (constraintExpandable.getVisibility() == View.GONE) {
+                    if (expandedPosition >= 0) {
+                        int prev = expandedPosition;
+                        notifyItemChanged(prev);
+                    }
+                    expandedPosition = getAdapterPosition();
+                    notifyItemChanged(expandedPosition);
+                    /*if (constraintExpandable.getVisibility() == View.GONE) {
                         TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
                         constraintExpandable.setVisibility(View.VISIBLE);
                         arrow.setImageResource(R.drawable.ic_keyboard_arrow_up_24);
+
                     } else {
-                        TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
-                        constraintExpandable.setVisibility(View.GONE);
+                        TransitionManager.beginDelayedTransition(cardView, new AutoTransition().setDuration(25));
                         arrow.setImageResource(R.drawable.ic_keyboard_arrow_down_24);
-                    }
+                        constraintExpandable.setVisibility(View.GONE);
+                    }*/
                 }
             });
         }
@@ -296,10 +313,9 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
     }
 
     public void eliminarFirebase(final PasswordsModel i) {
-        String userID = user.getUid();
         String doc = i.getIdContrasena();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS);
+        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CONTRASENAS);
 
         reference.document(doc)
                 .delete()
@@ -342,8 +358,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        String userID = user.getUid();
-        DocumentReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS).document(idPass);
+        DocumentReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CONTRASENAS).document(idPass);
 
         LinearLayout layout = new LinearLayout(mCtx);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -511,8 +526,8 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                 }).show();
     }
 
-    public void updateList (ArrayList<PasswordsModel> newList) {
-        listContrasena = new ArrayList<>();
+    public void updateList (List<PasswordsModel> newList) {
+        listContrasena.clear();
         listContrasena.addAll(newList);
         notifyDataSetChanged();
     }

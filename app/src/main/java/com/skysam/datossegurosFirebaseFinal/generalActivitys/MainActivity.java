@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         progressBarCargar.setVisibility(View.VISIBLE);
         String userID = user.getUid();
         listContrasena = new ArrayList<>();
-        adapterContrasena = new PasswordsAdapter(listContrasena, this);
+        adapterContrasena = new PasswordsAdapter(listContrasena);
         recycler.setAdapter(adapterContrasena);
 
         ultMetodo = 0;
@@ -481,7 +481,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ultMetodo = 4;
 
         listContrasena = new ArrayList<>();
-        adapterContrasena = new PasswordsAdapter(listContrasena, this);
+        adapterContrasena = new PasswordsAdapter(listContrasena);
         recycler.setAdapter(adapterContrasena);
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");

@@ -23,7 +23,6 @@ object Firestore {
         return FirebaseFirestore.getInstance()
     }
 
-    @ExperimentalCoroutinesApi
     fun getPasswords(): Flow<List<PasswordsModel>> {
         return callbackFlow {
             val request = getInstance().collection(Constants.BD_PROPIETARIOS).document(Auth.getCurrenUser()!!.uid)
