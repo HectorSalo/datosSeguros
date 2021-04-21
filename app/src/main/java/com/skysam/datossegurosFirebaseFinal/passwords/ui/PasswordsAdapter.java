@@ -1,22 +1,17 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
-import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -30,8 +25,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.transition.AutoTransition;
-import androidx.transition.TransitionManager;
 
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel;
@@ -39,12 +32,6 @@ import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -55,13 +42,12 @@ import java.util.List;
 
 public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.ViewHolderContrasena> {
 
-    private final List<PasswordsModel> listContrasena;
+    private final ArrayList<PasswordsModel> listContrasena;
     private ArrayList<String> selectedItems;
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
-    private int expandedPosition = -1;
 
-    public PasswordsAdapter(List<PasswordsModel> listContrasena) {
+    public PasswordsAdapter(ArrayList<PasswordsModel> listContrasena) {
         this.listContrasena = listContrasena;
     }
 
@@ -88,82 +74,64 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         if (listContrasena.get(i).getVencimiento() == 0) {
             viewHolderContrasena.vencimiento.setText("Sin fecha de vencimiento");
         } else {
-            viewHolderContrasena.vencimiento.setText(String.valueOf(listContrasena.get(i).getVencimiento()) + " días");
+            viewHolderContrasena.vencimiento.setText(listContrasena.get(i).getVencimiento() + " días");
             if (listContrasena.get(i).getVencimiento() <= 7 && listContrasena.get(i).getVencimiento() != 0) {
                 viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.color_red_error));
-
             }
         }
+        boolean isExpanded = listContrasena.get(i).isExpanded();
+        viewHolderContrasena.constraintExpandable.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
+        viewHolderContrasena.arrow.setImageResource(isExpanded ? R.drawable.ic_keyboard_arrow_up_24 : R.drawable.ic_keyboard_arrow_down_24);
 
-        if (i == expandedPosition) {
-            viewHolderContrasena.constraintExpandable.setVisibility(View.VISIBLE);
-        } else {
-            viewHolderContrasena.constraintExpandable.setVisibility(View.GONE);
-        }
+        viewHolderContrasena.menu.setOnClickListener(v -> {
+            PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderContrasena.menu);
+            popupMenu.inflate(R.menu.menu_contrasena);
+            popupMenu.setOnMenuItemClickListener(item -> {
+                switch (item.getItemId()) {
+                    case R.id.menu_copiar:
+                        copiar(listContrasena.get(i));
+                        break;
 
-        viewHolderContrasena.menu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderContrasena.menu);
-                popupMenu.inflate(R.menu.menu_contrasena);
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.menu_copiar:
-                                copiar(listContrasena.get(i));
-                                break;
+                    case R.id.menu_compartir:
+                        compartir(listContrasena.get(i));
+                        break;
 
-                            case R.id.menu_compartir:
-                                compartir(listContrasena.get(i));
-                                break;
+                    case R.id.menu_editar:
+                        editar(listContrasena.get(i));
+                        break;
 
-                            case R.id.menu_editar:
-                                editar(listContrasena.get(i));
-                                break;
+                    case R.id.menu_eliminar:
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
+                        dialog.setTitle("Confirmar");
+                        dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
-                            case R.id.menu_eliminar:
-                                AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
-                                dialog.setTitle("Confirmar");
-                                dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
+                        dialog.setPositiveButton("Eliminar", (dialog1, which) -> {
+                            if (almacenamientoNube) {
+                                eliminarFirebase(listContrasena.get(i));
+                            } else {
+                                eliminarSQLite(listContrasena.get(i));
+                            }
+                        });
+                        dialog.setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
+                        dialog.setIcon(R.drawable.ic_delete);
+                        dialog.show();
 
-                                dialog.setPositiveButton("Eliminar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (almacenamientoNube) {
-                                            eliminarFirebase(listContrasena.get(i));
-                                        } else {
-                                            eliminarSQLite(listContrasena.get(i));
-                                        }
-                                    }
-                                });
-                                dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                dialog.setIcon(R.drawable.ic_delete);
-                                dialog.show();
+                        break;
 
-                                break;
-
-                            case R.id.menu_ultimos_pass:
-                                if (almacenamientoNube) {
-                                    verUltimosPassFirebase(listContrasena.get(i).getIdContrasena());
-                                } else {
-                                    verUltimosPassSQLite(listContrasena.get(i).getIdContrasena());
-                                }
-                                break;
-
-                            default:
-                                break;
+                    case R.id.menu_ultimos_pass:
+                        if (almacenamientoNube) {
+                            verUltimosPassFirebase(listContrasena.get(i).getIdContrasena());
+                        } else {
+                            verUltimosPassSQLite(listContrasena.get(i).getIdContrasena());
                         }
-                        return false;
-                    }
-                });
-                popupMenu.show();
-            }
+                        break;
+
+                    default:
+                        break;
+                }
+                return false;
+            });
+            popupMenu.show();
         });
 
     }
@@ -192,26 +160,10 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
             arrow = itemView.findViewById(R.id.ib_arrow);
             constraintExpandable = itemView.findViewById(R.id.expandable);
 
-            arrow.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    if (expandedPosition >= 0) {
-                        int prev = expandedPosition;
-                        notifyItemChanged(prev);
-                    }
-                    expandedPosition = getAdapterPosition();
-                    notifyItemChanged(expandedPosition);
-                    /*if (constraintExpandable.getVisibility() == View.GONE) {
-                        TransitionManager.beginDelayedTransition(cardView, new AutoTransition());
-                        constraintExpandable.setVisibility(View.VISIBLE);
-                        arrow.setImageResource(R.drawable.ic_keyboard_arrow_up_24);
-
-                    } else {
-                        TransitionManager.beginDelayedTransition(cardView, new AutoTransition().setDuration(25));
-                        arrow.setImageResource(R.drawable.ic_keyboard_arrow_down_24);
-                        constraintExpandable.setVisibility(View.GONE);
-                    }*/
-                }
+            arrow.setOnClickListener(view -> {
+                PasswordsModel passwordsModel = listContrasena.get(getAdapterPosition());
+                passwordsModel.setExpanded(!passwordsModel.isExpanded());
+                notifyItemChanged(getAdapterPosition());
             });
         }
     }
@@ -220,43 +172,32 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
-        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
-                String servicio = i.getServicio();
-                String usuario = i.getUsuario();
-                String contrasena = i.getContrasena();
+        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, (dialog1, which, isChecked) -> {
+            String servicio = i.getServicio();
+            String usuario = i.getUsuario();
+            String contrasena = i.getContrasena();
 
-                String [] items = {servicio, usuario, contrasena};
+            String [] items = {servicio, usuario, contrasena};
 
-                if (isChecked) {
-                    selectedCopiar.add(items[which]);
-                } else {
-                    selectedCopiar.remove(items[which]);
-                }
+            if (isChecked) {
+                selectedCopiar.add(items[which]);
+            } else {
+                selectedCopiar.remove(items[which]);
             }
         });
-        dialog.setPositiveButton("Copiar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selection = "";
-                for (String item: selectedCopiar) {
-                    selection = selection + "\n" + item;
-                }
-
-                ClipboardManager clipboardManager = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("text", selection);
-                clipboardManager.setPrimaryClip(clip);
-
-                Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
+        dialog.setPositiveButton("Copiar", (dialog12, which) -> {
+            StringBuilder selection = new StringBuilder();
+            for (String item: selectedCopiar) {
+                selection.append("\n").append(item);
             }
+
+            ClipboardManager clipboardManager = (ClipboardManager) mCtx.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("text", selection.toString());
+            clipboardManager.setPrimaryClip(clip);
+
+            Toast.makeText(mCtx, "Copiado", Toast.LENGTH_SHORT).show();
         });
-        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        dialog.setNegativeButton("Cancelar", (dialog13, which) -> dialog13.dismiss());
         dialog.show();
     }
 
@@ -264,42 +205,31 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         selectedItems = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
-        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, new DialogInterface.OnMultiChoiceClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+        dialog.setMultiChoiceItems(R.array.copiarContrasena, null, (dialog1, which, isChecked) -> {
 
-                String servicio = i.getServicio();
-                String usuario = i.getUsuario();
-                String contrasena = i.getContrasena();
+            String servicio = i.getServicio();
+            String usuario = i.getUsuario();
+            String contrasena = i.getContrasena();
 
-                String [] items = {servicio, usuario, contrasena};
+            String [] items = {servicio, usuario, contrasena};
 
-                if (isChecked) {
-                    selectedItems.add(items[which]);
-                } else {
-                    selectedItems.remove(items[which]);
-                }
+            if (isChecked) {
+                selectedItems.add(items[which]);
+            } else {
+                selectedItems.remove(items[which]);
             }
         });
-        dialog.setPositiveButton("Compartir", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selection = "";
-                for (String item: selectedItems) {
-                    selection = selection + "\n" + item;
-                }
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/plain");
-                intent.putExtra(Intent.EXTRA_TEXT, selection);
-                mCtx.startActivity(Intent.createChooser(intent, "Compartir con"));
+        dialog.setPositiveButton("Compartir", (dialog12, which) -> {
+            StringBuilder selection = new StringBuilder();
+            for (String item: selectedItems) {
+                selection.append("\n").append(item);
             }
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, selection.toString());
+            mCtx.startActivity(Intent.createChooser(intent, "Compartir con"));
         });
-        dialog.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        dialog.setNegativeButton("Cancelar", (dialog13, which) -> dialog13.dismiss());
         dialog.show();
     }
 
@@ -319,21 +249,13 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
 
         reference.document(doc)
                 .delete()
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        listContrasena.remove(i);
-                        notifyDataSetChanged();
-                        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
+                .addOnSuccessListener(aVoid -> {
+                    listContrasena.remove(i);
+                    notifyDataSetChanged();
+                    Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
 
-                    }
                 })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
     }
 
     public void eliminarSQLite(PasswordsModel i) {
@@ -383,50 +305,45 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         textView4.setText("");
         textView5.setText("");
 
-        reference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
+        reference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot doc = task.getResult();
 
-                    if (doc.exists()) {
-                        if (doc.getString(Constants.BD_ULTIMO_PASS_1) != null) {
-                            String pass1 = doc.getString(Constants.BD_ULTIMO_PASS_1);
-                            textView1.setText(pass1);
-                        } else {
-                            textView1.setText("Sin historial de contraseñas");
-                        }
-
-                        if (doc.getString(Constants.BD_ULTIMO_PASS_2) != null) {
-                            String pass2 = doc.getString(Constants.BD_ULTIMO_PASS_2);
-                            textView2.setText(pass2);
-                        }
-
-                        if (doc.getString(Constants.BD_ULTIMO_PASS_3) != null) {
-                            String pass3 = doc.getString(Constants.BD_ULTIMO_PASS_3);
-                            textView3.setText(pass3);
-                        }
-
-                        if (doc.getString(Constants.BD_ULTIMO_PASS_4) != null) {
-                            String pass4 = doc.getString(Constants.BD_ULTIMO_PASS_4);
-                            textView4.setText(pass4);
-                        }
-
-                        if (doc.getString(Constants.BD_ULTIMO_PASS_5) != null) {
-                            String pass5 = doc.getString(Constants.BD_ULTIMO_PASS_5);
-                            textView5.setText(pass5);
-                        }
-                        progress.dismiss();
+                if (doc.exists()) {
+                    if (doc.getString(Constants.BD_ULTIMO_PASS_1) != null) {
+                        String pass1 = doc.getString(Constants.BD_ULTIMO_PASS_1);
+                        textView1.setText(pass1);
                     } else {
-                        Log.d("msg", "No such document");
-                        progress.dismiss();
+                        textView1.setText("Sin historial de contraseñas");
                     }
 
+                    if (doc.getString(Constants.BD_ULTIMO_PASS_2) != null) {
+                        String pass2 = doc.getString(Constants.BD_ULTIMO_PASS_2);
+                        textView2.setText(pass2);
+                    }
+
+                    if (doc.getString(Constants.BD_ULTIMO_PASS_3) != null) {
+                        String pass3 = doc.getString(Constants.BD_ULTIMO_PASS_3);
+                        textView3.setText(pass3);
+                    }
+
+                    if (doc.getString(Constants.BD_ULTIMO_PASS_4) != null) {
+                        String pass4 = doc.getString(Constants.BD_ULTIMO_PASS_4);
+                        textView4.setText(pass4);
+                    }
+
+                    if (doc.getString(Constants.BD_ULTIMO_PASS_5) != null) {
+                        String pass5 = doc.getString(Constants.BD_ULTIMO_PASS_5);
+                        textView5.setText(pass5);
+                    }
                 } else {
-                    Log.d("msg", "Error:", task.getException());
-                    progress.dismiss();
+                    Log.d("msg", "No such document");
                 }
+
+            } else {
+                Log.d("msg", "Error:", task.getException());
             }
+            progress.dismiss();
         });
 
 
@@ -437,12 +354,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("Últimas contraseñas usadas")
                 .setView(layout)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
+                .setPositiveButton("OK", (dialog1, which) -> dialog1.dismiss()).show();
 
     }
 
@@ -518,15 +430,12 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("Últimas contraseñas usadas")
                 .setView(layout)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                }).show();
+                .setPositiveButton("OK", (dialog1, which) -> dialog1.dismiss()).show();
+
+        cursor.close();
     }
 
-    public void updateList (List<PasswordsModel> newList) {
+    public void updateList (ArrayList<PasswordsModel> newList) {
         listContrasena.clear();
         listContrasena.addAll(newList);
         notifyDataSetChanged();

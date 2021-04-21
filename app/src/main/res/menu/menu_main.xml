@@ -17,7 +17,7 @@
         android:id="@+id/menu_buscar"
         app:showAsAction="always"
         android:icon="@drawable/ic_buscar"
-        app:actionViewClass="android.widget.SearchView"/>
+        app:actionViewClass="androidx.appcompat.widget.SearchView"/>
 
 
 </menu>
