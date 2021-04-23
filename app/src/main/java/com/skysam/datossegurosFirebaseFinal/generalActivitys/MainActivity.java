@@ -31,6 +31,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.UserInfo;
 import com.skysam.datossegurosFirebaseFinal.cards.ui.CardAdapter;
 import com.skysam.datossegurosFirebaseFinal.accounts.ui.AccountAdapter;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.passwords.ui.PasswordsAdapter;
 import com.skysam.datossegurosFirebaseFinal.notes.ui.NoteAdapter;
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
@@ -71,28 +73,18 @@ public class MainActivity extends AppCompatActivity {
     private NoteAdapter adapterNota;
     private CardAdapter cardAdapter;
     private AccountAdapter adapterBanco;
-    private FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     private TextView sinLista;
     private Date fechaMomento;
     private int listaBuscar, add, ultMetodo;
     private ConexionSQLite conect;
     private ProgressBar progressBarCargar;
-    private SharedPreferences sharedPreferences;
-    private boolean almacenamientoNube, creado;
     private static final int INTERVALO = 2500;
     private long tiempoPrimerClick;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 setTheme(R.style.Theme_DatosSegurosYellow);
                 break;
@@ -162,23 +154,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem menuItem = menu.findItem(R.id.menu_buscar);
-       /* SearchView searchView = (SearchView) menuItem.getActionView();
-        searchView.setOnQueryTextListener(this);*/
-
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.menu_ajustes) {
             startActivity(new Intent(this, SettingsActivity.class));
         }else if (id == R.id.menu_cerrar_sesion) {
@@ -201,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void validarEscogencia() {
+    /*public void validarEscogencia() {
         creado = true;
         boolean escogerAlmacenamiento = sharedPreferences.getBoolean(Constants.ALMACENAMIENTO_ESCOGIDO, false);
         if (!escogerAlmacenamiento) {
@@ -240,7 +222,7 @@ public class MainActivity extends AppCompatActivity {
             }
         })
                 .setCancelable(false).show();
-    }
+    }*/
 
     public void verContrasenasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);
@@ -426,10 +408,8 @@ public class MainActivity extends AppCompatActivity {
 
         String providerId = "";
 
-        if (user != null) {
-            for (UserInfo profile : user.getProviderData()) {
-                providerId = profile.getProviderId();
-            }
+        for (UserInfo profile : Auth.INSTANCE.getCurrenUser().getProviderData()) {
+            providerId = profile.getProviderId();
         }
 
         if (providerId.equals("google.com")) {
@@ -447,11 +427,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void configurarPreferenciasDeafault() {
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+        /*SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
         editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
         editor.putBoolean(Constants.ALMACENAMIENTO_ESCOGIDO, false);
         editor.putString(Constants.PREFERENCE_PIN_RESPALDO, "0000");
-        editor.apply();
+        editor.apply();*/
     }
 }

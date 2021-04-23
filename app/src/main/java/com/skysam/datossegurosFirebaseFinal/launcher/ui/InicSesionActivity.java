@@ -130,11 +130,21 @@ public class InicSesionActivity extends AppCompatActivity{
                             activityInicSesionBinding.inputLayoutEmail.setEnabled(true);
                             activityInicSesionBinding.button.setEnabled(true);
                             Log.w("msg", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
-                                    Toast.LENGTH_LONG).show();
-
+                            switch (task.getException().getMessage()) {
+                                case "There is no user record corresponding to this identifier. The user may have been deleted.":
+                                    Toast.makeText(getApplicationContext(), "No existe el usuario, debe Registrarlo",
+                                            Toast.LENGTH_LONG).show();
+                                    break;
+                                case "The password is invalid or the user does not have a password.":
+                                    Toast.makeText(getApplicationContext(), "Contraseña inválida",
+                                            Toast.LENGTH_LONG).show();
+                                    break;
+                                default:
+                                    Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
+                                            Toast.LENGTH_LONG).show();
+                                    break;
+                            }
                         }
-
                     });
         }
     }

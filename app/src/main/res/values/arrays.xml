@@ -26,6 +26,18 @@
         <item>Lila</item>
     </string-array>
 
+    <string-array name="storage_entries">
+        <item>Todos</item>
+        <item>Sólo de la nube</item>
+        <item>Sólo del dispositivo</item>
+    </string-array>
+
+    <string-array name="storage_values">
+        <item>Todos</item>
+        <item>Sólo de la nube</item>
+        <item>Sólo del dispositivo</item>
+    </string-array>
+
     <string-array name="tiempo_vigencia">
         <item>Caducidad de la contraseña</item>
         <item>30 días</item>

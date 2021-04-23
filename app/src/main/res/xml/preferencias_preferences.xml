@@ -10,12 +10,12 @@
         app:useSimpleSummaryProvider="true"
         android:icon="@drawable/ic_bloqueo_24"/>
 
-    <SwitchPreferenceCompat
+    <ListPreference
         app:key="almacenamientoNube"
-        app:summaryOff="@string/almacenamiento_summary_off"
-        app:summaryOn="@string/almacenamiento_summary_on"
+        app:entries="@array/storage_entries"
+        app:entryValues="@array/storage_values"
         app:title="@string/tipo_almacenamiento_title"
-        app:defaultValue="true"
+        app:useSimpleSummaryProvider="true"
         android:icon="@drawable/ic_cloud_done_24"/>
 
     <ListPreference

@@ -23,14 +23,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.SwitchPreferenceCompat;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,11 +36,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.skysam.datossegurosFirebaseFinal.common.EliminarCuenta;
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 
 import java.util.ArrayList;
@@ -59,9 +56,7 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
 
         String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
@@ -103,12 +98,9 @@ public class SettingsActivity extends AppCompatActivity implements
             setTitle(savedInstanceState.getCharSequence(TITLE_TAG));
         }
         getSupportFragmentManager().addOnBackStackChangedListener(
-                new FragmentManager.OnBackStackChangedListener() {
-                    @Override
-                    public void onBackStackChanged() {
-                        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
-                            setTitle(R.string.title_activity_settings);
-                        }
+                () -> {
+                    if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+                        setTitle(R.string.title_activity_settings);
                     }
                 });
         ActionBar actionBar = getSupportActionBar();
@@ -134,11 +126,9 @@ public class SettingsActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
-            case android.R.id.home:
-                onBackPressed();
-                return true;
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -179,9 +169,7 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = super.onCreateView(inflater, container, savedInstanceState);
-
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
             String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
             switch (tema){
@@ -208,6 +196,7 @@ public class SettingsActivity extends AppCompatActivity implements
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
             Preference datosPersonales = findPreference("datos_personales_header");
+            Preference preferenceAbout = findPreference("about");
 
             String providerId = "";
 
@@ -216,12 +205,14 @@ public class SettingsActivity extends AppCompatActivity implements
                     providerId = profile.getProviderId();
                 }
             }
-
-            if (providerId.equals("google.com")) {
-                datosPersonales.setVisible(false);
-            } else {
-                datosPersonales.setVisible(true);
+            if (datosPersonales != null) {
+                datosPersonales.setVisible(!providerId.equals("google.com"));
             }
+
+            preferenceAbout.setOnPreferenceClickListener(preference -> {
+                requireActivity().startActivity(new Intent(requireContext(), AcercaActivity.class));
+                return false;
+            });
         }
     }
 
@@ -230,9 +221,7 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = super.onCreateView(inflater, container, savedInstanceState);
-
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
             String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
             switch (tema){
@@ -256,8 +245,7 @@ public class SettingsActivity extends AppCompatActivity implements
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferencias_preferences, rootKey);
 
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            final SharedPreferences sharedPreferences = getActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+            final SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
             final String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
             final boolean almacenamientoNubeB = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
@@ -265,7 +253,7 @@ public class SettingsActivity extends AppCompatActivity implements
 
             ListPreference listaBloqueo = findPreference(Constants.PREFERENCE_TIPO_BLOQUEO);
             ListPreference listaTemas = findPreference(Constants.PREFERENCE_TEMA);
-            final SwitchPreferenceCompat almacenamientoNube = findPreference(Constants.PREFERENCE_ALMACENAMIENTO_NUBE);
+            final ListPreference almacenamientoNube = findPreference(Constants.PREFERENCE_ALMACENAMIENTO_NUBE);
 
             switch (tema){
                 case Constants.PREFERENCE_AMARILLO:
@@ -294,133 +282,118 @@ public class SettingsActivity extends AppCompatActivity implements
                     break;
             }
 
-            if (almacenamientoNubeB) {
-                almacenamientoNube.setChecked(true);
-            } else {
-                almacenamientoNube.setChecked(false);
-            }
 
+            listaBloqueo.setOnPreferenceChangeListener((preference, newValue) -> {
+                String bloqueoEscogido = (String) newValue;
 
-            listaBloqueo.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    String bloqueoEscogido = (String) newValue;
-
-                    switch (bloqueoEscogido){
-                        case Constants.PREFERENCE_SIN_BLOQUEO:
-                            if (!bloqueoEscogido.equals(bloqueo)) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
-                                Intent intent = new Intent(getContext(), BloqueoActivity.class);
-                                intent.putExtras(bundle);
-                                requireActivity().startActivity(intent);
-                            }
-                            break;
-                        case Constants.PREFERENCE_HUELLA:
-                            if (!bloqueoEscogido.equals(bloqueo)) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
-                                Intent intent = new Intent(getContext(), BloqueoActivity.class);
-                                intent.putExtras(bundle);
-                                requireActivity().startActivity(intent);
-                            }
-                            break;
-                        case Constants.PREFERENCE_PIN:
-                            if (!bloqueoEscogido.equals(bloqueo)) {
-                                Bundle bundle = new Bundle();
-                                bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
-                                Intent intent = new Intent(getContext(), BloqueoActivity.class);
-                                intent.putExtras(bundle);
-                                requireActivity().startActivity(intent);
-                            }
-                            break;
-                    }
-                    return true;
+                switch (bloqueoEscogido){
+                    case Constants.PREFERENCE_SIN_BLOQUEO:
+                        if (!bloqueoEscogido.equals(bloqueo)) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
+                            Intent intent = new Intent(getContext(), BloqueoActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().startActivity(intent);
+                        }
+                        break;
+                    case Constants.PREFERENCE_HUELLA:
+                        if (!bloqueoEscogido.equals(bloqueo)) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
+                            Intent intent = new Intent(getContext(), BloqueoActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().startActivity(intent);
+                        }
+                        break;
+                    case Constants.PREFERENCE_PIN:
+                        if (!bloqueoEscogido.equals(bloqueo)) {
+                            Bundle bundle = new Bundle();
+                            bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
+                            Intent intent = new Intent(getContext(), BloqueoActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().startActivity(intent);
+                        }
+                        break;
                 }
+                return true;
             });
 
 
-            listaTemas.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    String temaEscogido = (String) newValue;
+            listaTemas.setOnPreferenceChangeListener((preference, newValue) -> {
+                String temaEscogido = (String) newValue;
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                switch (temaEscogido){
+                    case Constants.PREFERENCE_AMARILLO:
+                        if (!temaEscogido.equals(tema)) {
+                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
+                            editor.apply();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                            Intent intent = new Intent(getContext(), SettingsActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().finish();
+                            requireActivity().startActivity(intent);
+                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
+                        break;
+                    case Constants.PREFERENCE_ROJO:
+                        if (!temaEscogido.equals(tema)) {
+                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_ROJO);
+                            editor.commit();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                            Intent intent = new Intent(getContext(), SettingsActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().finish();
+                            requireActivity().startActivity(intent);
+                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
+                        break;
+                    case Constants.PREFERENCE_MARRON:
+                        if (!temaEscogido.equals(tema)) {
+                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_MARRON);
+                            editor.commit();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                            Intent intent = new Intent(getContext(), SettingsActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().finish();
+                            requireActivity().startActivity(intent);
+                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
+                        break;
+                    case Constants.PREFERENCE_LILA:
+                        if (!temaEscogido.equals(tema)) {
+                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_LILA);
+                            editor.commit();
+                            Bundle bundle = new Bundle();
+                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                            Intent intent = new Intent(getContext(), SettingsActivity.class);
+                            intent.putExtras(bundle);
+                            requireActivity().finish();
+                            requireActivity().startActivity(intent);
+                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
+                        break;
+                }
+                return true;
+            });
+
+
+            almacenamientoNube.setOnPreferenceChangeListener((preference, newValue) -> {
+                boolean isOn = (boolean) newValue;
+                if (isOn) {
+                    almacenamientoNube.setIcon(R.drawable.ic_cloud_done_24);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    switch (temaEscogido){
-                        case Constants.PREFERENCE_AMARILLO:
-                            if (!temaEscogido.equals(tema)) {
-                                editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-                                editor.commit();
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                                Intent intent = new Intent(getContext(), SettingsActivity.class);
-                                intent.putExtras(bundle);
-                                getActivity().finish();
-                                getActivity().startActivity(intent);
-                                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            }
-                            break;
-                        case Constants.PREFERENCE_ROJO:
-                            if (!temaEscogido.equals(tema)) {
-                                editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_ROJO);
-                                editor.commit();
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                                Intent intent = new Intent(getContext(), SettingsActivity.class);
-                                intent.putExtras(bundle);
-                                getActivity().finish();
-                                getActivity().startActivity(intent);
-                                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            }
-                            break;
-                        case Constants.PREFERENCE_MARRON:
-                            if (!temaEscogido.equals(tema)) {
-                                editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_MARRON);
-                                editor.commit();
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                                Intent intent = new Intent(getContext(), SettingsActivity.class);
-                                intent.putExtras(bundle);
-                                getActivity().finish();
-                                getActivity().startActivity(intent);
-                                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            }
-                            break;
-                        case Constants.PREFERENCE_LILA:
-                            if (!temaEscogido.equals(tema)) {
-                                editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_LILA);
-                                editor.commit();
-                                Bundle bundle = new Bundle();
-                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                                Intent intent = new Intent(getContext(), SettingsActivity.class);
-                                intent.putExtras(bundle);
-                                getActivity().finish();
-                                getActivity().startActivity(intent);
-                                getActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                            }
-                            break;
-                    }
-                    return true;
+                    editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
+                    editor.commit();
+                } else {
+                    almacenamientoNube.setIcon(R.drawable.ic_cloud_off_24);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, false);
+                    editor.commit();
                 }
-            });
-
-
-            almacenamientoNube.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean isOn = (boolean) newValue;
-                    if (isOn) {
-                        almacenamientoNube.setIcon(R.drawable.ic_cloud_done_24);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-                        editor.commit();
-                    } else {
-                        almacenamientoNube.setIcon(R.drawable.ic_cloud_off_24);
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, false);
-                        editor.commit();
-                    }
-                    return true;
-                }
+                return true;
             });
         }
 
@@ -448,8 +421,7 @@ public class SettingsActivity extends AppCompatActivity implements
 
             button = view.findViewById(R.id.button);
 
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
             String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
             switch (tema){
@@ -491,39 +463,33 @@ public class SettingsActivity extends AppCompatActivity implements
             layoutPass.setVisibility(View.GONE);
             layoutEmail.setVisibility(View.VISIBLE);
 
-            radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(RadioGroup group, int checkedId) {
-                    switch (checkedId) {
-                        case R.id.radioButtonUpdateEmail:
-                            layoutEmail.setVisibility(View.VISIBLE);
-                            layoutPass.setVisibility(View.GONE);
-                            inputLayoutPass.setError(null);
-                            inputLayoutPassRepetir.setError(null);
-                            etPass.setText("");
-                            etRepetirPass.setText("");
-                            break;
+            radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+                switch (checkedId) {
+                    case R.id.radioButtonUpdateEmail:
+                        layoutEmail.setVisibility(View.VISIBLE);
+                        layoutPass.setVisibility(View.GONE);
+                        inputLayoutPass.setError(null);
+                        inputLayoutPassRepetir.setError(null);
+                        etPass.setText("");
+                        etRepetirPass.setText("");
+                        break;
 
-                        case R.id.radioButtonUpdatePass:
-                            inputLayoutEmail.setError(null);
-                            inputLayoutEmailRepetir.setError(null);
-                            layoutEmail.setVisibility(View.GONE);
-                            layoutPass.setVisibility(View.VISIBLE);
-                            etEmail.setText("");
-                            etRepetirEmail.setText("");
-                            break;
-                    }
+                    case R.id.radioButtonUpdatePass:
+                        inputLayoutEmail.setError(null);
+                        inputLayoutEmailRepetir.setError(null);
+                        layoutEmail.setVisibility(View.GONE);
+                        layoutPass.setVisibility(View.VISIBLE);
+                        etEmail.setText("");
+                        etRepetirEmail.setText("");
+                        break;
                 }
             });
 
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (rbEmail.isChecked()) {
-                        validarEmail();
-                    } else if (rbPass.isChecked()) {
-                        validarPass();
-                    }
+            button.setOnClickListener(v -> {
+                if (rbEmail.isChecked()) {
+                    validarEmail();
+                } else if (rbPass.isChecked()) {
+                    validarPass();
                 }
             });
 
@@ -586,22 +552,19 @@ public class SettingsActivity extends AppCompatActivity implements
 
             if (user != null) {
                 user.updateEmail(email)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d("msg", "User email address updated.");
-                                    Toast.makeText(getContext(), "Correo actualizado", Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    startActivity(new Intent(getContext(), SettingsActivity.class));
-                                } else {
-                                    Toast.makeText(getContext(), "Error al actualizar. Intene nuevamente", Toast.LENGTH_SHORT).show();
-                                    layoutPass.setEnabled(true);
-                                    layoutEmail.setEnabled(true);
-                                    button.setEnabled(true);
-                                    radioGroup.setEnabled(true);
-                                    progressBar.setVisibility(View.GONE);
-                                }
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("msg", "User email address updated.");
+                                Toast.makeText(getContext(), "Correo actualizado", Toast.LENGTH_SHORT).show();
+                                progressBar.setVisibility(View.GONE);
+                                startActivity(new Intent(getContext(), SettingsActivity.class));
+                            } else {
+                                Toast.makeText(getContext(), "Error al actualizar. Intene nuevamente", Toast.LENGTH_SHORT).show();
+                                layoutPass.setEnabled(true);
+                                layoutEmail.setEnabled(true);
+                                button.setEnabled(true);
+                                radioGroup.setEnabled(true);
+                                progressBar.setVisibility(View.GONE);
                             }
                         });
             }
@@ -618,22 +581,19 @@ public class SettingsActivity extends AppCompatActivity implements
 
             if (user != null) {
                 user.updatePassword(pass)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    Log.d("msg", "User password updated.");
-                                    Toast.makeText(getContext(), "Contraseña actualizada", Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    startActivity(new Intent(getContext(), SettingsActivity.class));
-                                } else {
-                                    Toast.makeText(getContext(), "Error al actualizar. Intene nuevamente", Toast.LENGTH_SHORT).show();
-                                    progressBar.setVisibility(View.GONE);
-                                    layoutPass.setEnabled(true);
-                                    layoutEmail.setEnabled(true);
-                                    button.setEnabled(true);
-                                    radioGroup.setEnabled(true);
-                                }
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                Log.d("msg", "User password updated.");
+                                Toast.makeText(getContext(), "Contraseña actualizada", Toast.LENGTH_SHORT).show();
+                                progressBar.setVisibility(View.GONE);
+                                startActivity(new Intent(getContext(), SettingsActivity.class));
+                            } else {
+                                Toast.makeText(getContext(), "Error al actualizar. Intene nuevamente", Toast.LENGTH_SHORT).show();
+                                progressBar.setVisibility(View.GONE);
+                                layoutPass.setEnabled(true);
+                                layoutEmail.setEnabled(true);
+                                button.setEnabled(true);
+                                radioGroup.setEnabled(true);
                             }
                         });
             }
@@ -664,7 +624,7 @@ public class SettingsActivity extends AppCompatActivity implements
             buttonTodos = view.findViewById(R.id.button_borrar_todos);
 
             user = FirebaseAuth.getInstance().getCurrentUser();
-            SharedPreferences sharedPreferences = getActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
+            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
             String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
             switch (tema){
@@ -697,26 +657,11 @@ public class SettingsActivity extends AppCompatActivity implements
             eliminarCuenta = new EliminarCuenta(getContext());
             progressBar = view.findViewById(R.id.progressBar);
 
-            buttonNube.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recuperarContrasenaNube();
-                }
-            });
+            buttonNube.setOnClickListener(v -> recuperarContrasenaNube());
 
-            buttonDispositivo.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    eliminarDataDispositivo(false);
-                }
-            });
+            buttonDispositivo.setOnClickListener(v -> eliminarDataDispositivo(false));
 
-            buttonTodos.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    eliminarDataDispositivo(true);
-                }
-            });
+            buttonTodos.setOnClickListener(v -> eliminarDataDispositivo(true));
 
             return view;
         }
@@ -733,20 +678,17 @@ public class SettingsActivity extends AppCompatActivity implements
             CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS);
 
             Query query = reference.orderBy(Constants.BD_SERVICIO, Query.Direction.ASCENDING);
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot doc : task.getResult()) {
-                            String id = doc.getId();
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                        String id = doc.getId();
 
-                            listContrasena.add(id);
-                        }
-
-                        recuperarCuentaNube();
-                    } else {
-                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        listContrasena.add(id);
                     }
+
+                    recuperarCuentaNube();
+                } else {
+                    Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -759,20 +701,17 @@ public class SettingsActivity extends AppCompatActivity implements
             CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CUENTAS);
 
             Query query = reference.orderBy(Constants.BD_BANCO, Query.Direction.ASCENDING);
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
-                            String id = doc.getId();
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                        String id = doc.getId();
 
-                            listBancos.add(id);
-                        }
-
-                        recuperarTarjetaNube();
-                    } else {
-                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        listBancos.add(id);
                     }
+
+                    recuperarTarjetaNube();
+                } else {
+                    Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -785,20 +724,17 @@ public class SettingsActivity extends AppCompatActivity implements
             CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_TARJETAS);
 
             Query query = reference.orderBy(Constants.BD_TITULAR_TARJETA, Query.Direction.ASCENDING);
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
-                            String id = doc.getId();
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                        String id = doc.getId();
 
-                            listTarjetas.add(id);
-                        }
-
-                        recuperarNotaNube();
-                    } else {
-                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        listTarjetas.add(id);
                     }
+
+                    recuperarNotaNube();
+                } else {
+                    Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             });
         }
@@ -811,19 +747,16 @@ public class SettingsActivity extends AppCompatActivity implements
             CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_NOTAS);
 
             Query query = reference.orderBy(Constants.BD_TITULO_NOTAS, Query.Direction.ASCENDING);
-            query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if (task.isSuccessful()) {
-                        for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
-                            String id = doc.getId();
+            query.get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
+                        String id = doc.getId();
 
-                            listNota.add(id);
-                        }
-                        validarNube();
-                    } else {
-                        Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                        listNota.add(id);
                     }
+                    validarNube();
+                } else {
+                    Toast.makeText(getContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 }
             });
         }

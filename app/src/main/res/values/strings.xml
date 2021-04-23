@@ -165,9 +165,7 @@
     <!-- Prefrencias Preferences -->
     <string name="signature_title">Your signature</string>
     <string name="tipo_bloqueo_title">Bloqueo de la Aplicación</string>
-    <string name="tipo_almacenamiento_title">Almacenamiento en la Nube</string>
-    <string name="almacenamiento_summary_on">La información se almacenará en la nube</string>
-    <string name="almacenamiento_summary_off">La información se almacenará en su dispositivo</string>
+    <string name="tipo_almacenamiento_title">Ver datos guardados</string>
     <string name="tema_summary">Escoja el tema de la aplicación</string>
 
     <!-- Borrar Datos Preferences -->
