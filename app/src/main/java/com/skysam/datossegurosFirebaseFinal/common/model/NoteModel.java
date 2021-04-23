@@ -2,12 +2,16 @@ package com.skysam.datossegurosFirebaseFinal.common.model;
 
 public class NoteModel {
     private String titulo, contenido, idNota;
+    private boolean isExpanded = false;
 
     public NoteModel() {}
 
-    public NoteModel(String titulo, String contenido) {
-        this.titulo = titulo;
-        this.contenido = contenido;
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
     }
 
     public String getIdNota() {

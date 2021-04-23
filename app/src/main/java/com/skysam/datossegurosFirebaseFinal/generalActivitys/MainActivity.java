@@ -60,7 +60,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recycler;
     private PasswordsAdapter adapterContrasena;
@@ -153,32 +153,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         almanaque.set(anualActual, mesActual, diaActual);
         fechaMomento = almanaque.getTime();
 
-        sinLista = (TextView) findViewById(R.id.tvSinLista);
-        progressBarCargar = findViewById(R.id.progressBarCargar);
-
         conect = new ConexionSQLite(getApplicationContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-
-        recycler = (RecyclerView) findViewById(R.id.recycler);
-        recycler.setLayoutManager(new LinearLayoutManager(this));
-        recycler.setHasFixedSize(true);
-
-        add = 0;
-
-
-        fabAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(Constants.AGREGAR, add);
-                Intent intent = new Intent(MainActivity.this, AddActivity.class);
-                intent.putExtras(bundle);
-
-                startActivity(intent);
-            }
-        });
-
-
-
 
         validarEscogencia();*/
 
@@ -267,214 +242,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 .setCancelable(false).show();
     }
 
-
-    private void verContrasenaFirebase() {
-        progressBarCargar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
-        listContrasena = new ArrayList<>();
-        adapterContrasena = new PasswordsAdapter(listContrasena);
-        recycler.setAdapter(adapterContrasena);
-
-        ultMetodo = 0;
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS);
-
-        Query query = reference.orderBy(Constants.BD_SERVICIO, Query.Direction.ASCENDING);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        PasswordsModel pass = new PasswordsModel();
-                        pass.setIdContrasena(doc.getId());
-                        pass.setServicio(doc.getString(Constants.BD_SERVICIO));
-                        pass.setUsuario(doc.getString(Constants.BD_USUARIO));
-                        pass.setContrasena(doc.getString(Constants.BD_PASSWORD));
-
-                        Date momentoCreacion = doc.getDate(Constants.BD_FECHA_CREACION);
-                        long fechaCreacion = momentoCreacion.getTime();
-                        long fechaActual = fechaMomento.getTime();
-
-                        long diasRestantes = fechaActual - fechaCreacion;
-
-                        long segundos = diasRestantes / 1000;
-                        long minutos = segundos / 60;
-                        long horas = minutos / 60;
-                        long dias = horas / 24;
-                        int diasTranscurridos = (int) dias;
-
-
-                        if (doc.getString(Constants.BD_VIGENCIA).equals("0")) {
-                            pass.setVencimiento(0);
-                        } else {
-                            int vencimiento = Integer.parseInt(doc.getString(Constants.BD_VIGENCIA));
-                            int faltante = vencimiento - diasTranscurridos;
-                            pass.setVencimiento(faltante);
-                        }
-
-                        listContrasena.add(pass);
-
-                    }
-                    adapterContrasena.updateList(listContrasena);
-                    if (listContrasena.isEmpty()) {
-                        sinLista.setVisibility(View.VISIBLE);
-                    } else {
-                        sinLista.setVisibility(View.GONE);
-                    }
-                    progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-    }
-
-
-
-    private void verCuentasBancariasFirebase() {
-        progressBarCargar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
-        listBancos = new ArrayList<>();
-        adapterBanco = new AccountAdapter(listBancos, this);
-        recycler.setAdapter(adapterBanco);
-
-        ultMetodo = 1;
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CUENTAS);
-
-        Query query = reference.orderBy(Constants.BD_BANCO, Query.Direction.ASCENDING);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
-                        AccountModel bank = new AccountModel();
-                        bank.setIdCuenta(doc.getId());
-                        bank.setTitular(doc.getString(Constants.BD_TITULAR_BANCO));
-                        bank.setBanco(doc.getString(Constants.BD_BANCO));
-                        bank.setNumeroCuenta(doc.getString(Constants.BD_NUMERO_CUENTA));
-                        bank.setCedula(doc.getString(Constants.BD_CEDULA_BANCO));
-                        bank.setTipo(doc.getString(Constants.BD_TIPO_CUENTA));
-                        bank.setTelefono(doc.getString(Constants.BD_TELEFONO));
-                        bank.setCorreo(doc.getString(Constants.BD_CORREO_CUENTA));
-                        bank.setTipoDocumento(doc.getString(Constants.BD_TIPO_DOCUMENTO));
-
-                        listBancos.add(bank);
-
-                    }
-                    adapterBanco.updateList(listBancos);
-                    if (listBancos.isEmpty()) {
-                        sinLista.setVisibility(View.VISIBLE);
-                    } else {
-                        sinLista.setVisibility(View.GONE);
-                    }
-                    progressBarCargar.setVisibility(View.GONE);
-
-                } else {
-                    progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-
-
-    private void verTarjetasFirebase() {
-        progressBarCargar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
-        listTarjetas = new ArrayList<>();
-        cardAdapter = new CardAdapter(listTarjetas, this);
-        recycler.setAdapter(cardAdapter);
-
-        ultMetodo = 2;
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_TARJETAS);
-
-        Query query = reference.orderBy(Constants.BD_TITULAR_TARJETA, Query.Direction.ASCENDING);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
-                        CardModel tarjeta = new CardModel();
-                        tarjeta.setIdTarjeta(doc.getId());
-                        tarjeta.setTitular(doc.getString(Constants.BD_TITULAR_TARJETA));
-                        tarjeta.setNumeroTarjeta(doc.getString(Constants.BD_NUMERO_TARJETA));
-                        tarjeta.setCvv(doc.getString(Constants.BD_CVV));
-                        tarjeta.setCedula(doc.getString(Constants.BD_CEDULA_TARJETA));
-                        tarjeta.setTipo(doc.getString(Constants.BD_TIPO_TARJETA));
-                        tarjeta.setBanco(doc.getString(Constants.BD_BANCO_TARJETA));
-                        tarjeta.setVencimiento(doc.getString(Constants.BD_VENCIMIENTO_TARJETA));
-                        tarjeta.setClave(doc.getString(Constants.BD_CLAVE_TARJETA));
-
-                        listTarjetas.add(tarjeta);
-
-                    }
-                    cardAdapter.updateList(listTarjetas);
-                    if (listTarjetas.isEmpty()) {
-                        sinLista.setVisibility(View.VISIBLE);
-                    } else {
-                        sinLista.setVisibility(View.GONE);
-                    }
-                    progressBarCargar.setVisibility(View.GONE);
-                } else {
-                    progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-
-
-    private void verNotasFirebase() {
-        progressBarCargar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
-        listNota = new ArrayList<>();
-        adapterNota = new NoteAdapter(listNota, this);
-        recycler.setAdapter(adapterNota);
-
-        ultMetodo = 3;
-
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_NOTAS);
-
-        Query query = reference.orderBy(Constants.BD_TITULO_NOTAS, Query.Direction.ASCENDING);
-        query.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : Objects.requireNonNull(task.getResult())) {
-                        NoteModel nota = new NoteModel();
-                        nota.setIdNota(doc.getId());
-                        nota.setTitulo(doc.getString(Constants.BD_TITULO_NOTAS));
-                        nota.setContenido(doc.getString(Constants.BD_CONTENIDO_NOTAS));
-
-                        listNota.add(nota);
-
-                    }
-                    adapterNota.updateList(listNota);
-                    if (listNota.isEmpty()) {
-                        sinLista.setVisibility(View.VISIBLE);
-                    } else {
-                        sinLista.setVisibility(View.GONE);
-                    }
-                    progressBarCargar.setVisibility(View.GONE);
-
-                } else {
-                    progressBarCargar.setVisibility(View.GONE);
-                    Toast.makeText(getApplicationContext(), "Error al cargar la lista. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
     public void verContrasenasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);
 
@@ -542,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ultMetodo = 5;
 
         listBancos = new ArrayList<>();
-        adapterBanco = new AccountAdapter(listBancos, this);
+        adapterBanco = new AccountAdapter(listBancos);
         recycler.setAdapter(adapterBanco);
 
         SQLiteDatabase db = conect.getReadableDatabase();
@@ -579,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ultMetodo = 6;
 
         listTarjetas = new ArrayList<>();
-        cardAdapter = new CardAdapter(listTarjetas, this);
+        cardAdapter = new CardAdapter(listTarjetas);
         recycler.setAdapter(cardAdapter);
 
         SQLiteDatabase db = conect.getReadableDatabase();
@@ -617,7 +384,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ultMetodo = 7;
 
         listNota = new ArrayList<>();
-        adapterNota = new NoteAdapter(listNota, this);
+        adapterNota = new NoteAdapter(listNota);
         recycler.setAdapter(adapterNota);
 
         SQLiteDatabase db = conect.getReadableDatabase();
@@ -677,84 +444,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         } else {
             startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
         }
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        if (listaBuscar == 0) {
-            if (listContrasena.isEmpty()) {
-                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
-            } else {
-                String userInput = newText.toLowerCase();
-                final ArrayList<PasswordsModel> newList = new ArrayList<>();
-
-                for (PasswordsModel name : listContrasena) {
-
-                    if (name.getServicio().toLowerCase().contains(userInput) || name.getUsuario().toLowerCase().contains(userInput)) {
-
-                        newList.add(name);
-                    }
-                }
-
-                adapterContrasena.updateList(newList);
-
-            }
-        } else if (listaBuscar == 1) {
-            if (listBancos.isEmpty()) {
-                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
-            } else {
-                String userInput = newText.toLowerCase();
-                final ArrayList<AccountModel> newList = new ArrayList<>();
-
-                for (AccountModel name : listBancos) {
-
-                    if (name.getBanco().toLowerCase().contains(userInput) || name.getTitular().toLowerCase().contains(userInput)) {
-
-                        newList.add(name);
-                    }
-                }
-                adapterBanco.updateList(newList);
-            }
-
-        } else if (listaBuscar == 2) {
-            if (listTarjetas.isEmpty()) {
-                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
-            } else {
-                String userInput = newText.toLowerCase();
-                final ArrayList<CardModel> newList = new ArrayList<>();
-
-                for (CardModel name : listTarjetas) {
-
-                    if (name.getTitular().toLowerCase().contains(userInput) || name.getBanco().toLowerCase().contains(userInput)) {
-
-                        newList.add(name);
-                    }
-                }
-                cardAdapter.updateList(newList);
-            }
-        } else if (listaBuscar == 3) {
-            if (listNota.isEmpty()) {
-                Toast.makeText(this, "No hay lista cargada", Toast.LENGTH_SHORT).show();
-            } else {
-                String userInput = newText.toLowerCase();
-                final ArrayList<NoteModel> newList = new ArrayList<>();
-
-                for (NoteModel name : listNota) {
-
-                    if (name.getTitulo().toLowerCase().contains(userInput) || name.getContenido().toLowerCase().contains(userInput)) {
-
-                        newList.add(name);
-                    }
-                }
-                adapterNota.updateList(newList);
-            }
-        }
-        return false;
     }
 
     public void configurarPreferenciasDeafault() {

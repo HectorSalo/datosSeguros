@@ -42,13 +42,13 @@ import java.util.List;
 
 public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.ViewHolderContrasena> {
 
-    private final ArrayList<PasswordsModel> listContrasena;
+    private ArrayList<PasswordsModel> listContrasena;
     private ArrayList<String> selectedItems;
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
 
-    public PasswordsAdapter(ArrayList<PasswordsModel> listContrasena) {
-        this.listContrasena = listContrasena;
+    public PasswordsAdapter(List<PasswordsModel> listContrasena) {
+        this.listContrasena = new ArrayList<>(listContrasena);
     }
 
     @NonNull
@@ -73,10 +73,13 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
         if (listContrasena.get(i).getVencimiento() == 0) {
             viewHolderContrasena.vencimiento.setText("Sin fecha de vencimiento");
+            viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.md_text_white));
         } else {
             viewHolderContrasena.vencimiento.setText(listContrasena.get(i).getVencimiento() + " días");
             if (listContrasena.get(i).getVencimiento() <= 7 && listContrasena.get(i).getVencimiento() != 0) {
                 viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.color_red_error));
+            } else {
+                viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.md_text_white));
             }
         }
         boolean isExpanded = listContrasena.get(i).isExpanded();
@@ -435,9 +438,9 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         cursor.close();
     }
 
-    public void updateList (ArrayList<PasswordsModel> newList) {
+    public void updateList (List<PasswordsModel> newList) {
         listContrasena.clear();
-        listContrasena.addAll(newList);
+        listContrasena = new ArrayList<>(newList);
         notifyDataSetChanged();
     }
 }

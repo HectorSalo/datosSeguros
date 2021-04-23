@@ -1,18 +1,21 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
+import com.skysam.datossegurosFirebaseFinal.common.Constants
 import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel
 import com.skysam.datossegurosFirebaseFinal.databinding.PasswordsFragmentBinding
+import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
+import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
 import java.util.*
 
 class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
@@ -34,23 +37,14 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        adapter = PasswordsAdapter(passwords)
+        adapter = PasswordsAdapter(passwords.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                if (dy > 0) {
-                    fab.hide()
-                } else {
-                    fab.show()
-                }
-                super.onScrolled(recyclerView, dx, dy)
-            }
-        })
         viewModel.passwords.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
+                passwords.clear()
                 passwords.addAll(it)
-                adapter.updateList(passwords.toMutableList())
+                adapter.updateList(passwords.toList())
                 binding.recycler.visibility = View.VISIBLE
                 binding.progressBar.visibility = View.GONE
                 binding.tvSinLista.visibility = View.GONE
@@ -62,6 +56,14 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
         })
 
         fab = requireActivity().findViewById(R.id.fab)
+        fab.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt(Constants.AGREGAR, 0)
+            val intent = Intent(requireContext(), AddActivity::class.java)
+            intent.putExtras(bundle);
+
+            startActivity(intent);
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -82,6 +84,16 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_contrasena)
             fab.show()
+            binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dy > 0) {
+                        fab.hide()
+                    } else {
+                        fab.show()
+                    }
+                    super.onScrolled(recyclerView, dx, dy)
+                }
+            })
         }, 150)
     }
 
@@ -95,9 +107,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if (passwords.isEmpty()) {
-            Toast.makeText(requireContext(), "No hay lista cargada", Toast.LENGTH_SHORT).show()
-        } else {
+        if (passwords.isNotEmpty()) {
             val userInput = newText!!.toLowerCase(Locale.ROOT)
             listSearch.clear()
 
@@ -110,6 +120,8 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
             if (listSearch.isEmpty()) {
                 binding.lottieAnimationView.visibility = View.VISIBLE
                 binding.lottieAnimationView.playAnimation()
+            } else {
+                binding.lottieAnimationView.visibility = View.GONE
             }
             adapter.updateList(listSearch.toList())
         }

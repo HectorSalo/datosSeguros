@@ -2,19 +2,17 @@ package com.skysam.datossegurosFirebaseFinal.common.model;
 
 public class CardModel {
     private String titular, tipo, numeroTarjeta, cedula, cvv, idTarjeta, banco, vencimiento, clave;
+    private boolean isExpanded = false;
 
 
     public CardModel() {}
 
-    public CardModel(String titular, String numeroTarjeta, String cvv, String cedula, String tipo, String banco, String vencimiento, String clave) {
-        this.titular = titular;
-        this.numeroTarjeta = numeroTarjeta;
-        this.cvv = cvv;
-        this.cedula = cedula;
-        this.tipo = tipo;
-        this.banco = banco;
-        this.clave = clave;
-        this.vencimiento = vencimiento;
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
     }
 
     public String getIdTarjeta() {

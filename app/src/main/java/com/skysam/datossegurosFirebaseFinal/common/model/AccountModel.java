@@ -3,19 +3,17 @@ package com.skysam.datossegurosFirebaseFinal.common.model;
 public class AccountModel {
 
     private String titular, banco, tipo, numeroCuenta, cedula, telefono, idCuenta, correo, tipoDocumento;
+    private boolean isExpanded = false;
 
 
     public AccountModel() {}
 
-    public AccountModel(String titular, String banco, String tipo, String numeroCuenta, String cedula, String telefono, String correo, String tipoDocumento) {
-        this.titular = titular;
-        this.banco = banco;
-        this.tipo = tipo;
-        this.numeroCuenta = numeroCuenta;
-        this.cedula = cedula;
-        this.telefono = telefono;
-        this.correo = correo;
-        this.tipoDocumento = tipoDocumento;
+    public boolean isExpanded() {
+        return isExpanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        isExpanded = expanded;
     }
 
     public String getIdCuenta() {
