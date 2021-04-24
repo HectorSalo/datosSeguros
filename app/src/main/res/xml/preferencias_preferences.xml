@@ -11,6 +11,7 @@
         android:icon="@drawable/ic_bloqueo_24"/>
 
     <ListPreference
+        android:defaultValue="true"
         app:key="almacenamientoNube"
         app:entries="@array/storage_entries"
         app:entryValues="@array/storage_values"

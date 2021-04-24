@@ -43,8 +43,6 @@ public class Constants {
 
     public static final String AGREGAR = "agregar";
 
-    public static final String ALMACENAMIENTO_ESCOGIDO = "escogido";
-
     public static final String PREFERENCE_TIPO_BLOQUEO = "tipoBloqueo";
     public static final String PREFERENCE_HUELLA = "huella";
     public static final String PREFERENCE_PIN = "pin";
@@ -57,5 +55,8 @@ public class Constants {
     public static final String PREFERENCE_MARRON = "Marron";
     public static final String PREFERENCE_LILA = "Lila";
     public static final String PREFERENCE_ALMACENAMIENTO_NUBE = "almacenamientoNube";
+    public static final String PREFERENCE_SHOW_ALL = "todos";
+    public static final String PREFERENCE_SHOW_CLOUD = "nube";
+    public static final String PREFERENCE_SHOW_DEVICE = "dispositivo";
 
 }

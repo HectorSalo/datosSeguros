@@ -26,7 +26,6 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.SwitchPreferenceCompat;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -41,6 +40,7 @@ import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 
 import java.util.ArrayList;
@@ -221,10 +221,7 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = super.onCreateView(inflater, container, savedInstanceState);
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-            String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-            switch (tema){
+            switch (SharedPref.INSTANCE.getTheme()){
                 case Constants.PREFERENCE_AMARILLO:
                     view.setBackgroundColor(getResources().getColor(R.color.color_fondo_ajustes));
                     break;
@@ -245,17 +242,11 @@ public class SettingsActivity extends AppCompatActivity implements
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
             setPreferencesFromResource(R.xml.preferencias_preferences, rootKey);
 
-            final SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-            final String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-            final boolean almacenamientoNubeB = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-            final String bloqueo = sharedPreferences.getString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
-
             ListPreference listaBloqueo = findPreference(Constants.PREFERENCE_TIPO_BLOQUEO);
             ListPreference listaTemas = findPreference(Constants.PREFERENCE_TEMA);
-            final ListPreference almacenamientoNube = findPreference(Constants.PREFERENCE_ALMACENAMIENTO_NUBE);
+            ListPreference listShowData = findPreference(Constants.PREFERENCE_ALMACENAMIENTO_NUBE);
 
-            switch (tema){
+            switch (SharedPref.INSTANCE.getTheme()){
                 case Constants.PREFERENCE_AMARILLO:
                     listaTemas.setValue(Constants.PREFERENCE_AMARILLO);
                     break;
@@ -270,7 +261,7 @@ public class SettingsActivity extends AppCompatActivity implements
                     break;
             }
 
-            switch (bloqueo){
+            switch (SharedPref.INSTANCE.getLock()){
                 case Constants.PREFERENCE_SIN_BLOQUEO:
                     listaBloqueo.setValue(Constants.PREFERENCE_SIN_BLOQUEO);
                     break;
@@ -282,13 +273,25 @@ public class SettingsActivity extends AppCompatActivity implements
                     break;
             }
 
+            switch (SharedPref.INSTANCE.getShowData()) {
+                case Constants.PREFERENCE_SHOW_ALL:
+                    listShowData.setValue(Constants.PREFERENCE_SHOW_ALL);
+                    break;
+                case Constants.PREFERENCE_SHOW_CLOUD:
+                    listShowData.setValue(Constants.PREFERENCE_SHOW_CLOUD);
+                    break;
+                case Constants.PREFERENCE_SHOW_DEVICE:
+                    listShowData.setValue(Constants.PREFERENCE_SHOW_DEVICE);
+                    break;
+            }
+
 
             listaBloqueo.setOnPreferenceChangeListener((preference, newValue) -> {
                 String bloqueoEscogido = (String) newValue;
 
                 switch (bloqueoEscogido){
                     case Constants.PREFERENCE_SIN_BLOQUEO:
-                        if (!bloqueoEscogido.equals(bloqueo)) {
+                        if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
                             Bundle bundle = new Bundle();
                             bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
                             Intent intent = new Intent(getContext(), BloqueoActivity.class);
@@ -297,7 +300,7 @@ public class SettingsActivity extends AppCompatActivity implements
                         }
                         break;
                     case Constants.PREFERENCE_HUELLA:
-                        if (!bloqueoEscogido.equals(bloqueo)) {
+                        if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
                             Bundle bundle = new Bundle();
                             bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
                             Intent intent = new Intent(getContext(), BloqueoActivity.class);
@@ -306,7 +309,7 @@ public class SettingsActivity extends AppCompatActivity implements
                         }
                         break;
                     case Constants.PREFERENCE_PIN:
-                        if (!bloqueoEscogido.equals(bloqueo)) {
+                        if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
                             Bundle bundle = new Bundle();
                             bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
                             Intent intent = new Intent(getContext(), BloqueoActivity.class);
@@ -321,12 +324,10 @@ public class SettingsActivity extends AppCompatActivity implements
 
             listaTemas.setOnPreferenceChangeListener((preference, newValue) -> {
                 String temaEscogido = (String) newValue;
-                SharedPreferences.Editor editor = sharedPreferences.edit();
                 switch (temaEscogido){
                     case Constants.PREFERENCE_AMARILLO:
-                        if (!temaEscogido.equals(tema)) {
-                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-                            editor.apply();
+                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_AMARILLO);
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
                             Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -337,9 +338,8 @@ public class SettingsActivity extends AppCompatActivity implements
                         }
                         break;
                     case Constants.PREFERENCE_ROJO:
-                        if (!temaEscogido.equals(tema)) {
-                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_ROJO);
-                            editor.commit();
+                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_ROJO);
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
                             Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -350,9 +350,8 @@ public class SettingsActivity extends AppCompatActivity implements
                         }
                         break;
                     case Constants.PREFERENCE_MARRON:
-                        if (!temaEscogido.equals(tema)) {
-                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_MARRON);
-                            editor.commit();
+                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_MARRON);
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
                             Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -363,9 +362,8 @@ public class SettingsActivity extends AppCompatActivity implements
                         }
                         break;
                     case Constants.PREFERENCE_LILA:
-                        if (!temaEscogido.equals(tema)) {
-                            editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_LILA);
-                            editor.commit();
+                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_LILA);
                             Bundle bundle = new Bundle();
                             bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
                             Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -380,18 +378,18 @@ public class SettingsActivity extends AppCompatActivity implements
             });
 
 
-            almacenamientoNube.setOnPreferenceChangeListener((preference, newValue) -> {
-                boolean isOn = (boolean) newValue;
-                if (isOn) {
-                    almacenamientoNube.setIcon(R.drawable.ic_cloud_done_24);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-                    editor.commit();
-                } else {
-                    almacenamientoNube.setIcon(R.drawable.ic_cloud_off_24);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, false);
-                    editor.commit();
+            listShowData.setOnPreferenceChangeListener((preference, newValue) -> {
+                String showData = (String) newValue;
+                switch (showData) {
+                    case Constants.PREFERENCE_SHOW_ALL:
+                        SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_ALL);
+                        break;
+                    case Constants.PREFERENCE_SHOW_CLOUD:
+                        SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_CLOUD);
+                        break;
+                    case Constants.PREFERENCE_SHOW_DEVICE:
+                        SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_DEVICE);
+                        break;
                 }
                 return true;
             });

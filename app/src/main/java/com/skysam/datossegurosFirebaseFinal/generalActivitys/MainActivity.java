@@ -117,27 +117,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         }
 
-        /*switch (tema){
-            case Constants.PREFERENCE_AMARILLO:
-                //progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDark)), PorterDuff.Mode.SRC_IN);
-                break;
-            case Constants.PREFERENCE_ROJO:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentRojo));
-                fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)));
-                //progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkRojo)), PorterDuff.Mode.SRC_IN);
-                break;
-            case Constants.PREFERENCE_MARRON:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentMarron));
-                fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)));
-                //progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkMarron)), PorterDuff.Mode.SRC_IN);
-                break;
-            case Constants.PREFERENCE_LILA:
-                constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorAccentLila));
-                fabAdd.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimaryDarkLila)));
-                //progressBarCargar.getIndeterminateDrawable().setColorFilter((ContextCompat.getColor(this, R.color.colorPrimaryDarkLila)), PorterDuff.Mode.SRC_IN);
-                break;
-        }*/
-
         /*Calendar almanaque = Calendar.getInstance();
         int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
         int mesActual = almanaque.get(Calendar.MONTH);
@@ -404,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void cerrarSesion() {
         FirebaseAuth.getInstance().signOut();
-        configurarPreferenciasDeafault();
+        SharedPref.INSTANCE.changeToDefault();
 
         String providerId = "";
 
@@ -424,14 +403,5 @@ public class MainActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
         }
-    }
-
-    public void configurarPreferenciasDeafault() {
-        /*SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
-        editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-        editor.putBoolean(Constants.ALMACENAMIENTO_ESCOGIDO, false);
-        editor.putString(Constants.PREFERENCE_PIN_RESPALDO, "0000");
-        editor.apply();*/
     }
 }
