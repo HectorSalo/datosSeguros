@@ -35,6 +35,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     private val passwords: MutableList<PasswordsModel> = mutableListOf()
     private val listSearch: MutableList<PasswordsModel> = mutableListOf()
     private lateinit var adapter: PasswordsAdapter
+    private var firestoreActived = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -45,7 +46,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        adapter = PasswordsAdapter(passwordsFirestore.toList())
+        adapter = PasswordsAdapter(passwords.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
 
@@ -60,7 +61,6 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
 
         loadViewModel()
         loadPasswordsSQLite()
-        loadPasswords()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -77,6 +77,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onResume() {
         super.onResume()
+        loadPasswords()
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_contrasena)
@@ -131,36 +132,39 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
             Constants.PREFERENCE_SHOW_ALL -> {
                 passwords.addAll(passwordsFirestore)
                 passwords.addAll(passwordsSQLite)
+                firestoreActived = true
             }
             Constants.PREFERENCE_SHOW_CLOUD -> {
                 passwords.addAll(passwordsFirestore)
+                firestoreActived = true
             }
             Constants.PREFERENCE_SHOW_DEVICE -> {
+                firestoreActived = false
                 passwords.addAll(passwordsSQLite)
             }
         }
         if (passwords.isNotEmpty()) {
             adapter.updateList(passwords.toList())
             binding.recycler.visibility = View.VISIBLE
-            binding.progressBar.visibility = View.GONE
             binding.tvSinLista.visibility = View.GONE
         } else {
             binding.recycler.visibility = View.GONE
-            binding.progressBar.visibility = View.VISIBLE
             binding.tvSinLista.visibility = View.VISIBLE
         }
+        binding.progressBar.visibility = View.GONE
     }
 
-    fun loadViewModel() {
+    private fun loadViewModel() {
         viewModel.passwords.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 passwordsFirestore.clear()
                 passwordsFirestore.addAll(it)
+                if (firestoreActived) loadPasswords()
             }
         })
     }
 
-    fun loadPasswordsSQLite() {
+    private fun loadPasswordsSQLite() {
         val calendar = Calendar.getInstance()
         val fechaMomento = calendar.time
         val conect =  ConexionSQLite(requireContext(), Auth.getCurrenUser()!!.uid, null, Constants.VERSION_SQLITE)

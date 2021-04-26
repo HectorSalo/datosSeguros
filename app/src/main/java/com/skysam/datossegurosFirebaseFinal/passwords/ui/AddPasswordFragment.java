@@ -1,13 +1,9 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -28,12 +24,10 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -55,13 +49,9 @@ public class AddPasswordFragment extends Fragment {
     private Spinner spinner;
     private Button buttonGuardar;
 
-
-    private OnFragmentInteractionListener mListener;
-
     public AddPasswordFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,12 +66,6 @@ public class AddPasswordFragment extends Fragment {
 
         user = FirebaseAuth.getInstance().getCurrentUser();
 
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
         etServicio = vista.findViewById(R.id.et_servicio);
         etUsuario = vista.findViewById(R.id.et_usuario);
         etContrasena = vista.findViewById(R.id.et_pass);
@@ -95,7 +79,7 @@ public class AddPasswordFragment extends Fragment {
         spinner = vista.findViewById(R.id.spinner);
         buttonGuardar = vista.findViewById(R.id.guardarContrasena);
 
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 buttonGuardar.setBackgroundColor(getResources().getColor(R.color.color_yellow_dark));
                 break;
@@ -118,7 +102,7 @@ public class AddPasswordFragment extends Fragment {
         fechaActual = almanaque.getTime();
 
         List<String> listaCaducidad = Arrays.asList(getResources().getStringArray(R.array.tiempo_vigencia));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_opciones, listaCaducidad);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_opciones, listaCaducidad);
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -137,44 +121,10 @@ public class AddPasswordFragment extends Fragment {
             }
         });
 
-        if (almacenamientoNube) {
-            rbNube.setChecked(true);
-        } else {
-            rbDispositivo.setChecked(true);
-        }
-
-        buttonGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validarDatos();
-            }
-        });
+        buttonGuardar.setOnClickListener(v -> validarDatos());
 
         return vista;
     }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
-    }
-
 
     private void validarDatos () {
         inputLayoutServicio.setError(null);
@@ -275,28 +225,22 @@ public class AddPasswordFragment extends Fragment {
         contrasenaM.put(Constants.BD_PROPIETARIO, userID);
         contrasenaM.put(Constants.BD_FECHA_CREACION, fechaActual);
 
-        db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
+        db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(documentReference -> {
+            progressBar.setVisibility(View.GONE);
+            Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+            requireActivity().finish();
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("msg", "Error adding document", e);
-                progressBar.setVisibility(View.GONE);
-                inputLayoutServicio.setEnabled(true);
-                inputLayoutUsuario.setEnabled(true);
-                inputLayoutPass.setEnabled(true);
-                spinner.setEnabled(true);
-                rbNube.setEnabled(true);
-                rbDispositivo.setEnabled(true);
-                buttonGuardar.setEnabled(true);
-                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-            }
+        }).addOnFailureListener(e -> {
+            Log.w("msg", "Error adding document", e);
+            progressBar.setVisibility(View.GONE);
+            inputLayoutServicio.setEnabled(true);
+            inputLayoutUsuario.setEnabled(true);
+            inputLayoutPass.setEnabled(true);
+            spinner.setEnabled(true);
+            rbNube.setEnabled(true);
+            rbDispositivo.setEnabled(true);
+            buttonGuardar.setEnabled(true);
+            Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
         });
     }
 

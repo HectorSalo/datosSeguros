@@ -1,11 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.generalActivitys;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.net.Uri;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -17,17 +12,15 @@ import android.os.Bundle;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.R;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.passwords.ui.AddPasswordFragment;
 import com.skysam.datossegurosFirebaseFinal.accounts.ui.AddCuentasFragment;
 import com.skysam.datossegurosFirebaseFinal.notes.ui.AddNotaFragment;
 import com.skysam.datossegurosFirebaseFinal.cards.ui.AddTarjetaFragment;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 
-public class AddActivity extends AppCompatActivity implements AddPasswordFragment.OnFragmentInteractionListener, AddCuentasFragment.OnFragmentInteractionListener,
-        AddTarjetaFragment.OnFragmentInteractionListener, AddNotaFragment.OnFragmentInteractionListener {
+public class AddActivity extends AppCompatActivity {
 
     private AddPasswordFragment addPasswordFragment;
     private AddCuentasFragment addCuentasFragment;
@@ -37,13 +30,8 @@ public class AddActivity extends AppCompatActivity implements AddPasswordFragmen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 setTheme(R.style.Theme_DatosSegurosYellow);
                 break;
@@ -69,7 +57,7 @@ public class AddActivity extends AppCompatActivity implements AddPasswordFragmen
 
         ConstraintLayout constraintLayout = findViewById(R.id.constraint_layout);
 
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar));
                 break;
@@ -114,26 +102,23 @@ public class AddActivity extends AppCompatActivity implements AddPasswordFragmen
         }
 
 
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                switch (checkedId) {
-                    case R.id.radioButton_nueva_contrasena:
-                        transaction.replace(R.id.contenedorFragments, addPasswordFragment);
-                        break;
-                    case R.id.radioButton_nueva_cuenta:
-                        transaction.replace(R.id.contenedorFragments, addCuentasFragment);
-                        break;
-                    case R.id.radioButton_nueva_tarjeta:
-                        transaction.replace(R.id.contenedorFragments, addTarjetaFragment);
-                        break;
-                    case R.id.radioButton_nueva_nota:
-                        transaction.replace(R.id.contenedorFragments, addNotaFragment);
-                        break;
-                }
-                transaction.commit();
+        radioGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            switch (checkedId) {
+                case R.id.radioButton_nueva_contrasena:
+                    transaction.replace(R.id.contenedorFragments, addPasswordFragment);
+                    break;
+                case R.id.radioButton_nueva_cuenta:
+                    transaction.replace(R.id.contenedorFragments, addCuentasFragment);
+                    break;
+                case R.id.radioButton_nueva_tarjeta:
+                    transaction.replace(R.id.contenedorFragments, addTarjetaFragment);
+                    break;
+                case R.id.radioButton_nueva_nota:
+                    transaction.replace(R.id.contenedorFragments, addNotaFragment);
+                    break;
             }
+            transaction.commit();
         });
     }
 
@@ -143,24 +128,9 @@ public class AddActivity extends AppCompatActivity implements AddPasswordFragmen
         dialog.setTitle("Confirmar");
         dialog.setMessage("¿Desea salir? Se perderá la información no guardada");
         dialog.setIcon(R.drawable.ic_advertencia);
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        dialog.setPositiveButton("Si", (dialog12, which) -> finish());
+        dialog.setNegativeButton("No", (dialog1, which) -> dialog1.dismiss());
         dialog.show();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 
     @Override
