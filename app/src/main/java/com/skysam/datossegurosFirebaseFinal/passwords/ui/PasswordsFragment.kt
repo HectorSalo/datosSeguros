@@ -32,6 +32,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     private val viewModel: MainViewModel by activityViewModels()
     private val passwordsFirestore: MutableList<PasswordsModel> = mutableListOf()
     private val passwordsSQLite: MutableList<PasswordsModel> = mutableListOf()
+    private val passwords: MutableList<PasswordsModel> = mutableListOf()
     private val listSearch: MutableList<PasswordsModel> = mutableListOf()
     private lateinit var adapter: PasswordsAdapter
 
@@ -57,6 +58,8 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
             startActivity(intent)
         }
 
+        loadViewModel()
+        loadPasswordsSQLite()
         loadPasswords()
     }
 
@@ -123,34 +126,28 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun loadPasswords() {
+        passwords.clear()
         when (SharedPref.getShowData()) {
             Constants.PREFERENCE_SHOW_ALL -> {
-
+                passwords.addAll(passwordsFirestore)
+                passwords.addAll(passwordsSQLite)
             }
             Constants.PREFERENCE_SHOW_CLOUD -> {
-                if (passwordsFirestore.isNotEmpty()) {
-                    adapter.updateList(passwordsFirestore.toList())
-                    binding.recycler.visibility = View.VISIBLE
-                    binding.progressBar.visibility = View.GONE
-                    binding.tvSinLista.visibility = View.GONE
-                } else {
-                    binding.recycler.visibility = View.GONE
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.tvSinLista.visibility = View.VISIBLE
-                }
+                passwords.addAll(passwordsFirestore)
             }
             Constants.PREFERENCE_SHOW_DEVICE -> {
-                if (passwordsSQLite.isNotEmpty()) {
-                    adapter.updateList(passwordsSQLite.toList())
-                    binding.recycler.visibility = View.VISIBLE
-                    binding.progressBar.visibility = View.GONE
-                    binding.tvSinLista.visibility = View.GONE
-                } else {
-                    binding.recycler.visibility = View.GONE
-                    binding.progressBar.visibility = View.VISIBLE
-                    binding.tvSinLista.visibility = View.VISIBLE
-                }
+                passwords.addAll(passwordsSQLite)
             }
+        }
+        if (passwords.isNotEmpty()) {
+            adapter.updateList(passwords.toList())
+            binding.recycler.visibility = View.VISIBLE
+            binding.progressBar.visibility = View.GONE
+            binding.tvSinLista.visibility = View.GONE
+        } else {
+            binding.recycler.visibility = View.GONE
+            binding.progressBar.visibility = View.VISIBLE
+            binding.tvSinLista.visibility = View.VISIBLE
         }
     }
 
@@ -164,6 +161,8 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     fun loadPasswordsSQLite() {
+        val calendar = Calendar.getInstance()
+        val fechaMomento = calendar.time
         val conect =  ConexionSQLite(requireContext(), Auth.getCurrenUser()!!.uid, null, Constants.VERSION_SQLITE)
 
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
@@ -179,7 +178,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
             try {
                 val fechaCreacion = sdf.parse(fechaCreacionS)
                 val fechaCreacionL = fechaCreacion.time
-                val fechaMomentoL: Long = fechaMomento.getTime()
+                val fechaMomentoL: Long = fechaMomento.time
                 val diasRestantes = fechaCreacionL - fechaMomentoL
                 val segundos = diasRestantes / 1000
                 val minutos = segundos / 60

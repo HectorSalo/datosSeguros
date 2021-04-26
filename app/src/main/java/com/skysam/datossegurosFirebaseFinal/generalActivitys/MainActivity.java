@@ -117,15 +117,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         }
 
-        /*Calendar almanaque = Calendar.getInstance();
-        int diaActual = almanaque.get(Calendar.DAY_OF_MONTH);
-        int mesActual = almanaque.get(Calendar.MONTH);
-        int anualActual = almanaque.get(Calendar.YEAR);
-        almanaque.set(anualActual, mesActual, diaActual);
-        fechaMomento = almanaque.getTime();
-
-        conect = new ConexionSQLite(getApplicationContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-
+        /*
         validarEscogencia();*/
 
 
@@ -202,67 +194,6 @@ public class MainActivity extends AppCompatActivity {
         })
                 .setCancelable(false).show();
     }*/
-
-    public void verContrasenasSQLite() {
-        progressBarCargar.setVisibility(View.VISIBLE);
-
-        ultMetodo = 4;
-
-        listContrasena = new ArrayList<>();
-        adapterContrasena = new PasswordsAdapter(listContrasena);
-        recycler.setAdapter(adapterContrasena);
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-
-        SQLiteDatabase db = conect.getReadableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * from " + Constants.BD_CONTRASENAS, null);
-
-        while (cursor.moveToNext()) {
-            PasswordsModel pass = new PasswordsModel();
-            pass.setIdContrasena(String.valueOf(cursor.getInt(0)));
-            pass.setServicio(cursor.getString(1));
-            pass.setUsuario(cursor.getString(2));
-            pass.setContrasena(cursor.getString(3));
-
-            String fechaCreacionS = cursor.getString(10);
-            try {
-                Date fechaCreacion = sdf.parse(fechaCreacionS);
-                long fechaCreacionL = fechaCreacion.getTime();
-                long fechaMomentoL = fechaMomento.getTime();
-
-                long diasRestantes = fechaCreacionL - fechaMomentoL;
-
-                long segundos = diasRestantes / 1000;
-                long minutos = segundos / 60;
-                long horas = minutos / 60;
-                long dias = horas / 24;
-                int diasTranscurridos = (int) dias;
-
-                if (cursor.getString(4).equals("0")) {
-                    pass.setVencimiento(0);
-                } else {
-                    int vencimiento = Integer.parseInt(cursor.getString(4));
-                    int faltante = vencimiento - diasTranscurridos;
-                    pass.setVencimiento(faltante);
-                }
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-
-            listContrasena.add(pass);
-        }
-
-        adapterContrasena.updateList(listContrasena);
-        if (listContrasena.isEmpty()) {
-            sinLista.setVisibility(View.VISIBLE);
-            progressBarCargar.setVisibility(View.GONE);
-        } else {
-            sinLista.setVisibility(View.GONE);
-            progressBarCargar.setVisibility(View.GONE);
-        }
-
-    }
 
     public void verCuentasBancariasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);

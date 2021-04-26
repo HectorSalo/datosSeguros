@@ -56,11 +56,7 @@ public class SettingsActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 setTheme(R.style.Theme_DatosSegurosYellow);
                 break;
@@ -169,10 +165,8 @@ public class SettingsActivity extends AppCompatActivity implements
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
             View view = super.onCreateView(inflater, container, savedInstanceState);
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-            String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
-            switch (tema){
+            switch (SharedPref.INSTANCE.getTheme()){
                 case Constants.PREFERENCE_AMARILLO:
                     view.setBackgroundColor(getResources().getColor(R.color.color_fondo_ajustes));
                     break;
@@ -419,10 +413,7 @@ public class SettingsActivity extends AppCompatActivity implements
 
             button = view.findViewById(R.id.button);
 
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-            String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-            switch (tema){
+            switch (SharedPref.INSTANCE.getTheme()){
                 case Constants.PREFERENCE_AMARILLO:
                     view.setBackgroundColor(getResources().getColor(R.color.color_fondo_ajustes));
                     button.setBackgroundColor(getResources().getColor(R.color.color_blue_grey));
@@ -622,10 +613,8 @@ public class SettingsActivity extends AppCompatActivity implements
             buttonTodos = view.findViewById(R.id.button_borrar_todos);
 
             user = FirebaseAuth.getInstance().getCurrentUser();
-            SharedPreferences sharedPreferences = requireActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-            String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
-            switch (tema){
+            switch (SharedPref.INSTANCE.getTheme()){
                 case Constants.PREFERENCE_AMARILLO:
                     view.setBackgroundColor(getResources().getColor(R.color.color_fondo_ajustes));
                     buttonTodos.setBackgroundColor(getResources().getColor(R.color.color_blue_grey));
