@@ -132,11 +132,4 @@ public class AddActivity extends AppCompatActivity {
         dialog.setNegativeButton("No", (dialog1, which) -> dialog1.dismiss());
         dialog.show();
     }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
-
-
 }

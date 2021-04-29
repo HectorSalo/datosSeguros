@@ -1,8 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.settings;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -39,7 +37,6 @@ import com.skysam.datossegurosFirebaseFinal.common.EliminarCuenta;
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 
