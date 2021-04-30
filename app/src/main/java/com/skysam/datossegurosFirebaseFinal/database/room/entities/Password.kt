@@ -9,15 +9,16 @@ import com.skysam.datossegurosFirebaseFinal.common.Constants
  */
 @Entity(tableName = Constants.BD_CONTRASENAS)
 data class Password(
-        @PrimaryKey(autoGenerate = true) val id: Int,
+        @PrimaryKey val id: String,
         var service: String,
         var user: String,
         var password: String,
-        var duration: Int,
+        var expiration: Int,
         var dateCreated: Long,
-        var passOld1: String,
-        var passOld2: String,
-        var passOld3: String,
-        var passOld4: String,
-        var passOld5: String
+        var isExpanded: Boolean = false,
+        var passOld1: String? = null,
+        var passOld2: String? = null,
+        var passOld3: String? = null,
+        var passOld4: String? = null,
+        var passOld5: String? = null
 )

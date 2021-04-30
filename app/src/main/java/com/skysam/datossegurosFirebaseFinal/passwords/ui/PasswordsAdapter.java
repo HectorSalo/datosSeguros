@@ -27,8 +27,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
-import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -42,12 +42,12 @@ import java.util.List;
 
 public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.ViewHolderContrasena> {
 
-    private ArrayList<PasswordsModel> listContrasena;
+    private ArrayList<Password> listContrasena;
     private ArrayList<String> selectedItems;
     private ArrayList <String> selectedCopiar;
     private Context mCtx;
 
-    public PasswordsAdapter(List<PasswordsModel> listContrasena) {
+    public PasswordsAdapter(List<Password> listContrasena) {
         this.listContrasena = new ArrayList<>(listContrasena);
     }
 
@@ -68,15 +68,15 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         final boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
 
 
-        viewHolderContrasena.servicio.setText(listContrasena.get(i).getServicio());
-        viewHolderContrasena.usuario.setText(listContrasena.get(i).getUsuario());
-        viewHolderContrasena.contrasena.setText(listContrasena.get(i).getContrasena());
-        if (listContrasena.get(i).getVencimiento() == 0) {
+        viewHolderContrasena.servicio.setText(listContrasena.get(i).getService());
+        viewHolderContrasena.usuario.setText(listContrasena.get(i).getUser());
+        viewHolderContrasena.contrasena.setText(listContrasena.get(i).getPassword());
+        if (listContrasena.get(i).getExpiration() == 0) {
             viewHolderContrasena.vencimiento.setText("Sin fecha de vencimiento");
             viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.md_text_white));
         } else {
-            viewHolderContrasena.vencimiento.setText(listContrasena.get(i).getVencimiento() + " días");
-            if (listContrasena.get(i).getVencimiento() <= 7 && listContrasena.get(i).getVencimiento() != 0) {
+            viewHolderContrasena.vencimiento.setText(listContrasena.get(i).getExpiration() + " días");
+            if (listContrasena.get(i).getExpiration() <= 7 && listContrasena.get(i).getExpiration() != 0) {
                 viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.color_red_error));
             } else {
                 viewHolderContrasena.vencimiento.setTextColor(mCtx.getResources().getColor(R.color.md_text_white));
@@ -123,9 +123,9 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
 
                     case R.id.menu_ultimos_pass:
                         if (almacenamientoNube) {
-                            verUltimosPassFirebase(listContrasena.get(i).getIdContrasena());
+                            verUltimosPassFirebase(listContrasena.get(i).getId());
                         } else {
-                            verUltimosPassSQLite(listContrasena.get(i).getIdContrasena());
+                            verUltimosPassSQLite(listContrasena.get(i).getId());
                         }
                         break;
 
@@ -164,21 +164,21 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
             constraintExpandable = itemView.findViewById(R.id.expandable);
 
             arrow.setOnClickListener(view -> {
-                PasswordsModel passwordsModel = listContrasena.get(getAdapterPosition());
+                Password passwordsModel = listContrasena.get(getAdapterPosition());
                 passwordsModel.setExpanded(!passwordsModel.isExpanded());
                 notifyItemChanged(getAdapterPosition());
             });
         }
     }
 
-    public void copiar(final PasswordsModel i) {
+    public void copiar(final Password i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
         dialog.setMultiChoiceItems(R.array.copiarContrasena, null, (dialog1, which, isChecked) -> {
-            String servicio = i.getServicio();
-            String usuario = i.getUsuario();
-            String contrasena = i.getContrasena();
+            String servicio = i.getService();
+            String usuario = i.getUser();
+            String contrasena = i.getPassword();
 
             String [] items = {servicio, usuario, contrasena};
 
@@ -204,15 +204,15 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         dialog.show();
     }
 
-    public void compartir(final PasswordsModel i) {
+    public void compartir(final Password i) {
         selectedItems = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
         dialog.setMultiChoiceItems(R.array.copiarContrasena, null, (dialog1, which, isChecked) -> {
 
-            String servicio = i.getServicio();
-            String usuario = i.getUsuario();
-            String contrasena = i.getContrasena();
+            String servicio = i.getService();
+            String usuario = i.getUser();
+            String contrasena = i.getPassword();
 
             String [] items = {servicio, usuario, contrasena};
 
@@ -236,17 +236,17 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         dialog.show();
     }
 
-    public void editar(PasswordsModel i) {
+    public void editar(Password i) {
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
-        myBundle.putString("id", i.getIdContrasena());
+        myBundle.putString("id", i.getId());
         myBundle.putInt("data", 0);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
-    public void eliminarFirebase(final PasswordsModel i) {
-        String doc = i.getIdContrasena();
+    public void eliminarFirebase(final Password i) {
+        String doc = i.getId();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CONTRASENAS);
 
@@ -261,8 +261,8 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
     }
 
-    public void eliminarSQLite(PasswordsModel i) {
-        String idContrasena = i.getIdContrasena();
+    public void eliminarSQLite(Password i) {
+        String idContrasena = i.getId();
 
         ConexionSQLite conect = new ConexionSQLite(mCtx, Constants.BD_PROPIETARIOS, null, Constants.VERSION_SQLITE);
         SQLiteDatabase db = conect.getWritableDatabase();
@@ -438,7 +438,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         cursor.close();
     }
 
-    public void updateList (List<PasswordsModel> newList) {
+    public void updateList (List<Password> newList) {
         listContrasena.clear();
         listContrasena = new ArrayList<>(newList);
         notifyDataSetChanged();

@@ -21,6 +21,6 @@ interface Password {
     @Delete
     suspend fun delete(password: Password)
 
-    @Query ("DELETE FROM password")
+    @Query ("DELETE FROM contrasenas")
     suspend fun deleteAll()
 }

@@ -37,7 +37,6 @@ import com.skysam.datossegurosFirebaseFinal.passwords.ui.PasswordsAdapter;
 import com.skysam.datossegurosFirebaseFinal.notes.ui.NoteAdapter;
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.common.model.AccountModel;
-import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel;
 import com.skysam.datossegurosFirebaseFinal.common.model.NoteModel;
 import com.skysam.datossegurosFirebaseFinal.common.model.CardModel;
 import com.skysam.datossegurosFirebaseFinal.R;
@@ -66,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recycler;
     private PasswordsAdapter adapterContrasena;
-    private ArrayList<PasswordsModel> listContrasena;
     private ArrayList<AccountModel> listBancos;
     private ArrayList<CardModel> listTarjetas;
     private ArrayList<NoteModel> listNota;
@@ -117,10 +115,6 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         }
 
-        /*
-        validarEscogencia();*/
-
-
     }
 
     @Override
@@ -152,48 +146,6 @@ public class MainActivity extends AppCompatActivity {
         }
         tiempoPrimerClick = System.currentTimeMillis();
     }
-
-
-    /*public void validarEscogencia() {
-        creado = true;
-        boolean escogerAlmacenamiento = sharedPreferences.getBoolean(Constants.ALMACENAMIENTO_ESCOGIDO, false);
-        if (!escogerAlmacenamiento) {
-            //seleccionarAlmacenamiento();
-        } else {
-            if (almacenamientoNube) {
-                //verContrasenaFirebase();
-            } else {
-                //verContrasenasSQLite();
-            }
-        }
-    }
-
-    public void seleccionarAlmacenamiento () {
-
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle("Escoja lugar de almacenamiento")
-                .setMessage(R.string.explicacion_escoger_almacenamiento)
-                .setPositiveButton("Dispositivo", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, false);
-                        editor.putBoolean(Constants.ALMACENAMIENTO_ESCOGIDO, true);
-                        editor.commit();
-                        //verContrasenasSQLite();
-                    }
-                }).setNegativeButton("En la nube", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-                editor.putBoolean(Constants.ALMACENAMIENTO_ESCOGIDO, true);
-                editor.commit();
-                //verContrasenaFirebase();
-            }
-        })
-                .setCancelable(false).show();
-    }*/
 
     public void verCuentasBancariasSQLite() {
         progressBarCargar.setVisibility(View.VISIBLE);

@@ -40,7 +40,7 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter = NoteAdapter(notes.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        viewModel.notes.observe(viewLifecycleOwner, {
+        viewModel.notesFirestore.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 notes.clear()
                 notes.addAll(it)

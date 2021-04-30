@@ -40,7 +40,7 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter = AccountAdapter(accounts.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        viewModel.accounts.observe(viewLifecycleOwner, {
+        viewModel.accountsFirestore.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 accounts.clear()
                 accounts.addAll(it)

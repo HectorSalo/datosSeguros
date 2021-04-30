@@ -1,7 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui
 
 import android.content.Intent
-import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -12,16 +11,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel
-import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
 import com.skysam.datossegurosFirebaseFinal.databinding.PasswordsFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
-import java.text.ParseException
-import java.text.SimpleDateFormat
 import java.util.*
 
 class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
@@ -30,12 +25,11 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     private var _binding: PasswordsFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
-    private val passwordsFirestore: MutableList<PasswordsModel> = mutableListOf()
-    private val passwordsSQLite: MutableList<PasswordsModel> = mutableListOf()
-    private val passwords: MutableList<PasswordsModel> = mutableListOf()
-    private val listSearch: MutableList<PasswordsModel> = mutableListOf()
+    private val passwordsFirestore: MutableList<Password> = mutableListOf()
+    private val passwordsRoom: MutableList<Password> = mutableListOf()
+    private val passwords: MutableList<Password> = mutableListOf()
+    private val listSearch: MutableList<Password> = mutableListOf()
     private lateinit var adapter: PasswordsAdapter
-    private var firestoreActived = true
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -60,7 +54,6 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
         }
 
         loadViewModel()
-        loadPasswordsSQLite()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -110,8 +103,8 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
             listSearch.clear()
 
             for (password in passwordsFirestore) {
-                if (password.servicio.toLowerCase(Locale.ROOT).contains(userInput) ||
-                        password.usuario.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (password.service.toLowerCase(Locale.ROOT).contains(userInput) ||
+                        password.user.toLowerCase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(password)
                 }
             }
@@ -131,16 +124,13 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
         when (SharedPref.getShowData()) {
             Constants.PREFERENCE_SHOW_ALL -> {
                 passwords.addAll(passwordsFirestore)
-                passwords.addAll(passwordsSQLite)
-                firestoreActived = true
+                passwords.addAll(passwordsRoom)
             }
             Constants.PREFERENCE_SHOW_CLOUD -> {
                 passwords.addAll(passwordsFirestore)
-                firestoreActived = true
             }
             Constants.PREFERENCE_SHOW_DEVICE -> {
-                firestoreActived = false
-                passwords.addAll(passwordsSQLite)
+                passwords.addAll(passwordsRoom)
             }
         }
         if (passwords.isNotEmpty()) {
@@ -155,51 +145,20 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun loadViewModel() {
-        viewModel.passwords.observe(viewLifecycleOwner, {
+        viewModel.passwordsFirestore.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 passwordsFirestore.clear()
                 passwordsFirestore.addAll(it)
-                if (firestoreActived) loadPasswords()
+                loadPasswords()
             }
         })
-    }
 
-    private fun loadPasswordsSQLite() {
-        val calendar = Calendar.getInstance()
-        val fechaMomento = calendar.time
-        val conect =  ConexionSQLite(requireContext(), Auth.getCurrenUser()!!.uid, null, Constants.VERSION_SQLITE)
-
-        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm")
-        val db: SQLiteDatabase = conect.readableDatabase
-        val cursor = db.rawQuery("SELECT * from " + Constants.BD_CONTRASENAS, null)
-        while (cursor.moveToNext()) {
-            val pass = PasswordsModel()
-            pass.idContrasena = cursor.getInt(0).toString()
-            pass.servicio = cursor.getString(1)
-            pass.usuario = cursor.getString(2)
-            pass.contrasena = cursor.getString(3)
-            val fechaCreacionS = cursor.getString(10)
-            try {
-                val fechaCreacion = sdf.parse(fechaCreacionS)
-                val fechaCreacionL = fechaCreacion.time
-                val fechaMomentoL: Long = fechaMomento.time
-                val diasRestantes = fechaCreacionL - fechaMomentoL
-                val segundos = diasRestantes / 1000
-                val minutos = segundos / 60
-                val horas = minutos / 60
-                val dias = horas / 24
-                val diasTranscurridos = dias.toInt()
-                if (cursor.getString(4) == "0") {
-                    pass.vencimiento = 0
-                } else {
-                    val vencimiento = cursor.getString(4).toInt()
-                    val faltante = vencimiento - diasTranscurridos
-                    pass.vencimiento = faltante
-                }
-            } catch (e: ParseException) {
-                e.printStackTrace()
+        viewModel.passwordsRoom.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                passwordsRoom.clear()
+                passwordsRoom.addAll(it)
+                loadPasswords()
             }
-            passwordsSQLite.add(pass)
-        }
+        })
     }
 }

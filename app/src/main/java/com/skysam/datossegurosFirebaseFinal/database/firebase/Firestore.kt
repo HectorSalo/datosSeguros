@@ -9,7 +9,7 @@ import com.skysam.datossegurosFirebaseFinal.common.Constants
 import com.skysam.datossegurosFirebaseFinal.common.model.AccountModel
 import com.skysam.datossegurosFirebaseFinal.common.model.CardModel
 import com.skysam.datossegurosFirebaseFinal.common.model.NoteModel
-import com.skysam.datossegurosFirebaseFinal.common.model.PasswordsModel
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -24,7 +24,7 @@ object Firestore {
         return FirebaseFirestore.getInstance()
     }
 
-    fun getPasswords(): Flow<List<PasswordsModel>> {
+    fun getPasswords(): Flow<List<Password>> {
         return callbackFlow {
             val request = getInstance().collection(Constants.BD_PROPIETARIOS).document(Auth.getCurrenUser()!!.uid)
                     .collection(Constants.BD_CONTRASENAS)
@@ -35,14 +35,8 @@ object Firestore {
                             return@addSnapshotListener
                         }
 
-                        val passwords: MutableList<PasswordsModel> = mutableListOf()
+                        val passwords: MutableList<Password> = mutableListOf()
                         for (doc in value!!) {
-                            val pass = PasswordsModel()
-                            pass.idContrasena = doc.id
-                            pass.servicio = doc.getString(Constants.BD_SERVICIO)
-                            pass.usuario = doc.getString(Constants.BD_USUARIO)
-                            pass.contrasena = doc.getString(Constants.BD_PASSWORD)
-
                             val momentoCreacion: Date = doc.getDate(Constants.BD_FECHA_CREACION)!!
                             val fechaCreacion = momentoCreacion.time
                             val calendar = Calendar.getInstance()
@@ -56,14 +50,22 @@ object Firestore {
                             val dias = horas / 24
                             val diasTranscurridos = dias.toInt()
 
-
-                            if (doc.getString(Constants.BD_VIGENCIA) == "0") {
-                                pass.vencimiento = 0
+                            val expiration: Int = if (doc.getString(Constants.BD_VIGENCIA) == "0") {
+                                0
                             } else {
                                 val vencimiento: Int = doc.getString(Constants.BD_VIGENCIA)!!.toInt()
                                 val faltante = vencimiento - diasTranscurridos
-                                pass.vencimiento = faltante
+                                faltante
                             }
+
+                            val pass = Password(
+                                    doc.id,
+                                    doc.getString(Constants.BD_SERVICIO)!!,
+                                    doc.getString(Constants.BD_USUARIO)!!,
+                                    doc.getString(Constants.BD_PASSWORD)!!,
+                                    expiration,
+                                    fechaCreacion
+                            )
                             passwords.add(pass)
                         }
                         offer(passwords.toList())

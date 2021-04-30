@@ -40,7 +40,7 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter = CardAdapter(cards.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        viewModel.cards.observe(viewLifecycleOwner, {
+        viewModel.cardsFirestore.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 cards.clear()
                 cards.addAll(it)

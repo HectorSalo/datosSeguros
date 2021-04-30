@@ -9,6 +9,7 @@ import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlin.coroutines.CoroutineContext
 
@@ -27,6 +28,11 @@ object Room: CoroutineScope {
         RoomDB::class.java, NAME_DB_ROOM)
                 .fallbackToDestructiveMigration()
                 .build()
+    }
+
+    fun getPasswords(): Flow<MutableList<Password>> {
+        return getInstance().passwords()
+                .getAll()
     }
 
     fun savePassword(password: Password) {
@@ -57,6 +63,11 @@ object Room: CoroutineScope {
         }
     }
 
+    fun getAccounts(): Flow<MutableList<Account>> {
+        return getInstance().accounts()
+                .getAll()
+    }
+
     fun saveAccount(account: Account) {
         launch {
             getInstance().accounts()
@@ -85,6 +96,11 @@ object Room: CoroutineScope {
         }
     }
 
+    fun getCards(): Flow<MutableList<Card>> {
+        return getInstance().cards()
+                .getAll()
+    }
+
     fun saveCard(card: Card) {
         launch {
             getInstance().cards()
@@ -111,6 +127,11 @@ object Room: CoroutineScope {
             getInstance().cards()
                     .deleteAll()
         }
+    }
+
+    fun getNotes(): Flow<MutableList<Note>> {
+        return getInstance().notes()
+                .getAll()
     }
 
     fun saveNote(note: Note) {
