@@ -37,6 +37,7 @@ import com.skysam.datossegurosFirebaseFinal.common.EliminarCuenta;
 import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 
@@ -786,15 +787,10 @@ public class SettingsActivity extends AppCompatActivity implements
         }
 
         private void eliminarDataDispositivo(boolean borrarTodo) {
-            ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-            SQLiteDatabase db = conect.getWritableDatabase();
-
-            db.delete(Constants.BD_CONTRASENAS, null, null);
-            db.delete(Constants.BD_CUENTAS, null, null);
-            db.delete(Constants.BD_TARJETAS, null, null);
-            db.delete(Constants.BD_NOTAS, null, null);
-
-            db.close();
+            Room.INSTANCE.deleteAllPasswords();
+            Room.INSTANCE.deleteAllAccounts();
+            Room.INSTANCE.deleteAllCards();
+            Room.INSTANCE.deleteAllNotes();
 
             Toast.makeText(getContext(), "Datos eliminados del Dispositivo satisfactoriamente", Toast.LENGTH_LONG).show();
 

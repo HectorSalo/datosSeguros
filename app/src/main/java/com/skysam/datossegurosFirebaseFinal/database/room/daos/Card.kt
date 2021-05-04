@@ -12,6 +12,9 @@ interface Card {
     @Query("SELECT * FROM tarjetas ORDER BY user ASC")
     fun getAll(): Flow<MutableList<Card>>
 
+    @Query("SELECT * FROM tarjetas WHERE id = :id")
+    suspend fun getCardById(id: String): Card
+
     @Insert
     suspend fun insert(card: Card)
 

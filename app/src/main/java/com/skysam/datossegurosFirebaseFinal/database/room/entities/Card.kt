@@ -9,7 +9,7 @@ import com.skysam.datossegurosFirebaseFinal.common.Constants
  */
 @Entity(tableName = Constants.BD_TARJETAS)
 data class Card(
-        @PrimaryKey(autoGenerate = true) val id: Int,
+        @PrimaryKey val id: String,
         var user: String,
         var bank: String,
         var numberCard: String,
@@ -18,4 +18,6 @@ data class Card(
         var cvv: String,
         var dateExpiration: String,
         var code: String,
+        var isExpanded: Boolean = false,
+        var isSavedCloud: Boolean = true
 )

@@ -5,8 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,9 +20,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
-import com.skysam.datossegurosFirebaseFinal.common.model.NoteModel;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -36,12 +34,12 @@ import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota> {
 
-    private ArrayList<NoteModel> listNota;
+    private ArrayList<Note> listNota;
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
 
-    public NoteAdapter(List<NoteModel> listNota) {
+    public NoteAdapter(List<Note> listNota) {
         this.listNota = new ArrayList<>(listNota);
     }
 
@@ -55,13 +53,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderNota viewHolderNota, final int i) {
-
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-        viewHolderNota.titulo.setText(listNota.get(i).getTitulo());
-        viewHolderNota.contenido.setText(listNota.get(i).getContenido());
+        viewHolderNota.titulo.setText(listNota.get(i).getTitle());
+        viewHolderNota.contenido.setText(listNota.get(i).getContent());
 
         boolean isExpanded = listNota.get(i).isExpanded();
         if (isExpanded) {
@@ -96,10 +89,10 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog1, which) -> {
-                            if (almacenamientoNube) {
+                            if (listNota.get(i).isSavedCloud()) {
                                 eliminarFirebase(listNota.get(i));
                             } else {
-                                eliminarSQLite(listNota.get(i));
+                                eliminarRoom(listNota.get(i));
                             }
                         });
                         dialog.setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
@@ -132,27 +125,27 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
         public ViewHolderNota(@NonNull View itemView) {
             super(itemView);
 
-            titulo = (TextView) itemView.findViewById(R.id.tvTituloNota);
-            contenido = (TextView) itemView.findViewById(R.id.tvcontenidoNota);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuNota);
+            titulo = itemView.findViewById(R.id.tvTituloNota);
+            contenido = itemView.findViewById(R.id.tvcontenidoNota);
+            menu = itemView.findViewById(R.id.tvmenuNota);
             cardView = itemView.findViewById(R.id.cardviewNota);
             arrow = itemView.findViewById(R.id.ib_arrow);
 
             arrow.setOnClickListener(view -> {
-                NoteModel noteModel = listNota.get(getAdapterPosition());
+                Note noteModel = listNota.get(getAdapterPosition());
                 noteModel.setExpanded(!noteModel.isExpanded());
                 notifyItemChanged(getAdapterPosition());
             });
         }
     }
 
-    public void copiar(final NoteModel i) {
+    public void copiar(final Note i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
         dialog.setMultiChoiceItems(R.array.copiarNota, null, (dialog1, which, isChecked) -> {
-            String titulo = i.getTitulo();
-            String contenido = i.getContenido();
+            String titulo = i.getTitle();
+            String contenido = i.getContent();
 
             String [] items = {titulo, contenido};
 
@@ -177,13 +170,13 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
         dialog.show();
     }
 
-    public void compartir(final NoteModel i) {
+    public void compartir(final Note i) {
         selectedCompartir = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
         dialog.setMultiChoiceItems(R.array.copiarNota, null, (dialog1, which, isChecked) -> {
-            String titulo = i.getTitulo();
-            String contenido = i.getContenido();
+            String titulo = i.getTitle();
+            String contenido = i.getContent();
 
             String [] items = {titulo, contenido};
 
@@ -207,19 +200,21 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
         dialog.show();
     }
 
-    public void editar(NoteModel i) {
+    public void editar(Note i) {
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
-        myBundle.putString("id", i.getIdNota());
+        myBundle.putString("id", i.getId());
+        myBundle.putBoolean("isCloud", i.isSavedCloud());
         myBundle.putInt("data", 3);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
-    public void eliminarFirebase(final NoteModel i) {
-        String doc = i.getIdNota();
+    public void eliminarFirebase(final Note i) {
+        String doc = i.getId();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_NOTAS);
+        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS)
+                .document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_NOTAS);
 
         reference.document(doc)
                 .delete()
@@ -232,21 +227,14 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
     }
 
-    public void eliminarSQLite(NoteModel i) {
-        String idNota = i.getIdNota();
-
-        ConexionSQLite conect = new ConexionSQLite(mCtx, Constants.BD_PROPIETARIOS, null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        db.delete(Constants.BD_NOTAS, "idNota=" + idNota, null);
-        db.close();
-
+    public void eliminarRoom(Note i) {
+        Room.INSTANCE.deleteNote(i);
         listNota.remove(i);
         notifyDataSetChanged();
         Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
-    public void updateList (List<NoteModel> newList) {
+    public void updateList (List<Note> newList) {
         listNota.clear();
         listNota = new ArrayList<>(newList);
         notifyDataSetChanged();

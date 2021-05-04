@@ -1,14 +1,7 @@
 package com.skysam.datossegurosFirebaseFinal.accounts.ui;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -24,18 +17,15 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,11 +37,11 @@ public class EditarCuentasFragment extends Fragment {
     private TextInputEditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
     private RadioButton rbAhorro, rbCorriente;
     private ProgressBar progressBar;
-    private FirebaseUser user;
     private String spinnerSeleccion, idDoc;
     private Spinner spinnerDocumento;
     private Button button;
-    private boolean almacenamientoNube;
+    private boolean isCloud;
+    private Account account;
 
 
     public EditarCuentasFragment() {
@@ -69,17 +59,9 @@ public class EditarCuentasFragment extends Fragment {
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_editar_cuentas, container, false);
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
         button = vista.findViewById(R.id.guardarCuenta);
 
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 button.setBackgroundColor(getResources().getColor(R.color.color_yellow_dark));
                 break;
@@ -112,106 +94,100 @@ public class EditarCuentasFragment extends Fragment {
         progressBar = vista.findViewById(R.id.progressBarAddCuenta);
 
         idDoc = getArguments().getString("id");
+        isCloud = getArguments().getBoolean("isCloud");
 
 
         String [] spDocumentos = {"Cédula", "RIF", "Pasaporte"};
-        ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<String>(getContext(), R.layout.spinner_opciones, spDocumentos);
+        ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<>(getContext(), R.layout.spinner_opciones, spDocumentos);
         spinnerDocumento.setAdapter(adapterDocumentos);
 
-        if (almacenamientoNube) {
+        if (isCloud) {
             cargarDataFirebase();
         } else {
-            cargarDataSQLite();
+            cargarDataRoom();
         }
 
-        Button button = (Button) vista.findViewById(R.id.guardarCuenta);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validarDatos();
-            }
-        });
+        Button button = vista.findViewById(R.id.guardarCuenta);
+        button.setOnClickListener(v -> validarDatos());
 
         return vista;
     }
 
     public void cargarDataFirebase() {
         progressBar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CUENTAS);
+        CollectionReference reference = dbFirestore.collection(Constants.BD_PROPIETARIOS)
+                .document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CUENTAS);
 
-        reference.document(idDoc).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
-                    etTitular.setText(doc.getString(Constants.BD_TITULAR_BANCO));
-                    etBanco.setText(doc.getString(Constants.BD_BANCO));
-                    etNumeroCuenta.setText(doc.getString(Constants.BD_NUMERO_CUENTA));
-                    etCedula.setText(doc.getString(Constants.BD_CEDULA_BANCO));
-                    etTelefono.setText(doc.getString(Constants.BD_TELEFONO));
-                    String tipo = doc.getString(Constants.BD_TIPO_CUENTA);
-                    etCorreo.setText(doc.getString(Constants.BD_CORREO_CUENTA));
-                    String tipoDocumento = doc.getString(Constants.BD_TIPO_DOCUMENTO);
+        reference.document(idDoc).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                DocumentSnapshot doc = task.getResult();
+                etTitular.setText(doc.getString(Constants.BD_TITULAR_BANCO));
+                etBanco.setText(doc.getString(Constants.BD_BANCO));
+                etNumeroCuenta.setText(doc.getString(Constants.BD_NUMERO_CUENTA));
+                etCedula.setText(doc.getString(Constants.BD_CEDULA_BANCO));
+                etTelefono.setText(doc.getString(Constants.BD_TELEFONO));
+                String tipo = doc.getString(Constants.BD_TIPO_CUENTA);
+                etCorreo.setText(doc.getString(Constants.BD_CORREO_CUENTA));
+                String tipoDocumento = doc.getString(Constants.BD_TIPO_DOCUMENTO);
 
-                    if (tipoDocumento != null) {
-                        if (tipoDocumento.equals("Cédula")) {
+                if (tipoDocumento != null) {
+                    switch (tipoDocumento) {
+                        case "Cédula":
                             spinnerDocumento.setSelection(0);
-                        } else if (tipoDocumento.equals("RIF")) {
+                            break;
+                        case "RIF":
                             spinnerDocumento.setSelection(1);
-                        } else if (tipoDocumento.equals("Pasaporte")) {
+                            break;
+                        case "Pasaporte":
                             spinnerDocumento.setSelection(2);
-                        }
+                            break;
                     }
-
-                    if (tipo.equals("Ahorro")) {
-                        rbAhorro.setChecked(true);
-                    } else if (tipo.equals("Corriente")) {
-                        rbCorriente.setChecked(true);
-                    }
-                    progressBar.setVisibility(View.GONE);
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                    requireActivity().finish();
                 }
+
+                if (tipo.equals("Ahorro")) {
+                    rbAhorro.setChecked(true);
+                } else if (tipo.equals("Corriente")) {
+                    rbCorriente.setChecked(true);
+                }
+                progressBar.setVisibility(View.GONE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                requireActivity().finish();
             }
         });
     }
 
-    public void cargarDataSQLite() {
-        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
+    public void cargarDataRoom() {
+        account = Room.INSTANCE.getAccountById(idDoc);
+        etTitular.setText(account.getUser());
+        etBanco.setText(account.getBank());
+        etNumeroCuenta.setText(account.getNumberAccount());
+        etCedula.setText(account.getNumberIdUser());
+        String tipo = account.getTypeAccount();
+        etTelefono.setText(account.getTelph());
+        etCorreo.setText(account.getEmail());
+        String tipoDocumento = account.getTypeIdUSer();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.BD_CUENTAS + " WHERE idCuenta =" + idDoc, null);
-
-        if (cursor.moveToFirst()) {
-            etTitular.setText(cursor.getString(1));
-            etBanco.setText(cursor.getString(2));
-            etNumeroCuenta.setText(cursor.getString(3));
-            etCedula.setText(cursor.getString(4));
-            String tipo = cursor.getString(5);
-            etTelefono.setText(cursor.getString(6));
-            etCorreo.setText(cursor.getString(7));
-            String tipoDocumento = cursor.getString(8);
-
-            if (tipoDocumento.equals("Cédula")) {
+        switch (tipoDocumento) {
+            case "Cédula":
                 spinnerDocumento.setSelection(0);
-            } else if (tipoDocumento.equals("RIF")) {
+                break;
+            case "RIF":
                 spinnerDocumento.setSelection(1);
-            } else if (tipoDocumento.equals("Pasaporte")) {
+                break;
+            case "Pasaporte":
                 spinnerDocumento.setSelection(2);
-            }
-
-            if (tipo.equals("Ahorro")) {
-                rbAhorro.setChecked(true);
-            } else if (tipo.equals("Corriente")) {
-                rbCorriente.setChecked(true);
-            }
+                break;
         }
 
+        if (tipo.equals("Ahorro")) {
+            rbAhorro.setChecked(true);
+        } else if (tipo.equals("Corriente")) {
+            rbCorriente.setChecked(true);
+        }
     }
 
 
@@ -271,16 +247,15 @@ public class EditarCuentasFragment extends Fragment {
         }
 
         if (datoValido) {
-            if (almacenamientoNube) {
+            if (isCloud) {
                 guardarDataFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
             } else {
-                guardarDataSQLite(titular, banco, documento, numeroCuenta, telefono, correo);
+                guardarDataRoom(titular, banco, documento, numeroCuenta, telefono, correo);
             }
         }
     }
 
     public void guardarDataFirebase (String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
-        String userID = user.getUid();
         spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
@@ -314,33 +289,29 @@ public class EditarCuentasFragment extends Fragment {
         cuentaBancaria.put(Constants.BD_TELEFONO, telefono);
         cuentaBancaria.put(Constants.BD_CORREO_CUENTA, correo);
 
-        db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CUENTAS).document(idDoc).update(cuentaBancaria).addOnSuccessListener(new OnSuccessListener<Void>() {
-            public void onSuccess(Void aVoid) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("msg", "Error adding document", e);
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                inputLayoutTitular.setEnabled(true);
-                inputLayoutBanco.setEnabled(true);
-                inputLayoutNumero.setEnabled(true);
-                inputLayoutCedula.setEnabled(true);
-                inputLayoutTelefono.setEnabled(true);
-                inputLayoutCorreo.setEnabled(true);
-                spinnerDocumento.setEnabled(true);
-                rbAhorro.setEnabled(true);
-                rbCorriente.setEnabled(true);
-                button.setEnabled(true);
-            }
-        });
+        db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid())
+                .collection(Constants.BD_CUENTAS).document(idDoc).update(cuentaBancaria).addOnSuccessListener(aVoid -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                }).addOnFailureListener(e -> {
+                    Log.w("msg", "Error adding document", e);
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    inputLayoutTitular.setEnabled(true);
+                    inputLayoutBanco.setEnabled(true);
+                    inputLayoutNumero.setEnabled(true);
+                    inputLayoutCedula.setEnabled(true);
+                    inputLayoutTelefono.setEnabled(true);
+                    inputLayoutCorreo.setEnabled(true);
+                    spinnerDocumento.setEnabled(true);
+                    rbAhorro.setEnabled(true);
+                    rbCorriente.setEnabled(true);
+                    button.setEnabled(true);
+                });
     }
 
-    public void guardarDataSQLite(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
+    public void guardarDataRoom(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
         spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
         String tipo = "";
 
@@ -349,22 +320,16 @@ public class EditarCuentasFragment extends Fragment {
         } else if (rbCorriente.isChecked()) {
             tipo = "Corriente";
         }
+        account.setUser(titular);
+        account.setBank(banco);
+        account.setNumberAccount(cuentaNumero);
+        account.setNumberIdUser(cedula);
+        account.setTypeAccount(tipo);
+        account.setTypeIdUSer(spinnerSeleccion);
+        account.setTelph(telefono);
+        account.setEmail(correo);
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(Constants.BD_TITULAR_TARJETA, titular);
-        values.put(Constants.BD_BANCO, banco);
-        values.put(Constants.BD_NUMERO_CUENTA, cuentaNumero);
-        values.put(Constants.BD_CEDULA_BANCO, cedula);
-        values.put(Constants.BD_TIPO_CUENTA, tipo);
-        values.put(Constants.BD_TIPO_DOCUMENTO, spinnerSeleccion);
-        values.put(Constants.BD_TELEFONO, telefono);
-        values.put(Constants.BD_CORREO_CUENTA, correo);
-
-        db.update(Constants.BD_CUENTAS, values, "idCuenta=" + idDoc, null);
-        db.close();
+        Room.INSTANCE.updateAccount(account);
 
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
         requireActivity().finish();

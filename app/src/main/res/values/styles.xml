@@ -23,14 +23,18 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/color_beige</item>
         <item name="colorPrimaryDark">@color/color_camel</item>
-        <item name="colorAccent">@color/color_brown</item>
+        <item name="colorAccent">@color/color_camel</item>
+        <item name="colorSurface">@color/color_brown</item>
+        <item name="android:windowBackground">@color/color_brown</item>
     </style>
 
     <style name="Theme.DatosSegurosLila" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/color_rose</item>
         <item name="colorPrimaryDark">@color/color_fucsia</item>
-        <item name="colorAccent">@color/color_purple</item>
+        <item name="colorAccent">@color/color_fucsia</item>
+        <item name="colorSurface">@color/color_purple</item>
+        <item name="android:windowBackground">@color/color_purple</item>
     </style>
 
     <style name="etiqueta">

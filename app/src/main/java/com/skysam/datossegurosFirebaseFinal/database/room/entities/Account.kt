@@ -9,14 +9,16 @@ import com.skysam.datossegurosFirebaseFinal.common.Constants
  */
 @Entity(tableName = Constants.BD_CUENTAS)
 data class Account(
-        @PrimaryKey(autoGenerate = true) val id: Int,
+        @PrimaryKey val id: String,
         var user: String,
         var bank: String,
         var numberAccount: String,
         var numberIdUser: String,
         var typeIdUSer: String,
         var typeAccount: String,
-        var telph: String,
-        var email: String,
+        var telph: String? = null,
+        var email: String? = null,
+        var isExpanded: Boolean = false,
+        var isSavedCloud: Boolean = true
 )
 

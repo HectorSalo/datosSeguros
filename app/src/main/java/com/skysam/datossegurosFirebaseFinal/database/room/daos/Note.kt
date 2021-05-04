@@ -12,6 +12,9 @@ interface Note {
     @Query("SELECT * FROM notas ORDER BY title ASC")
     fun getAll(): Flow<MutableList<Note>>
 
+    @Query("SELECT * FROM notas WHERE id = :id")
+    suspend fun getNoteById(id: String): Note
+
     @Insert
     suspend fun insert(note: Note)
 

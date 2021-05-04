@@ -8,7 +8,6 @@ import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -75,6 +74,15 @@ object Room: CoroutineScope {
                 .getAll()
     }
 
+    fun getAccountById(id: String): Account {
+        val account: Account
+        runBlocking {
+            account = getInstance().accounts()
+                    .getAccountById(id)
+        }
+        return account
+    }
+
     fun saveAccount(account: Account) {
         launch {
             getInstance().accounts()
@@ -108,6 +116,15 @@ object Room: CoroutineScope {
                 .getAll()
     }
 
+    fun getCardById(id: String): Card {
+        val card: Card
+        runBlocking {
+           card = getInstance().cards()
+                   .getCardById(id)
+        }
+        return card
+    }
+
     fun saveCard(card: Card) {
         launch {
             getInstance().cards()
@@ -139,6 +156,15 @@ object Room: CoroutineScope {
     fun getNotes(): Flow<MutableList<Note>> {
         return getInstance().notes()
                 .getAll()
+    }
+
+    fun getNoteById(id: String): Note {
+        val note: Note
+        runBlocking {
+            note = getInstance().notes()
+                    .getNoteById(id)
+        }
+        return note
     }
 
     fun saveNote(note: Note) {

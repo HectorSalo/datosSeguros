@@ -5,8 +5,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +20,9 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
-import com.skysam.datossegurosFirebaseFinal.common.model.CardModel;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -36,12 +34,12 @@ import java.util.List;
 
 public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarjeta> {
 
-    private ArrayList<CardModel> listTarjeta;
+    private ArrayList<Card> listTarjeta;
     private ArrayList<String> selectedCopiar;
     private ArrayList<String> selectedCompartir;
     private Context mCtx;
 
-    public CardAdapter(List<CardModel> listTarjeta) {
+    public CardAdapter(List<Card> listTarjeta) {
         this.listTarjeta = new ArrayList<>(listTarjeta);
     }
 
@@ -56,20 +54,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolderTarjeta viewHolderTarjeta, final int i) {
-
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-
-        viewHolderTarjeta.titular.setText(listTarjeta.get(i).getTitular());
-        viewHolderTarjeta.numeroTarjeta.setText(String.valueOf(listTarjeta.get(i).getNumeroTarjeta()));
-        viewHolderTarjeta.numeroCVV.setText(String.valueOf(listTarjeta.get(i).getCvv()));
-        viewHolderTarjeta.cedula.setText(String.valueOf(listTarjeta.get(i).getCedula()));
-        viewHolderTarjeta.tipoTarjeta.setText(listTarjeta.get(i).getTipo());
-        viewHolderTarjeta.banco.setText(listTarjeta.get(i).getBanco());
-        viewHolderTarjeta.vencimiento.setText(listTarjeta.get(i).getVencimiento());
-        viewHolderTarjeta.clave.setText(listTarjeta.get(i).getClave());
+        viewHolderTarjeta.titular.setText(listTarjeta.get(i).getUser());
+        viewHolderTarjeta.numeroTarjeta.setText(listTarjeta.get(i).getNumberCard());
+        viewHolderTarjeta.numeroCVV.setText(listTarjeta.get(i).getCvv());
+        viewHolderTarjeta.cedula.setText(listTarjeta.get(i).getNumberIdUser());
+        viewHolderTarjeta.tipoTarjeta.setText(listTarjeta.get(i).getTypeCard());
+        viewHolderTarjeta.banco.setText(listTarjeta.get(i).getBank());
+        viewHolderTarjeta.vencimiento.setText(listTarjeta.get(i).getDateExpiration());
+        viewHolderTarjeta.clave.setText(listTarjeta.get(i).getCode());
 
         boolean isExpanded = listTarjeta.get(i).isExpanded();
         viewHolderTarjeta.constraintExpandable.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
@@ -98,10 +90,10 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog12, which) -> {
-                            if (almacenamientoNube) {
+                            if (listTarjeta.get(i).isSavedCloud()) {
                                 eliminarFirebase(listTarjeta.get(i));
                             } else {
-                                eliminarSQLite(listTarjeta.get(i));
+                                eliminarRoom(listTarjeta.get(i));
                             }
                         });
                         dialog.setNegativeButton("Cancelar", (dialog1, which) -> dialog1.dismiss());
@@ -135,40 +127,40 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
         public ViewHolderTarjeta(@NonNull View itemView) {
             super(itemView);
 
-            titular = (TextView) itemView.findViewById(R.id.tvTitularTarjeta);
-            numeroTarjeta = (TextView) itemView.findViewById(R.id.tvnumeroTarjeta);
-            numeroCVV = (TextView) itemView.findViewById(R.id.tvnumeroCVV);
-            cedula = (TextView) itemView.findViewById(R.id.tvCedulaTarjeta);
-            tipoTarjeta = (TextView) itemView.findViewById(R.id.tvTipoTarjeta);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuTarjeta);
-            banco = (TextView) itemView.findViewById(R.id.tvBancoTarjeta);
-            vencimiento = (TextView) itemView.findViewById(R.id.tvVencimientoTarjeta);
-            clave = (TextView) itemView.findViewById(R.id.tvClaveTarjeta);
+            titular = itemView.findViewById(R.id.tvTitularTarjeta);
+            numeroTarjeta = itemView.findViewById(R.id.tvnumeroTarjeta);
+            numeroCVV = itemView.findViewById(R.id.tvnumeroCVV);
+            cedula = itemView.findViewById(R.id.tvCedulaTarjeta);
+            tipoTarjeta = itemView.findViewById(R.id.tvTipoTarjeta);
+            menu = itemView.findViewById(R.id.tvmenuTarjeta);
+            banco = itemView.findViewById(R.id.tvBancoTarjeta);
+            vencimiento = itemView.findViewById(R.id.tvVencimientoTarjeta);
+            clave = itemView.findViewById(R.id.tvClaveTarjeta);
             cardView = itemView.findViewById(R.id.cardviewTarjeta);
             arrow = itemView.findViewById(R.id.ib_arrow);
             constraintExpandable = itemView.findViewById(R.id.expandable);
 
             arrow.setOnClickListener(view -> {
-                CardModel cardModel = listTarjeta.get(getAdapterPosition());
+                Card cardModel = listTarjeta.get(getAdapterPosition());
                 cardModel.setExpanded(!cardModel.isExpanded());
                 notifyItemChanged(getAdapterPosition());
             });
         }
     }
 
-    public void copiar(final CardModel i) {
+    public void copiar(final Card i) {
         selectedCopiar = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea copiar?");
         dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, (dialog13, which, isChecked) -> {
-            String titular = i.getTitular();
-            String banco = i.getBanco();
-            String tarjeta = String.valueOf(i.getNumeroTarjeta());
-            String cvv = String.valueOf(i.getCvv());
-            String vencimiento = i.getVencimiento();
-            String cedula = String.valueOf(i.getCedula());
-            String clave = i.getClave();
-            String tipo = i.getTipo();
+            String titular = i.getUser();
+            String banco = i.getBank();
+            String tarjeta = i.getNumberCard();
+            String cvv = i.getCvv();
+            String vencimiento = i.getDateExpiration();
+            String cedula = i.getNumberIdUser();
+            String clave = i.getCode();
+            String tipo = i.getTypeCard();
 
             String [] items = {titular, banco, tarjeta, cvv, vencimiento, cedula, clave, tipo};
 
@@ -193,19 +185,19 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
         dialog.show();
     }
 
-    public void compartir(final CardModel i) {
+    public void compartir(final Card i) {
         selectedCompartir = new ArrayList<>();
         AlertDialog.Builder dialog = new AlertDialog.Builder(mCtx);
         dialog.setTitle("¿Qué desea compartir?");
         dialog.setMultiChoiceItems(R.array.copiarTarjeta, null, (dialog13, which, isChecked) -> {
-            String titular = i.getTitular();
-            String banco = i.getBanco();
-            String tarjeta = String.valueOf(i.getNumeroTarjeta());
-            String cvv = String.valueOf(i.getCvv());
-            String vencimiento = i.getVencimiento();
-            String cedula = String.valueOf(i.getCedula());
-            String clave = i.getClave();
-            String tipo = i.getTipo();
+            String titular = i.getUser();
+            String banco = i.getBank();
+            String tarjeta = i.getNumberCard();
+            String cvv = i.getCvv();
+            String vencimiento = i.getDateExpiration();
+            String cedula = i.getNumberIdUser();
+            String clave = i.getCode();
+            String tipo = i.getTypeCard();
 
             String [] items = {titular, banco, tarjeta, cvv, vencimiento, cedula, clave, tipo};
 
@@ -229,17 +221,18 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
         dialog.show();
     }
 
-    public void editar(CardModel i) {
+    public void editar(Card i) {
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
-        myBundle.putString("id", i.getIdTarjeta());
+        myBundle.putString("id", i.getId());
+        myBundle.putBoolean("isCloud", i.isSavedCloud());
         myBundle.putInt("data", 2);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
     }
 
-    public void eliminarFirebase(final CardModel i) {
-        String doc = i.getIdTarjeta();
+    public void eliminarFirebase(final Card i) {
+        String doc = i.getId();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_TARJETAS);
 
@@ -254,21 +247,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
     }
 
-    public void eliminarSQLite(CardModel i) {
-        String idTarjeta = i.getIdTarjeta();
-
-        ConexionSQLite conect = new ConexionSQLite(mCtx, Constants.BD_PROPIETARIOS, null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        db.delete(Constants.BD_TARJETAS, "idTarjeta=" + idTarjeta, null);
-        db.close();
-
+    public void eliminarRoom(Card i) {
+        Room.INSTANCE.deleteCard(i);
         listTarjeta.remove(i);
         notifyDataSetChanged();
         Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
-    public void updateList (List<CardModel> newList) {
+    public void updateList (List<Card> newList) {
         listTarjeta.clear();
         listTarjeta = new ArrayList<>(newList);
         notifyDataSetChanged();

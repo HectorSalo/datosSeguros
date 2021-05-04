@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.common.model.AccountModel
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
 import com.skysam.datossegurosFirebaseFinal.databinding.AccountFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
@@ -24,8 +25,10 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
     private val binding get() = _binding!!
     private lateinit var fab: FloatingActionButton
     private val viewModel: MainViewModel by activityViewModels()
-    private val accounts: MutableList<AccountModel> = mutableListOf()
-    private val listSearch: MutableList<AccountModel> = mutableListOf()
+    private val accountsFirestore: MutableList<Account> = mutableListOf()
+    private val accountsRoom: MutableList<Account> = mutableListOf()
+    private val accounts: MutableList<Account> = mutableListOf()
+    private val listSearch: MutableList<Account> = mutableListOf()
     private lateinit var adapter: AccountAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -37,23 +40,10 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        adapter = AccountAdapter(accounts.toList())
+        adapter = AccountAdapter(accountsFirestore.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        viewModel.accountsFirestore.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                accounts.clear()
-                accounts.addAll(it)
-                adapter.updateList(accounts.toList())
-                binding.recycler.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.GONE
-                binding.tvSinLista.visibility = View.GONE
-            } else {
-                binding.recycler.visibility = View.GONE
-                binding.progressBar.visibility = View.VISIBLE
-                binding.tvSinLista.visibility = View.VISIBLE
-            }
-        })
+
         fab = requireActivity().findViewById(R.id.fab)
         fab.setOnClickListener {
             val bundle = Bundle()
@@ -62,10 +52,12 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
             intent.putExtras(bundle)
             startActivity(intent)
         }
+        loadViewModel()
     }
 
     override fun onResume() {
         super.onResume()
+        loadPasswords()
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_banco)
@@ -99,18 +91,61 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    private fun loadViewModel() {
+        viewModel.accountsFirestore.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                accountsFirestore.clear()
+                accountsFirestore.addAll(it)
+                loadPasswords()
+            }
+        })
+
+        viewModel.accountsRoom.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                accountsRoom.clear()
+                accountsRoom.addAll(it)
+                loadPasswords()
+            }
+        })
+    }
+
+    private fun loadPasswords() {
+        accounts.clear()
+        when (SharedPref.getShowData()) {
+            Constants.PREFERENCE_SHOW_ALL -> {
+                accounts.addAll(accountsFirestore)
+                accounts.addAll(accountsRoom)
+            }
+            Constants.PREFERENCE_SHOW_CLOUD -> {
+                accounts.addAll(accountsFirestore)
+            }
+            Constants.PREFERENCE_SHOW_DEVICE -> {
+                accounts.addAll(accountsRoom)
+            }
+        }
+        if (accounts.isNotEmpty()) {
+            adapter.updateList(accounts.sortedWith(compareBy { it.bank }).toList())
+            binding.recycler.visibility = View.VISIBLE
+            binding.tvSinLista.visibility = View.GONE
+        } else {
+            binding.recycler.visibility = View.GONE
+            binding.tvSinLista.visibility = View.VISIBLE
+        }
+        binding.progressBar.visibility = View.GONE
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        if (accounts.isNotEmpty()) {
+        if (accountsFirestore.isNotEmpty()) {
             val userInput = newText!!.toLowerCase(Locale.ROOT)
             listSearch.clear()
 
-            for (account in accounts) {
-                if (account.banco.toLowerCase(Locale.ROOT).contains(userInput) ||
-                        account.titular.toLowerCase(Locale.ROOT).contains(userInput)) {
+            for (account in accountsFirestore) {
+                if (account.bank.toLowerCase(Locale.ROOT).contains(userInput) ||
+                        account.user.toLowerCase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(account)
                 }
             }

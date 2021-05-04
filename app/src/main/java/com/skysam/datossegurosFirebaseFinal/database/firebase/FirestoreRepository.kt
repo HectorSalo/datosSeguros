@@ -6,9 +6,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.common.model.AccountModel
-import com.skysam.datossegurosFirebaseFinal.common.model.CardModel
-import com.skysam.datossegurosFirebaseFinal.common.model.NoteModel
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -74,7 +74,7 @@ object FirestoreRepository {
         }
     }
 
-    fun getAccounts(): Flow<List<AccountModel>> {
+    fun getAccounts(): Flow<List<Account>> {
         return callbackFlow {
             val request = getInstance().collection(Constants.BD_PROPIETARIOS).document(Auth.getCurrenUser()!!.uid)
                     .collection(Constants.BD_CUENTAS)
@@ -85,19 +85,18 @@ object FirestoreRepository {
                             return@addSnapshotListener
                         }
 
-                        val accounts: MutableList<AccountModel> = mutableListOf()
+                        val accounts: MutableList<Account> = mutableListOf()
                         for (doc in value!!) {
-                            val account = AccountModel()
-                            account.idCuenta = doc.id
-                            account.titular = doc.getString(Constants.BD_TITULAR_BANCO)
-                            account.banco = doc.getString(Constants.BD_BANCO)
-                            account.numeroCuenta = doc.getString(Constants.BD_NUMERO_CUENTA)
-                            account.cedula = doc.getString(Constants.BD_CEDULA_BANCO)
-                            account.tipo = doc.getString(Constants.BD_TIPO_CUENTA)
-                            account.telefono = doc.getString(Constants.BD_TELEFONO)
-                            account.correo = doc.getString(Constants.BD_CORREO_CUENTA)
-                            account.tipoDocumento = doc.getString(Constants.BD_TIPO_DOCUMENTO)
-
+                            val account = Account(doc.id,
+                                    doc.getString(Constants.BD_TITULAR_BANCO)!!,
+                                    doc.getString(Constants.BD_BANCO)!!,
+                                    doc.getString(Constants.BD_NUMERO_CUENTA)!!,
+                                    doc.getString(Constants.BD_CEDULA_BANCO)!!,
+                                    doc.getString(Constants.BD_TIPO_DOCUMENTO)!!,
+                                    doc.getString(Constants.BD_TIPO_CUENTA)!!,
+                                    doc.getString(Constants.BD_TELEFONO),
+                                    doc.getString(Constants.BD_CORREO_CUENTA)
+                            )
                             accounts.add(account)
                         }
                         offer(accounts.toList())
@@ -106,7 +105,7 @@ object FirestoreRepository {
         }
     }
 
-    fun getCards(): Flow<List<CardModel>> {
+    fun getCards(): Flow<List<Card>> {
         return callbackFlow {
             val request = getInstance().collection(Constants.BD_PROPIETARIOS).document(Auth.getCurrenUser()!!.uid)
                     .collection(Constants.BD_TARJETAS)
@@ -117,19 +116,19 @@ object FirestoreRepository {
                             return@addSnapshotListener
                         }
 
-                        val cards: MutableList<CardModel> = mutableListOf()
+                        val cards: MutableList<Card> = mutableListOf()
                         for (doc in value!!) {
-                            val card = CardModel()
-                            card.idTarjeta = doc.id
-                            card.titular = doc.getString(Constants.BD_TITULAR_TARJETA)
-                            card.numeroTarjeta = doc.getString(Constants.BD_NUMERO_TARJETA)
-                            card.cvv = doc.getString(Constants.BD_CVV)
-                            card.cedula = doc.getString(Constants.BD_CEDULA_TARJETA)
-                            card.tipo = doc.getString(Constants.BD_TIPO_TARJETA)
-                            card.banco = doc.getString(Constants.BD_BANCO_TARJETA)
-                            card.vencimiento = doc.getString(Constants.BD_VENCIMIENTO_TARJETA)
-                            card.clave = doc.getString(Constants.BD_CLAVE_TARJETA)
-
+                            val card = Card(
+                                    doc.id,
+                                    doc.getString(Constants.BD_TITULAR_TARJETA)!!,
+                                    doc.getString(Constants.BD_BANCO_TARJETA)!!,
+                                    doc.getString(Constants.BD_NUMERO_TARJETA)!!,
+                                    doc.getString(Constants.BD_CEDULA_TARJETA)!!,
+                                    doc.getString(Constants.BD_TIPO_TARJETA)!!,
+                                    doc.getString(Constants.BD_CVV)!!,
+                                    doc.getString(Constants.BD_VENCIMIENTO_TARJETA)!!,
+                                    doc.getString(Constants.BD_CLAVE_TARJETA)!!
+                            )
                             cards.add(card)
                         }
                         offer(cards.toList())
@@ -138,7 +137,7 @@ object FirestoreRepository {
         }
     }
 
-    fun getNotes(): Flow<List<NoteModel>> {
+    fun getNotes(): Flow<List<Note>> {
         return callbackFlow {
             val request = getInstance().collection(Constants.BD_PROPIETARIOS).document(Auth.getCurrenUser()!!.uid)
                     .collection(Constants.BD_NOTAS)
@@ -149,13 +148,13 @@ object FirestoreRepository {
                             return@addSnapshotListener
                         }
 
-                        val notes: MutableList<NoteModel> = mutableListOf()
+                        val notes: MutableList<Note> = mutableListOf()
                         for (doc in value!!) {
-                            val note = NoteModel()
-                            note.idNota = doc.id
-                            note.titulo = doc.getString(Constants.BD_TITULO_NOTAS)
-                            note.contenido = doc.getString(Constants.BD_CONTENIDO_NOTAS)
-
+                            val note = Note(
+                                    doc.id,
+                                    doc.getString(Constants.BD_TITULO_NOTAS)!!,
+                                    doc.getString(Constants.BD_CONTENIDO_NOTAS)!!
+                            )
                             notes.add(note)
                         }
                         offer(notes.toList())

@@ -1,15 +1,8 @@
 package com.skysam.datossegurosFirebaseFinal.cards.ui;
 
 import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -26,16 +19,15 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,7 +38,6 @@ public class AddTarjetaFragment extends Fragment {
     private TextInputEditText etTitular, etTarjeta, etCVV, etCedula, etBanco, etVencimiento, etClave;
     private EditText etOtroTarjeta;
     private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro, rbNube, rbDispositivo;
-    private FirebaseUser user;
     private ProgressBar progressBar;
     private String tipo;
     private Button buttonGuardar;
@@ -59,15 +50,6 @@ public class AddTarjetaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View vista = inflater.inflate(R.layout.fragment_add_tarjeta, container, false);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-        boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
         etTitular = vista.findViewById(R.id.et_titular);
         etCedula = vista.findViewById(R.id.et_cedula);
         etTarjeta = vista.findViewById(R.id.et_tarjeta);
@@ -93,7 +75,7 @@ public class AddTarjetaFragment extends Fragment {
         buttonGuardar = vista.findViewById(R.id.guardarTarjeta);
         progressBar = vista.findViewById(R.id.progressBarAddTarjeta);
 
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 buttonGuardar.setBackgroundColor(getResources().getColor(R.color.color_yellow_dark));
                 break;
@@ -110,36 +92,17 @@ public class AddTarjetaFragment extends Fragment {
 
         rbMaestro.setChecked(true);
 
-        if (almacenamientoNube) {
-            rbNube.setChecked(true);
-        } else {
-            rbDispositivo.setChecked(true);
-        }
-
-        radioTarjeta.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.radioButtonOtroTarjeta) {
-                    etOtroTarjeta.setVisibility(View.VISIBLE);
-                } else {
-                    etOtroTarjeta.setVisibility(View.GONE);
-                }
+        radioTarjeta.setOnCheckedChangeListener((group, checkedId) -> {
+            if (checkedId == R.id.radioButtonOtroTarjeta) {
+                etOtroTarjeta.setVisibility(View.VISIBLE);
+            } else {
+                etOtroTarjeta.setVisibility(View.GONE);
             }
         });
 
-        etVencimiento.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                escogerVencimiento();
-            }
-        });
+        etVencimiento.setOnClickListener(v -> escogerVencimiento());
 
-        buttonGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validarDatos();
-            }
-        });
+        buttonGuardar.setOnClickListener(v -> validarDatos());
 
         return vista;
     }
@@ -226,7 +189,7 @@ public class AddTarjetaFragment extends Fragment {
             if (rbNube.isChecked()) {
                 guardarTarjetaFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
             } else {
-                guardarTarjetaSQLite(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
+                guardarTarjetaRoom(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
             }
         }
     }
@@ -248,8 +211,6 @@ public class AddTarjetaFragment extends Fragment {
         rbVisa.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
-        String userID = user.getUid();
-
         if (rbMaestro.isChecked()) {
             tipo = "Maestro";
         } else if (rbMastercard.isChecked()) {
@@ -270,42 +231,35 @@ public class AddTarjetaFragment extends Fragment {
         tarjeta.put(Constants.BD_VENCIMIENTO_TARJETA, vencimiento);
         tarjeta.put(Constants.BD_CLAVE_TARJETA, clave);
 
-        db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_TARJETAS).add(tarjeta).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-            @Override
-            public void onSuccess(DocumentReference documentReference) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
+        db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid())
+                .collection(Constants.BD_TARJETAS).add(tarjeta).addOnSuccessListener(documentReference -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
 
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("msg", "Error adding document", e);
-                progressBar.setVisibility(View.GONE);
-                inputLayoutTitular.setEnabled(true);
-                inputLayoutBanco.setEnabled(true);
-                inputLayoutTarjeta.setEnabled(true);
-                inputLayoutCVV.setEnabled(true);
-                inputLayoutVencimiento.setEnabled(true);
-                inputLayoutCedula.setEnabled(true);
-                inputLayoutClave.setEnabled(true);
-                rbOtro.setEnabled(true);
-                rbMaestro.setEnabled(true);
-                rbNube.setEnabled(true);
-                rbDispositivo.setEnabled(true);
-                rbMastercard.setEnabled(true);
-                rbVisa.setEnabled(true);
-                buttonGuardar.setEnabled(true);
-                Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-            }
-        });
+                }).addOnFailureListener(e -> {
+                    Log.w("msg", "Error adding document", e);
+                    progressBar.setVisibility(View.GONE);
+                    inputLayoutTitular.setEnabled(true);
+                    inputLayoutBanco.setEnabled(true);
+                    inputLayoutTarjeta.setEnabled(true);
+                    inputLayoutCVV.setEnabled(true);
+                    inputLayoutVencimiento.setEnabled(true);
+                    inputLayoutCedula.setEnabled(true);
+                    inputLayoutClave.setEnabled(true);
+                    rbOtro.setEnabled(true);
+                    rbMaestro.setEnabled(true);
+                    rbNube.setEnabled(true);
+                    rbDispositivo.setEnabled(true);
+                    rbMastercard.setEnabled(true);
+                    rbVisa.setEnabled(true);
+                    buttonGuardar.setEnabled(true);
+                    Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    public void guardarTarjetaSQLite(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
-        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
+    public void guardarTarjetaRoom(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
+        Calendar calendar = Calendar.getInstance();
         if (rbMaestro.isChecked()) {
             tipo = "Maestro";
         } else if (rbMastercard.isChecked()) {
@@ -313,19 +267,9 @@ public class AddTarjetaFragment extends Fragment {
         } else if (rbVisa.isChecked()) {
             tipo = "Visa";
         }
-
-        ContentValues values = new ContentValues();
-        values.put(Constants.BD_TITULAR_TARJETA, titular);
-        values.put(Constants.BD_BANCO_TARJETA, banco);
-        values.put(Constants.BD_NUMERO_TARJETA, numeroTarjeta);
-        values.put(Constants.BD_CVV, cvv);
-        values.put(Constants.BD_CEDULA_TARJETA, cedula);
-        values.put(Constants.BD_TIPO_TARJETA, tipo);
-        values.put(Constants.BD_VENCIMIENTO_TARJETA, vencimiento);
-        values.put(Constants.BD_CLAVE_TARJETA, clave);
-
-        db.insert(Constants.BD_TARJETAS, null, values);
-        db.close();
+        Card card = new Card(String.valueOf(calendar.getTimeInMillis()),
+                titular, banco, numeroTarjeta, cedula, tipo, cvv, vencimiento, clave, false, false);
+        Room.INSTANCE.saveCard(card);
 
         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
         requireActivity().finish();
@@ -334,8 +278,8 @@ public class AddTarjetaFragment extends Fragment {
     public void escogerVencimiento() {
         LayoutInflater inflater = getLayoutInflater();
         View vista = inflater.inflate(R.layout.vencimiento_tarjeta_picker, null);
-        final NumberPicker monthPicker = (NumberPicker) vista.findViewById(R.id.mesPicker);
-        final NumberPicker anualPicker = (NumberPicker) vista.findViewById(R.id.anualPicker);
+        final NumberPicker monthPicker = vista.findViewById(R.id.mesPicker);
+        final NumberPicker anualPicker = vista.findViewById(R.id.anualPicker);
         AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
 
         monthPicker.setMinValue(1);
@@ -345,18 +289,8 @@ public class AddTarjetaFragment extends Fragment {
 
         dialog.setTitle("Escoja mes y año")
                 .setView(vista)
-                .setPositiveButton("Seleccionar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        etVencimiento.setText(monthPicker.getValue() + "/" + anualPicker.getValue());
-                    }
-                })
-                .setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+                .setPositiveButton("Seleccionar", (dialog1, which) -> etVencimiento.setText(monthPicker.getValue() + "/" + anualPicker.getValue()))
+                .setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
         dialog.show();
     }
 }

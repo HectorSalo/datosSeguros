@@ -21,9 +21,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
@@ -41,7 +40,6 @@ public class AddPasswordFragment extends Fragment {
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
     private EditText etOtroDias;
     private RadioButton rbNube, rbDispositivo;
-    private FirebaseUser user;
     private ProgressBar progressBar;
     private Date fechaActual;
     private Spinner spinner;
@@ -61,8 +59,6 @@ public class AddPasswordFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_add_contrasena, container, false);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
         etServicio = vista.findViewById(R.id.et_servicio);
         etUsuario = vista.findViewById(R.id.et_usuario);
@@ -210,9 +206,6 @@ public class AddPasswordFragment extends Fragment {
         rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
-        String userID = user.getUid();
-
-
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         Map<String, Object> contrasenaM = new HashMap<>();
@@ -220,10 +213,11 @@ public class AddPasswordFragment extends Fragment {
         contrasenaM.put(Constants.BD_USUARIO, usuario);
         contrasenaM.put(Constants.BD_PASSWORD, contrasena);
         contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
-        contrasenaM.put(Constants.BD_PROPIETARIO, userID);
+        contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
         contrasenaM.put(Constants.BD_FECHA_CREACION, fechaActual);
 
-        db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(documentReference -> {
+        db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid())
+                .collection(Constants.BD_CONTRASENAS).add(contrasenaM).addOnSuccessListener(documentReference -> {
             progressBar.setVisibility(View.GONE);
             Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
             requireActivity().finish();

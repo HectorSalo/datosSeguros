@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.common.model.NoteModel
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
 import com.skysam.datossegurosFirebaseFinal.databinding.NotesFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
@@ -24,8 +25,10 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
     private val binding get() = _binding!!
     private lateinit var fab: FloatingActionButton
     private val viewModel: MainViewModel by activityViewModels()
-    private val notes: MutableList<NoteModel> = mutableListOf()
-    private val listSearch: MutableList<NoteModel> = mutableListOf()
+    private val notesFirestore: MutableList<Note> = mutableListOf()
+    private val notesRoom: MutableList<Note> = mutableListOf()
+    private val notes: MutableList<Note> = mutableListOf()
+    private val listSearch: MutableList<Note> = mutableListOf()
     private lateinit var adapter: NoteAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,20 +43,7 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter = NoteAdapter(notes.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        viewModel.notesFirestore.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                notes.clear()
-                notes.addAll(it)
-                adapter.updateList(notes.toList())
-                binding.recycler.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.GONE
-                binding.tvSinLista.visibility = View.GONE
-            } else {
-                binding.recycler.visibility = View.GONE
-                binding.progressBar.visibility = View.VISIBLE
-                binding.tvSinLista.visibility = View.VISIBLE
-            }
-        })
+
         fab = requireActivity().findViewById(R.id.fab)
         fab.setOnClickListener {
             val bundle = Bundle()
@@ -62,10 +52,12 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
             intent.putExtras(bundle)
             startActivity(intent)
         }
+        loadViewModel()
     }
 
     override fun onResume() {
         super.onResume()
+        loadPasswords()
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_nota)
@@ -99,6 +91,49 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    private fun loadViewModel() {
+        viewModel.notesFirestore.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                notesFirestore.clear()
+                notesFirestore.addAll(it)
+                loadPasswords()
+            }
+        })
+
+        viewModel.notesRoom.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                notesRoom.clear()
+                notesRoom.addAll(it)
+                loadPasswords()
+            }
+        })
+    }
+
+    private fun loadPasswords() {
+        notes.clear()
+        when (SharedPref.getShowData()) {
+            Constants.PREFERENCE_SHOW_ALL -> {
+                notes.addAll(notesFirestore)
+                notes.addAll(notesRoom)
+            }
+            Constants.PREFERENCE_SHOW_CLOUD -> {
+                notes.addAll(notesFirestore)
+            }
+            Constants.PREFERENCE_SHOW_DEVICE -> {
+                notes.addAll(notesRoom)
+            }
+        }
+        if (notes.isNotEmpty()) {
+            adapter.updateList(notes.sortedWith(compareBy { it.title }).toList())
+            binding.recycler.visibility = View.VISIBLE
+            binding.tvSinLista.visibility = View.GONE
+        } else {
+            binding.recycler.visibility = View.GONE
+            binding.tvSinLista.visibility = View.VISIBLE
+        }
+        binding.progressBar.visibility = View.GONE
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
     }
@@ -109,7 +144,7 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
             listSearch.clear()
 
             for (note in notes) {
-                if (note.titulo.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (note.title.toLowerCase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(note)
                 }
             }

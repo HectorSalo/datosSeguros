@@ -12,7 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.common.model.CardModel
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
 import com.skysam.datossegurosFirebaseFinal.databinding.CardsFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
@@ -24,8 +25,10 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
     private val binding get() = _binding!!
     private lateinit var fab: FloatingActionButton
     private val viewModel: MainViewModel by activityViewModels()
-    private val cards: MutableList<CardModel> = mutableListOf()
-    private val listSearch: MutableList<CardModel> = mutableListOf()
+    private val cardsFirestore: MutableList<Card> = mutableListOf()
+    private val cardsRoom: MutableList<Card> = mutableListOf()
+    private val cards: MutableList<Card> = mutableListOf()
+    private val listSearch: MutableList<Card> = mutableListOf()
     private lateinit var adapter: CardAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,20 +43,7 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
         adapter = CardAdapter(cards.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
-        viewModel.cardsFirestore.observe(viewLifecycleOwner, {
-            if (it.isNotEmpty()) {
-                cards.clear()
-                cards.addAll(it)
-                adapter.updateList(cards.toList())
-                binding.recycler.visibility = View.VISIBLE
-                binding.progressBar.visibility = View.GONE
-                binding.tvSinLista.visibility = View.GONE
-            } else {
-                binding.recycler.visibility = View.GONE
-                binding.progressBar.visibility = View.VISIBLE
-                binding.tvSinLista.visibility = View.VISIBLE
-            }
-        })
+
         fab = requireActivity().findViewById(R.id.fab)
         fab.setOnClickListener {
             val bundle = Bundle()
@@ -62,10 +52,12 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
             intent.putExtras(bundle)
             startActivity(intent)
         }
+        loadViewModel()
     }
 
     override fun onResume() {
         super.onResume()
+        loadPasswords()
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_card)
@@ -99,6 +91,49 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    private fun loadViewModel() {
+        viewModel.cardsFirestore.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                cardsFirestore.clear()
+                cardsFirestore.addAll(it)
+                loadPasswords()
+            }
+        })
+
+        viewModel.cardsRoom.observe(viewLifecycleOwner, {
+            if (it.isNotEmpty()) {
+                cardsRoom.clear()
+                cardsRoom.addAll(it)
+                loadPasswords()
+            }
+        })
+    }
+
+    private fun loadPasswords() {
+        cards.clear()
+        when (SharedPref.getShowData()) {
+            Constants.PREFERENCE_SHOW_ALL -> {
+                cards.addAll(cardsFirestore)
+                cards.addAll(cardsRoom)
+            }
+            Constants.PREFERENCE_SHOW_CLOUD -> {
+                cards.addAll(cardsFirestore)
+            }
+            Constants.PREFERENCE_SHOW_DEVICE -> {
+                cards.addAll(cardsRoom)
+            }
+        }
+        if (cards.isNotEmpty()) {
+            adapter.updateList(cards.sortedWith(compareBy { it.bank }).toList())
+            binding.recycler.visibility = View.VISIBLE
+            binding.tvSinLista.visibility = View.GONE
+        } else {
+            binding.recycler.visibility = View.GONE
+            binding.tvSinLista.visibility = View.VISIBLE
+        }
+        binding.progressBar.visibility = View.GONE
+    }
+
     override fun onQueryTextSubmit(query: String?): Boolean {
         return false
     }
@@ -109,8 +144,8 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
             listSearch.clear()
 
             for (card in cards) {
-                if (card.banco.toLowerCase(Locale.ROOT).contains(userInput) ||
-                        card.titular.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (card.bank.toLowerCase(Locale.ROOT).contains(userInput) ||
+                        card.user.toLowerCase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(card)
                 }
             }

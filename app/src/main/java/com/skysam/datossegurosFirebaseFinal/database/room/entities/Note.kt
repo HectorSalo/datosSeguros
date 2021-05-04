@@ -9,7 +9,9 @@ import com.skysam.datossegurosFirebaseFinal.common.Constants
  */
 @Entity(tableName = Constants.BD_NOTAS)
 data class Note(
-        @PrimaryKey(autoGenerate = true) val id: Int,
+        @PrimaryKey val id: String,
         var title: String,
-        var content: String
+        var content: String,
+        var isExpanded: Boolean = false,
+        var isSavedCloud: Boolean = true
 )

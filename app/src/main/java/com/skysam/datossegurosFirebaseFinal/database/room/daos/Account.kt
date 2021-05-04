@@ -12,6 +12,9 @@ interface Account {
     @Query("SELECT * FROM cuentas ORDER BY bank ASC")
     fun getAll(): Flow<MutableList<Account>>
 
+    @Query("SELECT * FROM cuentas WHERE id = :id")
+    suspend fun getAccountById(id: String): Account
+
     @Insert
     suspend fun insert(account: Account)
 
