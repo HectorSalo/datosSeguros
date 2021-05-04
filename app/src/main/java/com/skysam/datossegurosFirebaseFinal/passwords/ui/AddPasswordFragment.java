@@ -1,7 +1,5 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,15 +19,15 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -197,7 +195,7 @@ public class AddPasswordFragment extends Fragment {
             if (rbNube.isChecked()) {
                 guardarContrasenaFirebase(servicio, contrasena, usuario, vigencia);
             } else {
-                guardarContrasenaSQLite(servicio, contrasena, usuario, vigencia);
+                guardarContrasenaRoom(servicio, contrasena, usuario, vigencia);
             }
         }
     }
@@ -244,25 +242,15 @@ public class AddPasswordFragment extends Fragment {
         });
     }
 
-    public void guardarContrasenaSQLite(String servicio, String contrasena, String usuario, String vigencia) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String fechaS = sdf.format(fechaActual);
+    public void guardarContrasenaRoom(String servicio, String contrasena, String usuario, String vigencia) {
+        Password password = new Password(String.valueOf(fechaActual.getTime()),
+                servicio, usuario, contrasena, Integer.parseInt(vigencia), fechaActual.getTime(),
+                false, null, null, null, null,
+                null, false);
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(Constants.BD_SERVICIO, servicio);
-        values.put(Constants.BD_USUARIO, usuario);
-        values.put(Constants.BD_PASSWORD, contrasena);
-        values.put(Constants.BD_VIGENCIA, vigencia);
-        values.put(Constants.BD_FECHA_CREACION, fechaS);
-
-        db.insert(Constants.BD_CONTRASENAS, null, values);
-        db.close();
+        Room.INSTANCE.savePassword(password);
 
         Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
         requireActivity().finish();
     }
-
 }

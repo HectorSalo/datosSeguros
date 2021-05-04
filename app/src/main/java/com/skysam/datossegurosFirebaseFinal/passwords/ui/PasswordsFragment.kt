@@ -134,7 +134,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
             }
         }
         if (passwords.isNotEmpty()) {
-            adapter.updateList(passwords.toList())
+            adapter.updateList(passwords.sortedWith(compareBy { it.service }).toList())
             binding.recycler.visibility = View.VISIBLE
             binding.tvSinLista.visibility = View.GONE
         } else {

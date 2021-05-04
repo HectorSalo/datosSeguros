@@ -19,7 +19,7 @@ import java.util.*
 /**
  * Created by Hector Chirinos (Home) on 13/4/2021.
  */
-object Firestore {
+object FirestoreRepository {
     private fun getInstance(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
     }

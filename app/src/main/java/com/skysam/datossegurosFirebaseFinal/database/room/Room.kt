@@ -6,11 +6,9 @@ import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.callbackFlow
 import kotlin.coroutines.CoroutineContext
 
 /**
@@ -35,10 +33,19 @@ object Room: CoroutineScope {
                 .getAll()
     }
 
+    fun getPasswordById(id: String): Password {
+        val password: Password
+        runBlocking {
+            password = getInstance().passwords()
+                    .getPasswordById(id)
+        }
+        return password
+    }
+
     fun savePassword(password: Password) {
         launch {
             getInstance().passwords()
-                    .delete(password)
+                    .insert(password)
         }
     }
 
@@ -71,7 +78,7 @@ object Room: CoroutineScope {
     fun saveAccount(account: Account) {
         launch {
             getInstance().accounts()
-                    .delete(account)
+                    .insert(account)
         }
     }
 
@@ -104,7 +111,7 @@ object Room: CoroutineScope {
     fun saveCard(card: Card) {
         launch {
             getInstance().cards()
-                    .delete(card)
+                    .insert(card)
         }
     }
 
@@ -137,7 +144,7 @@ object Room: CoroutineScope {
     fun saveNote(note: Note) {
         launch {
             getInstance().notes()
-                    .delete(note)
+                    .insert(note)
         }
     }
 

@@ -6,9 +6,6 @@ import android.content.ClipboardManager;
 import android.content.Context;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,8 +23,8 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
@@ -61,13 +58,6 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull final PasswordsAdapter.ViewHolderContrasena viewHolderContrasena, final int i) {
-
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(Auth.INSTANCE.getCurrenUser().getUid(), Context.MODE_PRIVATE);
-
-
-        final boolean almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-
         viewHolderContrasena.servicio.setText(listContrasena.get(i).getService());
         viewHolderContrasena.usuario.setText(listContrasena.get(i).getUser());
         viewHolderContrasena.contrasena.setText(listContrasena.get(i).getPassword());
@@ -109,10 +99,10 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog1, which) -> {
-                            if (almacenamientoNube) {
+                            if (listContrasena.get(i).isSavedCloud()) {
                                 eliminarFirebase(listContrasena.get(i));
                             } else {
-                                eliminarSQLite(listContrasena.get(i));
+                                eliminarRoom(listContrasena.get(i));
                             }
                         });
                         dialog.setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
@@ -122,10 +112,10 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                         break;
 
                     case R.id.menu_ultimos_pass:
-                        if (almacenamientoNube) {
+                        if (listContrasena.get(i).isSavedCloud()) {
                             verUltimosPassFirebase(listContrasena.get(i).getId());
                         } else {
-                            verUltimosPassSQLite(listContrasena.get(i).getId());
+                            verUltimosRoom(listContrasena.get(i));
                         }
                         break;
 
@@ -154,11 +144,11 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         public ViewHolderContrasena(@NonNull View itemView) {
             super(itemView);
 
-            servicio = (TextView) itemView.findViewById(R.id.tvServicio);
-            usuario = (TextView) itemView.findViewById(R.id.tvUsuario);
-            contrasena = (TextView) itemView.findViewById(R.id.tvContrasena);
-            vencimiento = (TextView) itemView.findViewById(R.id.tvVencimiento);
-            menu = (TextView) itemView.findViewById(R.id.tvmenuContrasena);
+            servicio = itemView.findViewById(R.id.tvServicio);
+            usuario = itemView.findViewById(R.id.tvUsuario);
+            contrasena = itemView.findViewById(R.id.tvContrasena);
+            vencimiento = itemView.findViewById(R.id.tvVencimiento);
+            menu = itemView.findViewById(R.id.tvmenuContrasena);
             cardView = itemView.findViewById(R.id.cardview);
             arrow = itemView.findViewById(R.id.ib_arrow);
             constraintExpandable = itemView.findViewById(R.id.expandable);
@@ -240,6 +230,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         Intent myIntent = new Intent(mCtx, EditarActivity.class);
         Bundle myBundle = new Bundle();
         myBundle.putString("id", i.getId());
+        myBundle.putBoolean("isCloud", i.isSavedCloud());
         myBundle.putInt("data", 0);
         myIntent.putExtras(myBundle);
         mCtx.startActivity(myIntent);
@@ -248,7 +239,8 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
     public void eliminarFirebase(final Password i) {
         String doc = i.getId();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CONTRASENAS);
+        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS)
+                .document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CONTRASENAS);
 
         reference.document(doc)
                 .delete()
@@ -261,15 +253,8 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
     }
 
-    public void eliminarSQLite(Password i) {
-        String idContrasena = i.getId();
-
-        ConexionSQLite conect = new ConexionSQLite(mCtx, Constants.BD_PROPIETARIOS, null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        db.delete(Constants.BD_CONTRASENAS, "idContrasena=" + idContrasena, null);
-        db.close();
-
+    public void eliminarRoom(Password i) {
+        Room.INSTANCE.deletePassword(i);
         listContrasena.remove(i);
         notifyDataSetChanged();
         Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
@@ -361,16 +346,11 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
 
     }
 
-    public void verUltimosPassSQLite(String idContrasena) {
+    public void verUltimosRoom(Password password) {
         final ProgressDialog progress = new ProgressDialog(mCtx);
         progress.setMessage("Cargando...");
         progress.setCancelable(false);
         progress.show();
-
-        ConexionSQLite conect = new ConexionSQLite(mCtx, Constants.BD_PROPIETARIOS, null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.BD_CONTRASENAS + " WHERE idContrasena =" + idContrasena, null);
 
         LinearLayout layout = new LinearLayout(mCtx);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -395,35 +375,24 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         textView4.setText("");
         textView5.setText("");
 
-        if (cursor.moveToFirst()) {
-            if (cursor.getString(5) != null) {
-                String pass1 = cursor.getString(5);
-                textView1.setText(pass1);
-            } else {
-                textView1.setText("Sin historial de contraseñas");
-            }
-
-            if (cursor.getString(6) != null) {
-                String pass2 = cursor.getString(6);
-                textView2.setText(pass2);
-            }
-
-            if (cursor.getString(7) != null) {
-                String pass3 = cursor.getString(7);
-                textView3.setText(pass3);
-            }
-
-            if (cursor.getString(8) != null) {
-                String pass4 = cursor.getString(8);
-                textView4.setText(pass4);
-            }
-
-            if (cursor.getString(9) != null) {
-                String pass5 = cursor.getString(9);
-                textView5.setText(pass5);
-            }
-            progress.dismiss();
+        if (password.getPassOld1() != null) {
+            textView1.setText(password.getPassOld1());
+        } else {
+            textView1.setText("Sin historial de contraseñas");
         }
+        if (password.getPassOld2() != null) {
+            textView2.setText(password.getPassOld2());
+        }
+        if (password.getPassOld3() != null) {
+            textView3.setText(password.getPassOld3());
+        }
+        if (password.getPassOld4() != null) {
+            textView4.setText(password.getPassOld4());
+        }
+        if (password.getPassOld5() != null) {
+            textView5.setText(password.getPassOld5());
+        }
+        progress.dismiss();
 
 
         layout.addView(textView1);
@@ -434,8 +403,6 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         dialog.setTitle("Últimas contraseñas usadas")
                 .setView(layout)
                 .setPositiveButton("OK", (dialog1, which) -> dialog1.dismiss()).show();
-
-        cursor.close();
     }
 
     public void updateList (List<Password> newList) {

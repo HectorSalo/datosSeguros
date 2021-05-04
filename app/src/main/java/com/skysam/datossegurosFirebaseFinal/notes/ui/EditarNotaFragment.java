@@ -1,4 +1,4 @@
-package com.skysam.datossegurosFirebaseFinal.cards.ui;
+package com.skysam.datossegurosFirebaseFinal.notes.ui;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -47,8 +47,6 @@ public class EditarNotaFragment extends Fragment {
     private Button button;
     private String idDoc;
     private boolean almacenamientoNube;
-
-    private OnFragmentInteractionListener mListener;
 
     public EditarNotaFragment() {
         // Required empty public constructor
@@ -110,28 +108,6 @@ public class EditarNotaFragment extends Fragment {
         });
 
         return vista;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 
     public void cargarDataFirebase() {

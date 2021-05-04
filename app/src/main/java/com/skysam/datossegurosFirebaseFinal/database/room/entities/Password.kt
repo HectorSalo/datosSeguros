@@ -20,5 +20,6 @@ data class Password(
         var passOld2: String? = null,
         var passOld3: String? = null,
         var passOld4: String? = null,
-        var passOld5: String? = null
+        var passOld5: String? = null,
+        var isSavedCloud: Boolean = true
 )

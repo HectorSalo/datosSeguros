@@ -5,35 +5,23 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.skysam.datossegurosFirebaseFinal.R;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.passwords.ui.EditPasswordFragment;
 import com.skysam.datossegurosFirebaseFinal.accounts.ui.EditarCuentasFragment;
-import com.skysam.datossegurosFirebaseFinal.cards.ui.EditarNotaFragment;
-import com.skysam.datossegurosFirebaseFinal.notes.ui.EditarTarjetaFragment;
+import com.skysam.datossegurosFirebaseFinal.notes.ui.EditarNotaFragment;
+import com.skysam.datossegurosFirebaseFinal.cards.ui.EditarTarjetaFragment;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 
-public class EditarActivity extends AppCompatActivity implements EditPasswordFragment.OnFragmentInteractionListener, EditarCuentasFragment.OnFragmentInteractionListener,
-EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragmentInteractionListener{
+public class EditarActivity extends AppCompatActivity{
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        SharedPreferences sharedPreferences = getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 setTheme(R.style.Theme_DatosSegurosYellow);
                 break;
@@ -52,7 +40,7 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
 
         ConstraintLayout constraintLayout = findViewById(R.id.constraint_layout);
 
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 constraintLayout.setBackgroundColor(ContextCompat.getColor(this, R.color.color_fondo_agregar));
                 break;
@@ -75,9 +63,11 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
         Bundle myBundle = this.getIntent().getExtras();
         int data = myBundle.getInt("data");
         String id = myBundle.getString("id");
+        boolean isCloud = myBundle.getBoolean("isCloud");
 
         Bundle bundleFragment = new Bundle();
         bundleFragment.putString("id", id);
+        bundleFragment.putBoolean("isCloud", isCloud);
 
 
         if (data == 0) {
@@ -101,28 +91,8 @@ EditarTarjetaFragment.OnFragmentInteractionListener, EditarNotaFragment.OnFragme
         dialog.setTitle("Confirmar");
         dialog.setMessage("¿Desea salir? Se perderá la información no guardada");
         dialog.setIcon(R.drawable.ic_advertencia);
-        dialog.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                finish();
-            }
-        });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        dialog.setPositiveButton("Si", (dialog12, which) -> finish());
+        dialog.setNegativeButton("No", (dialog1, which) -> dialog1.dismiss());
         dialog.show();
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
-    }
-
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
     }
 }

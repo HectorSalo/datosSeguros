@@ -12,6 +12,9 @@ interface Password {
     @Query("SELECT * FROM contrasenas ORDER BY service ASC")
     fun getAll(): Flow<MutableList<Password>>
 
+    @Query("SELECT * FROM contrasenas WHERE id = :id")
+    suspend fun getPasswordById(id: String): Password
+
     @Insert
     suspend fun insert(password: Password)
 

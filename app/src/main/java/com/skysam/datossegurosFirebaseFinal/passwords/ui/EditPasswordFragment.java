@@ -1,14 +1,7 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -25,18 +18,15 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
+import com.skysam.datossegurosFirebaseFinal.database.room.Room;
+import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -46,22 +36,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import kotlin.coroutines.Continuation;
+
 public class EditPasswordFragment extends Fragment {
 
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
     private TextInputEditText etServicio, etUsuario, etContrasena;
     private EditText etOtro;
-    private FirebaseUser user;
     private ProgressBar progressBar;
     private Button button;
     private Spinner spinner;
     private int position;
-    private String contrasenaVieja, pass1, pass2, pass3, pass4, fechaEnviarS, idDoc;
+    private String contrasenaVieja;
+    private String pass1;
+    private String pass2;
+    private String pass3;
+    private String pass4;
+    private String idDoc;
     private Date fechaActual, fechaEnviar;
-    private boolean almacenamientoNube;
+    private boolean isCloud;
+    private Password passwordRoom;
 
-
-    private OnFragmentInteractionListener mListener;
 
     public EditPasswordFragment() {
         // Required empty public constructor
@@ -77,16 +72,8 @@ public class EditPasswordFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View vista = inflater.inflate(R.layout.fragment_editar_contrasena, container, false);
-
-        user = FirebaseAuth.getInstance().getCurrentUser();
-
-        SharedPreferences sharedPreferences = requireContext().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        almacenamientoNube = sharedPreferences.getBoolean(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, true);
-
-        String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
-
         idDoc = getArguments().getString("id");
+        isCloud = getArguments().getBoolean("isCloud");
 
         etServicio = vista.findViewById(R.id.et_servicio);
         etUsuario = vista.findViewById(R.id.et_usuario);
@@ -99,7 +86,7 @@ public class EditPasswordFragment extends Fragment {
         spinner = vista.findViewById(R.id.spinner);
         button = vista.findViewById(R.id.guardarContrasena);
 
-        switch (tema){
+        switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
                 button.setBackgroundColor(getResources().getColor(R.color.color_yellow_dark));
                 break;
@@ -127,7 +114,7 @@ public class EditPasswordFragment extends Fragment {
         pass4 = null;
 
         List<String> listaCaducidad = Arrays.asList(getResources().getStringArray(R.array.tiempo_vigencia));
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(requireContext(), R.layout.spinner_opciones, listaCaducidad);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), R.layout.spinner_opciones, listaCaducidad);
         spinner.setAdapter(adapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -146,159 +133,135 @@ public class EditPasswordFragment extends Fragment {
             }
         });
 
-        if (almacenamientoNube) {
+        if (isCloud) {
             cargarDataFirebase();
         } else {
-            cargarDataSQLite();
+            cargarDataRoom();
         }
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                validarDatos();
-            }
-        });
+        button.setOnClickListener(v -> validarDatos());
         return vista;
-    }
-
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
     public void cargarDataFirebase() {
         progressBar.setVisibility(View.VISIBLE);
-        String userID = user.getUid();;
 
         FirebaseFirestore dbFirestore = FirebaseFirestore.getInstance();
-        CollectionReference reference = dbFirestore.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS);
+        CollectionReference reference = dbFirestore.collection(Constants.BD_PROPIETARIOS)
+                .document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CONTRASENAS);
 
-        reference.document(idDoc).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
-                    etServicio.setText(doc.getString(Constants.BD_SERVICIO));
-                    etUsuario.setText(doc.getString(Constants.BD_USUARIO));
-                    etContrasena.setText(doc.getString(Constants.BD_PASSWORD));
+        reference.document(idDoc).get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()) {
+                DocumentSnapshot doc = task.getResult();
+                etServicio.setText(doc.getString(Constants.BD_SERVICIO));
+                etUsuario.setText(doc.getString(Constants.BD_USUARIO));
+                etContrasena.setText(doc.getString(Constants.BD_PASSWORD));
 
-                    contrasenaVieja = doc.getString(Constants.BD_PASSWORD);
+                contrasenaVieja = doc.getString(Constants.BD_PASSWORD);
 
-                    String vigencia = doc.getString(Constants.BD_VIGENCIA);
+                String vigencia = doc.getString(Constants.BD_VIGENCIA);
 
-                    if (vigencia.equals("0")) {
+                switch (vigencia) {
+                    case "0":
                         spinner.setSelection(5);
-                    } else if (vigencia.equals("30")) {
+                        break;
+                    case "30":
                         spinner.setSelection(1);
-                    } else if (vigencia.equals("60")) {
+                        break;
+                    case "60":
                         spinner.setSelection(2);
-                    } else if (vigencia.equals("90")) {
+                        break;
+                    case "90":
                         spinner.setSelection(3);
-                    } else if (vigencia.equals("120")) {
+                        break;
+                    case "120":
                         spinner.setSelection(4);
-                    } else {
+                        break;
+                    default:
                         spinner.setSelection(6);
                         etOtro.setVisibility(View.VISIBLE);
                         etOtro.setText(vigencia);
-                    }
+                        break;
+                }
 
-                    position = spinner.getSelectedItemPosition();
+                position = spinner.getSelectedItemPosition();
 
-                    if (doc.getString(Constants.BD_ULTIMO_PASS_1) != null) {
-                        pass1 = doc.getString(Constants.BD_ULTIMO_PASS_1);
-
-                    }
-
-                    if (doc.getString(Constants.BD_ULTIMO_PASS_2) != null) {
-                        pass2 = doc.getString(Constants.BD_ULTIMO_PASS_2);
-
-                    }
-
-                    if (doc.getString(Constants.BD_ULTIMO_PASS_3) != null) {
-                        pass3 = doc.getString(Constants.BD_ULTIMO_PASS_3);
-
-                    }
-
-                    if (doc.getString(Constants.BD_ULTIMO_PASS_4) != null) {
-                        pass4 = doc.getString(Constants.BD_ULTIMO_PASS_4);
-
-                    }
-                    progressBar.setVisibility(View.GONE);
-
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                if (doc.getString(Constants.BD_ULTIMO_PASS_1) != null) {
+                    pass1 = doc.getString(Constants.BD_ULTIMO_PASS_1);
 
                 }
+
+                if (doc.getString(Constants.BD_ULTIMO_PASS_2) != null) {
+                    pass2 = doc.getString(Constants.BD_ULTIMO_PASS_2);
+
+                }
+
+                if (doc.getString(Constants.BD_ULTIMO_PASS_3) != null) {
+                    pass3 = doc.getString(Constants.BD_ULTIMO_PASS_3);
+
+                }
+
+                if (doc.getString(Constants.BD_ULTIMO_PASS_4) != null) {
+                    pass4 = doc.getString(Constants.BD_ULTIMO_PASS_4);
+
+                }
+                progressBar.setVisibility(View.GONE);
+
+            } else {
+                progressBar.setVisibility(View.GONE);
+                Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+
             }
         });
     }
 
-    public void cargarDataSQLite() {
-        ConexionSQLite conect = new ConexionSQLite(getContext(), user.getUid(), null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
+    public void cargarDataRoom() {
+        passwordRoom = Room.INSTANCE.getPasswordById(idDoc);
+        etServicio.setText(passwordRoom.getService());
+        etUsuario.setText(passwordRoom.getUser());
+        etContrasena.setText(passwordRoom.getPassword());
+        contrasenaVieja = passwordRoom.getPassword();
 
-        Cursor cursor = db.rawQuery("SELECT * FROM " + Constants.BD_CONTRASENAS + " WHERE idContrasena =" + idDoc, null);
+        String vigencia = String.valueOf(passwordRoom.getExpiration());
 
-        if (cursor.moveToFirst()) {
-            etServicio.setText(cursor.getString(1));
-            etUsuario.setText(cursor.getString(2));
-            etContrasena.setText((cursor.getString(3)));
-            contrasenaVieja = cursor.getString(3);
-
-            String vigencia = cursor.getString(4);
-
-            if (vigencia.equals("0")) {
+        switch (vigencia) {
+            case "0":
                 spinner.setSelection(5);
-            } else if (vigencia.equals("30")) {
+                break;
+            case "30":
                 spinner.setSelection(1);
-            } else if (vigencia.equals("60")) {
+                break;
+            case "60":
                 spinner.setSelection(2);
-            } else if (vigencia.equals("90")) {
+                break;
+            case "90":
                 spinner.setSelection(3);
-            } else if (vigencia.equals("120")) {
+                break;
+            case "120":
                 spinner.setSelection(4);
-            } else {
+                break;
+            default:
                 spinner.setSelection(6);
                 etOtro.setVisibility(View.VISIBLE);
                 etOtro.setText(vigencia);
-            }
-            position = spinner.getSelectedItemPosition();
+                break;
+        }
+        position = spinner.getSelectedItemPosition();
 
-            if (cursor.getString(5) != null) {
-                pass1 = cursor.getString(5);
-            }
+        if (passwordRoom.getPassOld1() != null) {
+            pass1 = passwordRoom.getPassOld1();
+        }
 
-            if (cursor.getString(6) != null) {
-                pass2 = cursor.getString(6);
-            }
+        if (passwordRoom.getPassOld2() != null) {
+            pass2 = passwordRoom.getPassOld2();
+        }
 
-            if (cursor.getString(7) != null) {
-                pass3 = cursor.getString(7);
-            }
+        if (passwordRoom.getPassOld3() != null) {
+            pass3 = passwordRoom.getPassOld3();
+        }
 
-            if (cursor.getString(8) != null) {
-                pass4 = cursor.getString(8);
-            }
-            db.close();
+        if (passwordRoom.getPassOld4() != null) {
+            pass4 = passwordRoom.getPassOld4();
         }
     }
 
@@ -372,10 +335,10 @@ public class EditPasswordFragment extends Fragment {
         }
 
         if (datoValido) {
-            if (almacenamientoNube) {
+            if (isCloud) {
                 guardarDataFirebase(servicio, contrasena, usuario, vigencia);
             } else {
-                guardarDataSQLite(servicio, contrasena, usuario, vigencia);
+                guardarDataRoom(servicio, contrasena, usuario, vigencia);
             }
         }
     }
@@ -386,7 +349,6 @@ public class EditPasswordFragment extends Fragment {
         inputLayoutUsuario.setEnabled(false);
         spinner.setEnabled(false);
         button.setEnabled(false);
-        String userID = user.getUid();
         progressBar.setVisibility(View.VISIBLE);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -400,7 +362,7 @@ public class EditPasswordFragment extends Fragment {
                     contrasenaM.put(Constants.BD_USUARIO, usuario);
                     contrasenaM.put(Constants.BD_PASSWORD, contrasenaNueva);
                     contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
-                    contrasenaM.put(Constants.BD_PROPIETARIO, userID);
+                    contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
                     contrasenaM.put(Constants.BD_FECHA_CREACION, fechaEnviar);
                     contrasenaM.put(Constants.BD_ULTIMO_PASS_1, contrasenaVieja);
                     contrasenaM.put(Constants.BD_ULTIMO_PASS_2, pass1);
@@ -415,81 +377,65 @@ public class EditPasswordFragment extends Fragment {
                         contrasenaM.put(Constants.BD_USUARIO, usuario);
                         contrasenaM.put(Constants.BD_PASSWORD, contrasenaNueva);
                         contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
-                        contrasenaM.put(Constants.BD_PROPIETARIO, userID);
+                        contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
                         contrasenaM.put(Constants.BD_FECHA_CREACION, fechaEnviar);
                     } else {
                         contrasenaM.put(Constants.BD_SERVICIO, servicio);
                         contrasenaM.put(Constants.BD_USUARIO, usuario);
                         contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
-                        contrasenaM.put(Constants.BD_PROPIETARIO, userID);
+                        contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
                     }
                 }
 
-        db.collection(Constants.BD_PROPIETARIOS).document(userID).collection(Constants.BD_CONTRASENAS).document(idDoc).update(contrasenaM).addOnSuccessListener(new OnSuccessListener<Void>() {
-            public void onSuccess(Void aVoid) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-                requireActivity().finish();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("msg", "Error adding document", e);
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
-                inputLayoutServicio.setEnabled(true);
-                inputLayoutPass.setEnabled(true);
-                inputLayoutUsuario.setEnabled(true);
-                spinner.setEnabled(true);
-                button.setEnabled(true);
-            }
-        });
+        db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid())
+                .collection(Constants.BD_CONTRASENAS).document(idDoc).update(contrasenaM).addOnSuccessListener(aVoid -> {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
+                    requireActivity().finish();
+                }).addOnFailureListener(e -> {
+                    Log.w("msg", "Error adding document", e);
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), "Error al modificar. Intente nuevamente", Toast.LENGTH_SHORT).show();
+                    inputLayoutServicio.setEnabled(true);
+                    inputLayoutPass.setEnabled(true);
+                    inputLayoutUsuario.setEnabled(true);
+                    spinner.setEnabled(true);
+                    button.setEnabled(true);
+                });
 
 
     }
 
-    public void guardarDataSQLite(String servicio, String contrasenaNueva, String usuario, String vigencia) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String fechaActualS = sdf.format(fechaActual);
+    public void guardarDataRoom(String servicio, String contrasenaNueva, String usuario, String vigencia) {
+        if (!contrasenaNueva.equals(contrasenaVieja)) {
+            passwordRoom.setService(servicio);
+            passwordRoom.setUser(usuario);
+            passwordRoom.setPassword(contrasenaNueva);
+            passwordRoom.setExpiration(Integer.parseInt(vigencia));
+            passwordRoom.setDateCreated(fechaActual.getTime());
+            passwordRoom.setPassOld1(contrasenaVieja);
+            passwordRoom.setPassOld2(pass1);
+            passwordRoom.setPassOld3(pass2);
+            passwordRoom.setPassOld4(pass3);
+            passwordRoom.setPassOld5(pass4);
+        } else {
+            if (spinner.getSelectedItemPosition() != position) {
+                fechaEnviar = fechaActual;
 
-        ConexionSQLite conect = new ConexionSQLite(getContext(), idDoc, null, Constants.VERSION_SQLITE);
-        SQLiteDatabase db = conect.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-
-                if (!contrasenaNueva.equals(contrasenaVieja)) {
-                    fechaEnviarS = fechaActualS;
-
-                    values.put(Constants.BD_SERVICIO, servicio);
-                    values.put(Constants.BD_USUARIO, usuario);
-                    values.put(Constants.BD_PASSWORD, contrasenaNueva);
-                    values.put(Constants.BD_VIGENCIA, vigencia);
-                    values.put(Constants.BD_FECHA_CREACION, fechaEnviarS);
-                    values.put(Constants.BD_ULTIMO_PASS_1, contrasenaVieja);
-                    values.put(Constants.BD_ULTIMO_PASS_2, pass1);
-                    values.put(Constants.BD_ULTIMO_PASS_3, pass2);
-                    values.put(Constants.BD_ULTIMO_PASS_4, pass3);
-                    values.put(Constants.BD_ULTIMO_PASS_5, pass4);
-                } else {
-                    if (spinner.getSelectedItemPosition() != position) {
-                        fechaEnviar = fechaActual;
-
-                        values.put(Constants.BD_SERVICIO, servicio);
-                        values.put(Constants.BD_USUARIO, usuario);
-                        values.put(Constants.BD_VIGENCIA, vigencia);
-                        values.put(Constants.BD_FECHA_CREACION, fechaEnviarS);
-                    } else {
-                        values.put(Constants.BD_SERVICIO, servicio);
-                        values.put(Constants.BD_USUARIO, usuario);
-                        values.put(Constants.BD_VIGENCIA, vigencia);
-                    }
-                }
-
-        db.update(Constants.BD_CONTRASENAS, values, "idContrasena=" + idDoc, null);
-        db.close();
+                passwordRoom.setService(servicio);
+                passwordRoom.setUser(usuario);
+                passwordRoom.setPassword(contrasenaNueva);
+                passwordRoom.setExpiration(Integer.parseInt(vigencia));
+                passwordRoom.setDateCreated(fechaActual.getTime());
+            } else {
+                passwordRoom.setService(servicio);
+                passwordRoom.setUser(usuario);
+                passwordRoom.setExpiration(Integer.parseInt(vigencia));
+            }
+        }
+        Room.INSTANCE.updatePassword(passwordRoom);
 
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
         requireActivity().finish();
-
     }
 }
