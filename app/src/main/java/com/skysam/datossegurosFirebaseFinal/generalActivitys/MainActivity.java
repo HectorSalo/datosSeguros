@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cerrarSesion() {
-        FirebaseAuth.getInstance().signOut();
         SharedPref.INSTANCE.changeToDefault();
 
         String providerId = "";
@@ -121,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
             providerId = profile.getProviderId();
         }
 
+        FirebaseAuth.getInstance().signOut();
         if (providerId.equals("google.com")) {
             GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(getString(R.string.default_web_client_id))
@@ -129,9 +129,12 @@ public class MainActivity extends AppCompatActivity {
 
             GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-            mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> startActivity(new Intent(getApplicationContext(), InicSesionActivity.class)));
+            mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {
+                //FirebaseAuth.getInstance().signOut();
+                startActivity(new Intent(this, InicSesionActivity.class));
+            });
         } else {
-            startActivity(new Intent(getApplicationContext(), InicSesionActivity.class));
+            startActivity(new Intent(this, InicSesionActivity.class));
         }
     }
 }
