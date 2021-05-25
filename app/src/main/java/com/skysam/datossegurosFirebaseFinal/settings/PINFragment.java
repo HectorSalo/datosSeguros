@@ -28,9 +28,8 @@ import com.google.android.material.textfield.TextInputLayout;
 public class PINFragment extends Fragment {
 
     private EditText etPin, etPinRepetir;
-    private TextView tvPinTitle;
     private String pinGuardado, bloqueoEscogido;
-    private TextInputLayout tlPinRepetir, layoutPin;
+    private TextInputLayout layoutPin;
     private int valorNull;
     private SharedPreferences sharedPreferences;
 
@@ -49,10 +48,10 @@ public class PINFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View vista = inflater.inflate(R.layout.fragment_pin, container, false);
-        tvPinTitle = (TextView) vista.findViewById(R.id.titlePIN);
+        TextView tvPinTitle = (TextView) vista.findViewById(R.id.titlePIN);
         etPin = (EditText) vista.findViewById(R.id.etRegistrarPIN);
         etPinRepetir = (EditText) vista.findViewById(R.id.etRegistrarPINRepetir);
-        tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPIN);
+        TextInputLayout tlPinRepetir = vista.findViewById(R.id.inputLayoutRepetirPIN);
         layoutPin = vista.findViewById(R.id.inputLayoutPIN);
         FrameLayout frameLayout = vista.findViewById(R.id.fragmentPin);
 
@@ -66,16 +65,16 @@ public class PINFragment extends Fragment {
 
         switch (tema){
             case Constants.PREFERENCE_AMARILLO:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_blue_grey));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_blue_grey));
                 break;
             case Constants.PREFERENCE_ROJO:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_black_ligth));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_black_ligth));
                 break;
             case Constants.PREFERENCE_MARRON:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_brown));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_brown));
                 break;
             case Constants.PREFERENCE_LILA:
-                frameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.color_purple));
+                frameLayout.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.color_purple));
                 break;
         }
 
@@ -98,19 +97,15 @@ public class PINFragment extends Fragment {
 
 
         Button button = vista.findViewById(R.id.buttonRegistrarPIN);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (valorNull == 0) {
-                    if (!bloqueoGuardado.equals(Constants.PREFERENCE_SIN_BLOQUEO)) {
-                        validarPinRespaldo();
-                    } else {
-                        validarPinNuevo();
-                    }
-                } else {
+        button.setOnClickListener(v -> {
+            if (valorNull == 0) {
+                if (!bloqueoGuardado.equals(Constants.PREFERENCE_SIN_BLOQUEO)) {
                     validarPinRespaldo();
+                } else {
+                    validarPinNuevo();
                 }
-
+            } else {
+                validarPinRespaldo();
             }
         });
 
@@ -127,21 +122,21 @@ public class PINFragment extends Fragment {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
                     editor.putString(Constants.PREFERENCE_PIN_RESPALDO, "0000");
-                    editor.commit();
+                    editor.apply();
                     startActivity(new Intent(getContext(), MainActivity.class));
                 }
                 if (bloqueoEscogido.equals(Constants.PREFERENCE_PIN)) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
-                    editor.commit();
+                    editor.apply();
                 }
                 if (bloqueoEscogido.equals(Constants.PREFERENCE_HUELLA)) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
-                    editor.commit();
+                    editor.apply();
                 }
             } else {
-                startActivity(new Intent(getContext(), InicSesionActivity.class));
+                startActivity(new Intent(getContext(), MainActivity.class));
             }
         } else {
             layoutPin.setError("El PIN no coincide con el almacenado");
@@ -186,7 +181,7 @@ public class PINFragment extends Fragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
                 editor.putString(Constants.PREFERENCE_PIN_RESPALDO, pin);
-                editor.commit();
+                editor.apply();
                 startActivity(new Intent(getContext(), MainActivity.class));
             } else {
                 etPinRepetir.setError("El PIN no coincide");
