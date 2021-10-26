@@ -5,6 +5,15 @@
       <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_add_contrasena.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/passwords_fragment.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/xml/header_preferences.xml" value="0.2033514492753623" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

@@ -27,6 +27,9 @@
             app:icon="@drawable/ic_info_24"
             app:title="@string/acerca_title">
         </Preference>
+
+        <PreferenceScreen
+            app:key="name_version"/>
     </PreferenceCategory>
 
 </PreferenceScreen>

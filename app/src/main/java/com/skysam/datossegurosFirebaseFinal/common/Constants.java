@@ -35,11 +35,7 @@ public class Constants {
     public static final String BD_NOTAS = "notas";
     public static final String BD_TITULO_NOTAS = "titulonotas";
     public static final String BD_CONTENIDO_NOTAS= "contenidonotas";
-
-    public static final String CHANNEL_ID = "NOTIFICACION";
-    public static final int NOTIFICACION_ID = 0;
-
-    public static final int VERSION_SQLITE = 6;
+    public static final String ETIQUETAS = "etiquetas";
 
     public static final String AGREGAR = "agregar";
 

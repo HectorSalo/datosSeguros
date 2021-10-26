@@ -161,6 +161,7 @@
     <!-- Preference Titles -->
     <string name="datos_personales">Datos Personales</string>
     <string name="preferencias">Preferencias</string>
+    <string name="version_name">Versión %1$s</string>
 
     <!-- Prefrencias Preferences -->
     <string name="signature_title">Your signature</string>
