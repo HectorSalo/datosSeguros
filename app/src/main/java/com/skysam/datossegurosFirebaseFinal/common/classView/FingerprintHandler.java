@@ -18,13 +18,13 @@ import androidx.core.content.ContextCompat;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.textfield.TextInputLayout;
-import com.skysam.datossegurosFirebaseFinal.launcher.ui.InicSesionActivity;
+import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 
 @RequiresApi(api = Build.VERSION_CODES.M)
 public class FingerprintHandler extends FingerprintManager.AuthenticationCallback {
-    private Context context;
-    private int valorNull;
+    private final Context context;
+    private final int valorNull;
 
     public FingerprintHandler (Context context, int valorNull) {
         this.context = context;
@@ -77,12 +77,7 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                     mensaje.setText(s);
                     mensaje.setTextColor(Color.parseColor("#FFFFFF"));
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            context.startActivity(new Intent(context, InicSesionActivity.class));
-                        }
-                    }, 1500);
+                    new Handler().postDelayed(() -> context.startActivity(new Intent(context, MainActivity.class)), 1500);
 
                 } else {
                     lottieAnimationView.setAnimation("huellaactivo.json");
@@ -90,15 +85,12 @@ public class FingerprintHandler extends FingerprintManager.AuthenticationCallbac
                     mensaje.setText(s);
                     mensaje.setTextColor(Color.parseColor("#FFFFFF"));
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            linearPin.setVisibility(View.VISIBLE);
-                            tlPinRepetir.setVisibility(View.VISIBLE);
-                            etPin.setText("");
-                            etPinRepetir.setText("");
-                            linearHuella.setVisibility(View.GONE);
-                        }
+                    new Handler().postDelayed(() -> {
+                        linearPin.setVisibility(View.VISIBLE);
+                        tlPinRepetir.setVisibility(View.VISIBLE);
+                        etPin.setText("");
+                        etPinRepetir.setText("");
+                        linearHuella.setVisibility(View.GONE);
                     }, 1500);
 
                 }
