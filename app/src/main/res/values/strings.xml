@@ -7,12 +7,14 @@
     <string name="title_tema">Temas</string>
     <string name="title_activity_add">Agregar Datos</string>
     <string name="buttonGuardar">Guardar</string>
+    <string name="buttonCancelar">Cancelar</string>
     <string name="sin_lista">No tiene información almacenada</string>
     <string name="perfil">Actualizar Perfil</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
     <string name="menu_ajustes">Ajustes</string>
     <string name="eliminar_cuenta">Borrar Datos</string>
     <string name="tema">Cambiar Tema</string>
+    <string name="text_saving">Guardando…</string>
 
 
     <!-- Cardview contraseña -->
@@ -60,6 +62,11 @@
     <!-- Add Nota -->
     <string name="tituloNota">Título de la nota</string>
     <string name="contenidoNota">Ingrese su nota</string>
+
+    <!-- Add Label -->
+    <string name="title_dialog_add_label">Agregar etiqueta</string>
+    <string name="text_label">Etiqueta</string>
+    <string name="error_label_exists">Etiqueta ya existe</string>
 
     <!-- Menu Contrasena -->
     <string name="copiar">Copiar</string>

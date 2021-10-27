@@ -36,6 +36,7 @@ public class Constants {
     public static final String BD_TITULO_NOTAS = "titulonotas";
     public static final String BD_CONTENIDO_NOTAS= "contenidonotas";
     public static final String ETIQUETAS = "etiquetas";
+    public static final String NOMBRE= "nombre";
 
     public static final String AGREGAR = "agregar";
 

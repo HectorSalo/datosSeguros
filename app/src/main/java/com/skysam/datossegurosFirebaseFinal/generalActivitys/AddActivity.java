@@ -8,7 +8,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentTransaction;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -19,6 +22,7 @@ import com.skysam.datossegurosFirebaseFinal.accounts.ui.AddCuentasFragment;
 import com.skysam.datossegurosFirebaseFinal.notes.ui.AddNotaFragment;
 import com.skysam.datossegurosFirebaseFinal.cards.ui.AddTarjetaFragment;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.settings.SettingsActivity;
 
 public class AddActivity extends AppCompatActivity {
 
@@ -120,6 +124,22 @@ public class AddActivity extends AppCompatActivity {
             }
             transaction.commit();
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_activity_add, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.menu_add_label) {
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
