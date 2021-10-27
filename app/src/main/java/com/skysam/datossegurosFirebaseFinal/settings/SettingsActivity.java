@@ -1,7 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.settings;
 
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +23,7 @@ import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceScreen;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,8 +33,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.skysam.datossegurosFirebaseFinal.BuildConfig;
 import com.skysam.datossegurosFirebaseFinal.common.EliminarCuenta;
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.skysam.datossegurosFirebaseFinal.database.room.Room;
@@ -189,6 +189,7 @@ public class SettingsActivity extends AppCompatActivity implements
 
             Preference datosPersonales = findPreference("datos_personales_header");
             Preference preferenceAbout = findPreference("about");
+            PreferenceScreen preferenceVersion = findPreference("name_version");
 
             String providerId = "";
 
@@ -201,10 +202,16 @@ public class SettingsActivity extends AppCompatActivity implements
                 datosPersonales.setVisible(!providerId.equals("google.com"));
             }
 
-            preferenceAbout.setOnPreferenceClickListener(preference -> {
-                requireActivity().startActivity(new Intent(requireContext(), AcercaActivity.class));
-                return false;
-            });
+            if (preferenceAbout != null) {
+                preferenceAbout.setOnPreferenceClickListener(preference -> {
+                    requireActivity().startActivity(new Intent(requireContext(), AcercaActivity.class));
+                    return false;
+                });
+            }
+
+            if (preferenceVersion != null) {
+                preferenceVersion.setTitle(getString(R.string.version_name, BuildConfig.VERSION_NAME));
+            }
         }
     }
 
@@ -278,113 +285,119 @@ public class SettingsActivity extends AppCompatActivity implements
             }
 
 
-            listaBloqueo.setOnPreferenceChangeListener((preference, newValue) -> {
-                String bloqueoEscogido = (String) newValue;
+            if (listaBloqueo != null) {
+                listaBloqueo.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String bloqueoEscogido = (String) newValue;
 
-                switch (bloqueoEscogido){
-                    case Constants.PREFERENCE_SIN_BLOQUEO:
-                        if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
-                            Intent intent = new Intent(getContext(), BloqueoActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().startActivity(intent);
-                        }
-                        break;
-                    case Constants.PREFERENCE_HUELLA:
-                        if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
-                            Intent intent = new Intent(getContext(), BloqueoActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().startActivity(intent);
-                        }
-                        break;
-                    case Constants.PREFERENCE_PIN:
-                        if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
-                            Bundle bundle = new Bundle();
-                            bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
-                            Intent intent = new Intent(getContext(), BloqueoActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().startActivity(intent);
-                        }
-                        break;
-                }
-                return true;
-            });
-
-
-            listaTemas.setOnPreferenceChangeListener((preference, newValue) -> {
-                String temaEscogido = (String) newValue;
-                switch (temaEscogido){
-                    case Constants.PREFERENCE_AMARILLO:
-                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
-                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_AMARILLO);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                            Intent intent = new Intent(getContext(), SettingsActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().finish();
-                            requireActivity().startActivity(intent);
-                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
-                        break;
-                    case Constants.PREFERENCE_ROJO:
-                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
-                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_ROJO);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                            Intent intent = new Intent(getContext(), SettingsActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().finish();
-                            requireActivity().startActivity(intent);
-                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
-                        break;
-                    case Constants.PREFERENCE_MARRON:
-                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
-                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_MARRON);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                            Intent intent = new Intent(getContext(), SettingsActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().finish();
-                            requireActivity().startActivity(intent);
-                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
-                        break;
-                    case Constants.PREFERENCE_LILA:
-                        if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
-                            SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_LILA);
-                            Bundle bundle = new Bundle();
-                            bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
-                            Intent intent = new Intent(getContext(), SettingsActivity.class);
-                            intent.putExtras(bundle);
-                            requireActivity().finish();
-                            requireActivity().startActivity(intent);
-                            requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
-                        }
-                        break;
-                }
-                return true;
-            });
+                    switch (bloqueoEscogido){
+                        case Constants.PREFERENCE_SIN_BLOQUEO:
+                            if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
+                                Intent intent = new Intent(getContext(), BloqueoActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().startActivity(intent);
+                            }
+                            break;
+                        case Constants.PREFERENCE_HUELLA:
+                            if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
+                                Intent intent = new Intent(getContext(), BloqueoActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().startActivity(intent);
+                            }
+                            break;
+                        case Constants.PREFERENCE_PIN:
+                            if (!bloqueoEscogido.equals(SharedPref.INSTANCE.getLock())) {
+                                Bundle bundle = new Bundle();
+                                bundle.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
+                                Intent intent = new Intent(getContext(), BloqueoActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().startActivity(intent);
+                            }
+                            break;
+                    }
+                    return true;
+                });
+            }
 
 
-            listShowData.setOnPreferenceChangeListener((preference, newValue) -> {
-                String showData = (String) newValue;
-                switch (showData) {
-                    case Constants.PREFERENCE_SHOW_ALL:
-                        SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_ALL);
-                        break;
-                    case Constants.PREFERENCE_SHOW_CLOUD:
-                        SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_CLOUD);
-                        break;
-                    case Constants.PREFERENCE_SHOW_DEVICE:
-                        SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_DEVICE);
-                        break;
-                }
-                return true;
-            });
+            if (listaTemas != null) {
+                listaTemas.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String temaEscogido = (String) newValue;
+                    switch (temaEscogido){
+                        case Constants.PREFERENCE_AMARILLO:
+                            if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                                SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_AMARILLO);
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().finish();
+                                requireActivity().startActivity(intent);
+                                requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            }
+                            break;
+                        case Constants.PREFERENCE_ROJO:
+                            if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                                SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_ROJO);
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().finish();
+                                requireActivity().startActivity(intent);
+                                requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            }
+                            break;
+                        case Constants.PREFERENCE_MARRON:
+                            if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                                SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_MARRON);
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().finish();
+                                requireActivity().startActivity(intent);
+                                requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            }
+                            break;
+                        case Constants.PREFERENCE_LILA:
+                            if (!temaEscogido.equals(SharedPref.INSTANCE.getTheme())) {
+                                SharedPref.INSTANCE.changeTheme(Constants.PREFERENCE_LILA);
+                                Bundle bundle = new Bundle();
+                                bundle.putBoolean(Constants.PREFERENCE_TEMA, true);
+                                Intent intent = new Intent(getContext(), SettingsActivity.class);
+                                intent.putExtras(bundle);
+                                requireActivity().finish();
+                                requireActivity().startActivity(intent);
+                                requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                            }
+                            break;
+                    }
+                    return true;
+                });
+            }
+
+
+            if (listShowData != null) {
+                listShowData.setOnPreferenceChangeListener((preference, newValue) -> {
+                    String showData = (String) newValue;
+                    switch (showData) {
+                        case Constants.PREFERENCE_SHOW_ALL:
+                            SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_ALL);
+                            break;
+                        case Constants.PREFERENCE_SHOW_CLOUD:
+                            SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_CLOUD);
+                            break;
+                        case Constants.PREFERENCE_SHOW_DEVICE:
+                            SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_DEVICE);
+                            break;
+                    }
+                    return true;
+                });
+            }
         }
 
 

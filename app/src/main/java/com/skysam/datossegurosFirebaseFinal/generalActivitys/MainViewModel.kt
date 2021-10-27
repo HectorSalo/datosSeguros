@@ -1,7 +1,7 @@
 package com.skysam.datossegurosFirebaseFinal.generalActivitys
 
 import androidx.lifecycle.*
-import com.skysam.datossegurosFirebaseFinal.database.firebase.FirestoreRepository
+import com.skysam.datossegurosFirebaseFinal.database.repositories.FirestoreRepository
 import com.skysam.datossegurosFirebaseFinal.database.room.Room
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card

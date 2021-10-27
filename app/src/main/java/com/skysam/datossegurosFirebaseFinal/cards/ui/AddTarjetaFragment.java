@@ -122,75 +122,48 @@ public class AddTarjetaFragment extends Fragment {
         String cedula = etCedula.getText().toString();
         String clave = etClave.getText().toString();
 
-        boolean datoValido;
-
-        if (!titular.isEmpty()) {
-            datoValido = true;
-        } else {
+        if (titular.isEmpty()) {
             inputLayoutTitular.setError("El campo no puede estar vacío");
-            datoValido = false;
+            return;
         }
-
-        if (!banco.isEmpty()) {
-            datoValido = true;
-        } else {
-            datoValido = false;
+        if (banco.isEmpty()) {
             inputLayoutBanco.setError("El campo no puede estar vacío");
+            return;
         }
-
-        if (!tarjeta.isEmpty()) {
-            datoValido = true;
-        } else {
-            datoValido = false;
+        if (tarjeta.isEmpty()) {
             inputLayoutTarjeta.setError("El campo no puede estar vacío");
+            return;
         }
-
-        if (!cvv.isEmpty()) {
-            if (cvv.length() != 3) {
-                datoValido = true;
-            } else {
-                datoValido = false;
-                inputLayoutCVV.setError("La longitus debe ser 3 dígitos");
-            }
-        } else {
-            datoValido = false;
+        if (cvv.isEmpty()) {
             inputLayoutCVV.setError("El campo no puede estar vacío");
+            return;
         }
-
-        if (!vencimiento.isEmpty()) {
-            datoValido = true;
-        } else {
-            datoValido = false;
+        if (cvv.length() != 3) {
+            inputLayoutCVV.setError("La longitud debe ser 3 dígitos");
+            return;
+        }
+        if (vencimiento.isEmpty()) {
             inputLayoutVencimiento.setError("Debe escoger la fecha de vencimiento");
+            return;
         }
-
         if (rbOtro.isChecked()) {
             tipo = etOtroTarjeta.getText().toString();
-            if (!tipo.isEmpty()) {
-                datoValido = true;
-            } else {
-                datoValido = false;
+            if (tipo.isEmpty()) {
                 etOtroTarjeta.setError("El campo no puede estar vacío");
+                return;
             }
         }
-
-        if (!cedula.isEmpty()) {
-            datoValido = true;
-        } else {
-            datoValido = false;
+        if (cedula.isEmpty()) {
             inputLayoutCedula.setError("El campo no puede estar vacío");
+            return;
         }
-
         if (clave.isEmpty()) {
             clave = "";
         }
-
-        if (datoValido) {
-            if (rbNube.isChecked()) {
-                guardarTarjetaFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
-            } else {
-                guardarTarjetaRoom(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
-            }
+        if (rbNube.isChecked()) {
+            guardarTarjetaFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
+        } else {
+            guardarTarjetaRoom(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
         }
     }
 
