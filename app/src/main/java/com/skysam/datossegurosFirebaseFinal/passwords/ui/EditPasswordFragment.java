@@ -2,9 +2,13 @@ package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.R;
@@ -27,13 +34,17 @@ import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
+import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddViewModel;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import kotlin.Suppress;
 
 public class EditPasswordFragment extends Fragment {
 
@@ -53,6 +64,9 @@ public class EditPasswordFragment extends Fragment {
     private Date fechaActual, fechaEnviar;
     private boolean isCloud;
     private Password passwordRoom;
+    private ArrayList<String> labels;
+    private ArrayList<String> labelsToSave;
+    private ChipGroup chipGroup;
 
 
     public EditPasswordFragment() {
@@ -69,6 +83,12 @@ public class EditPasswordFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View vista = inflater.inflate(R.layout.fragment_editar_contrasena, container, false);
+        AddViewModel addViewModel = new ViewModelProvider(requireActivity()).get(AddViewModel.class);
+        addViewModel.getLabels().observe(getViewLifecycleOwner(), item -> {
+            labels = new ArrayList<>();
+            labels.addAll(item);
+        });
+
         idDoc = getArguments().getString("id");
         isCloud = getArguments().getBoolean("isCloud");
 
@@ -81,7 +101,11 @@ public class EditPasswordFragment extends Fragment {
         inputLayoutServicio = vista.findViewById(R.id.outlined_servicio);
         progressBar = vista.findViewById(R.id.progressBar);
         spinner = vista.findViewById(R.id.spinner);
+        ExtendedFloatingActionButton fab = vista.findViewById(R.id.extended_fab);
+        chipGroup = vista.findViewById(R.id.chip_group);
         button = vista.findViewById(R.id.guardarContrasena);
+
+        labelsToSave = new ArrayList<>();
 
         switch (SharedPref.INSTANCE.getTheme()){
             case Constants.PREFERENCE_AMARILLO:
@@ -131,11 +155,16 @@ public class EditPasswordFragment extends Fragment {
         });
 
         if (isCloud) {
+            fab.setVisibility(View.VISIBLE);
+            chipGroup.setVisibility(View.VISIBLE);
             cargarDataFirebase();
         } else {
+            fab.setVisibility(View.GONE);
+            chipGroup.setVisibility(View.GONE);
             cargarDataRoom();
         }
 
+        fab.setOnClickListener(view -> viewListLabels());
         button.setOnClickListener(v -> validarDatos());
         return vista;
     }
@@ -158,52 +187,50 @@ public class EditPasswordFragment extends Fragment {
 
                 String vigencia = doc.getString(Constants.BD_VIGENCIA);
 
-                switch (vigencia) {
-                    case "0":
-                        spinner.setSelection(5);
-                        break;
-                    case "30":
-                        spinner.setSelection(1);
-                        break;
-                    case "60":
-                        spinner.setSelection(2);
-                        break;
-                    case "90":
-                        spinner.setSelection(3);
-                        break;
-                    case "120":
-                        spinner.setSelection(4);
-                        break;
-                    default:
-                        spinner.setSelection(6);
-                        etOtro.setVisibility(View.VISIBLE);
-                        etOtro.setText(vigencia);
-                        break;
+                if (vigencia != null) {
+                    switch (vigencia) {
+                        case "0":
+                            spinner.setSelection(5);
+                            break;
+                        case "30":
+                            spinner.setSelection(1);
+                            break;
+                        case "60":
+                            spinner.setSelection(2);
+                            break;
+                        case "90":
+                            spinner.setSelection(3);
+                            break;
+                        case "120":
+                            spinner.setSelection(4);
+                            break;
+                        default:
+                            spinner.setSelection(6);
+                            etOtro.setVisibility(View.VISIBLE);
+                            etOtro.setText(vigencia);
+                            break;
+                    }
                 }
 
                 position = spinner.getSelectedItemPosition();
 
                 if (doc.getString(Constants.BD_ULTIMO_PASS_1) != null) {
                     pass1 = doc.getString(Constants.BD_ULTIMO_PASS_1);
-
                 }
-
                 if (doc.getString(Constants.BD_ULTIMO_PASS_2) != null) {
                     pass2 = doc.getString(Constants.BD_ULTIMO_PASS_2);
-
                 }
-
                 if (doc.getString(Constants.BD_ULTIMO_PASS_3) != null) {
                     pass3 = doc.getString(Constants.BD_ULTIMO_PASS_3);
-
                 }
-
                 if (doc.getString(Constants.BD_ULTIMO_PASS_4) != null) {
                     pass4 = doc.getString(Constants.BD_ULTIMO_PASS_4);
-
+                }
+                if (doc.get(Constants.ETIQUETAS) != null) {
+                    labelsToSave = (ArrayList<String>) doc.get(Constants.ETIQUETAS);
+                    addChips();
                 }
                 progressBar.setVisibility(View.GONE);
-
             } else {
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Error al cargar. Intente nuevamente", Toast.LENGTH_SHORT).show();
@@ -262,6 +289,53 @@ public class EditPasswordFragment extends Fragment {
         }
     }
 
+    private void viewListLabels() {
+        ArrayList<String> labelsToShow = new ArrayList<>();
+        for (String lab: labels) {
+            if (!labelsToSave.contains(lab)) {
+                labelsToShow.add(lab);
+            }
+        }
+        ArrayList<String> listTemporal = new ArrayList<>();
+        String[] arrayLabels = labelsToShow.toArray(new String[0]);
+        boolean[] array = new boolean[labelsToShow.size()];
+        Arrays.fill(array, Boolean.FALSE);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
+        builder.setTitle(R.string.text_add_label)
+                .setMultiChoiceItems(arrayLabels, array, (dialogInterface, position, isChecked) -> {
+                    if (isChecked) {
+                        listTemporal.add(arrayLabels[position]);
+                    } else {
+                        listTemporal.remove(arrayLabels[position]);
+                    }
+                })
+                .setPositiveButton(R.string.buttonAceptar, (dialogInterface, i) -> {
+                    if (!listTemporal.isEmpty()) {
+                        labelsToSave.addAll(listTemporal);
+                        addChips();
+                    }
+                });
+        builder.create();
+        builder.show();
+    }
+
+    private void addChips() {
+        chipGroup.removeAllViews();
+        for (String label: labelsToSave) {
+            Chip chip = new Chip(requireContext());
+            chip.setText(label);
+            chip.setCloseIconVisible(true);
+            chip.setChipBackgroundColorResource(getColorPrimary());
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_text_white));
+            chip.setCloseIconTintResource(R.color.md_text_white);
+            chip.setOnCloseIconClickListener(view -> {
+                chipGroup.removeView(chip);
+                labelsToSave.remove(chip.getText().toString());
+            });
+            chipGroup.addView(chip);
+        }
+    }
+
 
     private void validarDatos () {
         inputLayoutServicio.setError(null);
@@ -273,37 +347,24 @@ public class EditPasswordFragment extends Fragment {
         String contrasena = etContrasena.getText().toString();
         String vigencia = "";
 
-        boolean datoValido;
-
-        if (!usuario.isEmpty()) {
-            datoValido = true;
-        } else {
+        if (usuario.isEmpty()) {
             inputLayoutUsuario.setError("El campo no puede estar vacío");
-            datoValido = false;
+            return;
         }
-
-        if (!contrasena.isEmpty()) {
-            datoValido = true;
-        } else {
-            datoValido = false;
+        if (contrasena.isEmpty()) {
             inputLayoutPass.setError("El campo no puede estar vacío");
+            return;
         }
-
-        if (!servicio.isEmpty()) {
-            datoValido = true;
-        } else {
-            datoValido = false;
+        if (servicio.isEmpty()) {
             inputLayoutServicio.setError("El campo no puede estar vacío");
+            return;
         }
-
         if (spinner.getSelectedItemPosition() > 0) {
             if (spinner.getSelectedItemPosition() == 6) {
                 vigencia = etOtro.getText().toString();
-                if (!vigencia.isEmpty()) {
-                    datoValido = true;
-                } else {
-                    datoValido = false;
+                if (vigencia.isEmpty()) {
                     etOtro.setError("El campo no puede estar vacío");
+                    return;
                 }
             } else {
                 switch (spinner.getSelectedItemPosition()) {
@@ -323,20 +384,16 @@ public class EditPasswordFragment extends Fragment {
                         vigencia = "0";
                         break;
                 }
-                datoValido = true;
             }
-
         } else {
-            datoValido = false;
             Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (datoValido) {
-            if (isCloud) {
-                guardarDataFirebase(servicio, contrasena, usuario, vigencia);
-            } else {
-                guardarDataRoom(servicio, contrasena, usuario, vigencia);
-            }
+        if (isCloud) {
+            guardarDataFirebase(servicio, contrasena, usuario, vigencia);
+        } else {
+            guardarDataRoom(servicio, contrasena, usuario, vigencia);
         }
     }
 
@@ -361,6 +418,7 @@ public class EditPasswordFragment extends Fragment {
                     contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
                     contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
                     contrasenaM.put(Constants.BD_FECHA_CREACION, fechaEnviar);
+                    contrasenaM.put(Constants.ETIQUETAS, labelsToSave);
                     contrasenaM.put(Constants.BD_ULTIMO_PASS_1, contrasenaVieja);
                     contrasenaM.put(Constants.BD_ULTIMO_PASS_2, pass1);
                     contrasenaM.put(Constants.BD_ULTIMO_PASS_3, pass2);
@@ -376,11 +434,13 @@ public class EditPasswordFragment extends Fragment {
                         contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
                         contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
                         contrasenaM.put(Constants.BD_FECHA_CREACION, fechaEnviar);
+                        contrasenaM.put(Constants.ETIQUETAS, labelsToSave);
                     } else {
                         contrasenaM.put(Constants.BD_SERVICIO, servicio);
                         contrasenaM.put(Constants.BD_USUARIO, usuario);
                         contrasenaM.put(Constants.BD_VIGENCIA, vigencia);
                         contrasenaM.put(Constants.BD_PROPIETARIO, Auth.INSTANCE.getCurrenUser().getUid());
+                        contrasenaM.put(Constants.ETIQUETAS, labelsToSave);
                     }
                 }
 
@@ -434,5 +494,11 @@ public class EditPasswordFragment extends Fragment {
 
         Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
         requireActivity().finish();
+    }
+
+    private int getColorPrimary() {
+        TypedValue typedValue = new TypedValue();
+        requireActivity().getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        return typedValue.resourceId;
     }
 }

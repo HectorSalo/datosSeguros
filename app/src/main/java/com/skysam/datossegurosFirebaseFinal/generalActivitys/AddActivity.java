@@ -16,6 +16,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.skysam.datossegurosFirebaseFinal.R;
+import com.skysam.datossegurosFirebaseFinal.common.classView.AddLabelDialog;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.passwords.ui.AddPasswordFragment;
 import com.skysam.datossegurosFirebaseFinal.accounts.ui.AddCuentasFragment;
@@ -136,7 +137,8 @@ public class AddActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.menu_add_label) {
-
+            AddLabelDialog addLabelDialog = new AddLabelDialog();
+            addLabelDialog.show(getSupportFragmentManager(), getString(R.string.text_label));
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -64,7 +64,8 @@
     <string name="contenidoNota">Ingrese su nota</string>
 
     <!-- Add Label -->
-    <string name="title_dialog_add_label">Agregar etiqueta</string>
+    <string name="title_dialog_add_label">Crear etiqueta</string>
+    <string name="text_add_label">Etiquetar</string>
     <string name="text_label">Etiqueta</string>
     <string name="error_label_exists">Etiqueta ya existe</string>
 

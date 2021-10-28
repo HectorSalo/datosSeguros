@@ -10,4 +10,8 @@ import com.skysam.datossegurosFirebaseFinal.database.repositories.LabelRepositor
  */
 class AddViewModel: ViewModel() {
     val labels: LiveData<MutableList<String>> = LabelRepository.getLabels().asLiveData()
+
+    fun addLabel(label: String) {
+        LabelRepository.addLabel(label)
+    }
 }

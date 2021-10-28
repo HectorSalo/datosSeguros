@@ -27,7 +27,7 @@ class AddLabelDialog: DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         _binding = DialogAddLabelBinding.inflate(layoutInflater)
 
-        viewModel.labels.observe(viewLifecycleOwner, {
+        viewModel.labels.observe(this.requireActivity(), {
             labels.clear()
             labels.addAll(it)
         })
@@ -70,7 +70,7 @@ class AddLabelDialog: DialogFragment() {
         if (locationExists) return
 
         Keyboard.close(binding.root)
-        //if (isSale) viewModel.addLocation(costumer.id, label) else viewModel2.addLocation(costumer.id, label)
+        viewModel.addLabel(label)
         Toast.makeText(requireContext(), getString(R.string.text_saving), Toast.LENGTH_SHORT).show()
         dialog?.dismiss()
     }
