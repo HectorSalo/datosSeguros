@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +22,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
@@ -75,6 +79,19 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         boolean isExpanded = listContrasena.get(i).isExpanded();
         viewHolderContrasena.constraintExpandable.setVisibility(isExpanded ? View.VISIBLE : View.GONE);
         viewHolderContrasena.arrow.setImageResource(isExpanded ? R.drawable.ic_keyboard_arrow_up_24 : R.drawable.ic_keyboard_arrow_down_24);
+
+        if (!listContrasena.get(i).getLabels().isEmpty()) {
+            viewHolderContrasena.chipGroup.removeAllViews();
+        for (String label: listContrasena.get(i).getLabels()) {
+            Chip chip = new Chip(mCtx);
+            chip.setText(label);
+            chip.setChipBackgroundColorResource(getColorPrimary());
+            chip.setTextColor(ContextCompat.getColor(mCtx, R.color.md_text_white));
+            viewHolderContrasena.chipGroup.addView(chip);
+        }
+        } else {
+            viewHolderContrasena.chipGroup.removeAllViews();
+        }
 
         viewHolderContrasena.menu.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderContrasena.menu);
@@ -139,6 +156,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         TextView servicio, usuario, contrasena, vencimiento, menu;
         CardView cardView;
         ImageButton arrow;
+        ChipGroup chipGroup;
         ConstraintLayout constraintExpandable;
 
         public ViewHolderContrasena(@NonNull View itemView) {
@@ -151,6 +169,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
             menu = itemView.findViewById(R.id.tvmenuContrasena);
             cardView = itemView.findViewById(R.id.cardview);
             arrow = itemView.findViewById(R.id.ib_arrow);
+            chipGroup = itemView.findViewById(R.id.chip_group);
             constraintExpandable = itemView.findViewById(R.id.expandable);
 
             arrow.setOnClickListener(view -> {
@@ -403,6 +422,12 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
         dialog.setTitle("Últimas contraseñas usadas")
                 .setView(layout)
                 .setPositiveButton("OK", (dialog1, which) -> dialog1.dismiss()).show();
+    }
+
+    private int getColorPrimary() {
+        TypedValue typedValue = new TypedValue();
+        mCtx.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        return typedValue.resourceId;
     }
 
     public void updateList (List<Password> newList) {

@@ -2,10 +2,7 @@ package com.skysam.datossegurosFirebaseFinal.database.repositories
 
 import android.content.ContentValues
 import android.util.Log
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.*
 import com.skysam.datossegurosFirebaseFinal.common.Constants
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth
 import kotlinx.coroutines.channels.awaitClose
@@ -49,6 +46,32 @@ object LabelRepository {
         getInstance()
             .collection(Constants.ETIQUETAS)
             .add(data)
+    }
+
+    fun deleteLabels(labels: MutableList<String>) {
+        for (label in labels) {
+            getInstance()
+                .collection(Constants.BD_CONTRASENAS)
+                .whereArrayContains(Constants.ETIQUETAS, label)
+                .get()
+                .addOnSuccessListener {
+                    for (doc in it) {
+                        getInstance().collection(Constants.BD_CONTRASENAS)
+                            .document(doc.id)
+                            .update(Constants.ETIQUETAS, FieldValue.arrayRemove(label))
+                    }
+                }
+            getInstance()
+                .collection(Constants.ETIQUETAS)
+                .whereEqualTo(Constants.NOMBRE, label)
+                .get()
+                .addOnSuccessListener {
+                    for (doc in it) {
+                        getInstance().collection(Constants.ETIQUETAS)
+                            .document(doc.id).delete()
+                    }
+                }
+        }
     }
 
 

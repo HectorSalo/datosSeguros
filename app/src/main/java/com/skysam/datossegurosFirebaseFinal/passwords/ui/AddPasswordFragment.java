@@ -314,7 +314,7 @@ public class AddPasswordFragment extends Fragment {
         Password password = new Password(String.valueOf(fechaActual.getTime()),
                 servicio, usuario, contrasena, Integer.parseInt(vigencia), fechaActual.getTime(),
                 false, null, null, null, null,
-                null, false);
+                null, false, new ArrayList<>());
 
         Room.INSTANCE.savePassword(password);
 

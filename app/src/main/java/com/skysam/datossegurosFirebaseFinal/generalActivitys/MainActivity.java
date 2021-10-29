@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,11 +28,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.skysam.datossegurosFirebaseFinal.launcher.ui.InicSesionActivity;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int INTERVALO = 2500;
     private long tiempoPrimerClick;
+    private ArrayList<String> labels;
+    private MainViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +58,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_main);
+
+        viewModel = new ViewModelProvider(this).get(MainViewModel.class);
+        viewModel.getLabels().observe(this, item -> {
+            labels = new ArrayList<>();
+            labels.addAll(item);
+        });
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -82,13 +94,39 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == R.id.menu_ajustes) {
             startActivity(new Intent(this, SettingsActivity.class));
-        }else if (id == R.id.menu_cerrar_sesion) {
+        }
+        if (id == R.id.menu_cerrar_sesion) {
             confirmarCerrarSesion();
             return true;
-        } else if (id == R.id.menu_buscar) {
+        }
+        if (id == R.id.menu_eliminar) {
+            eliminarEtiquetas();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void eliminarEtiquetas() {
+        ArrayList<String> listTemporal = new ArrayList<>();
+        String[] arrayLabels = labels.toArray(new String[0]);
+        boolean[] array = new boolean[labels.size()];
+        Arrays.fill(array, Boolean.FALSE);
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle(R.string.menu_eliminar_etiqueta)
+                .setMultiChoiceItems(arrayLabels, array, (dialogInterface, position, isChecked) -> {
+                    if (isChecked) {
+                        listTemporal.add(arrayLabels[position]);
+                    } else {
+                        listTemporal.remove(arrayLabels[position]);
+                    }
+                })
+                .setPositiveButton(R.string.eliminar, (dialogInterface, i) -> {
+                    if (!listTemporal.isEmpty()) {
+                        viewModel.deleteLabels(listTemporal);
+                    }
+                });
+        builder.create();
+        builder.show();
     }
 
     @Override

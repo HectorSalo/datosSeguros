@@ -12,6 +12,7 @@
     <string name="perfil">Actualizar Perfil</string>
     <string name="cerrarSesion">Cerrar Sesión</string>
     <string name="menu_ajustes">Ajustes</string>
+    <string name="menu_eliminar_etiqueta">Eliminar etiqueta</string>
     <string name="eliminar_cuenta">Borrar Datos</string>
     <string name="tema">Cambiar Tema</string>
     <string name="text_saving">Guardando…</string>

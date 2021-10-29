@@ -59,13 +59,19 @@ object FirestoreRepository {
                                 faltante
                             }
 
+                            var labels = mutableListOf<String>()
+                            if (doc.get(Constants.ETIQUETAS) != null) {
+                                @Suppress("UNCHECKED_CAST")
+                                labels = doc.get(Constants.ETIQUETAS) as MutableList<String>
+                            }
                             val pass = Password(
                                     doc.id,
                                     doc.getString(Constants.BD_SERVICIO)!!,
                                     doc.getString(Constants.BD_USUARIO)!!,
                                     doc.getString(Constants.BD_PASSWORD)!!,
                                     expiration,
-                                    fechaCreacion
+                                    fechaCreacion,
+                                    labels = labels
                             )
                             passwords.add(pass)
                         }

@@ -3,6 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:title="@string/menu_eliminar_etiqueta"
+        android:id="@+id/menu_eliminar"
+        />
+
+    <item
         android:title="@string/menu_ajustes"
         android:id="@+id/menu_ajustes"
         />
