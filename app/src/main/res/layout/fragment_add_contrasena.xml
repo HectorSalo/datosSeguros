@@ -153,8 +153,7 @@
                 app:icon="@drawable/ic_label_24"
                 android:layout_centerHorizontal="true"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group"
@@ -166,7 +165,6 @@
                 android:layout_centerHorizontal="true"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/spinner"
                 android:layout_below="@+id/extended_fab">
         </com.google.android.material.chip.ChipGroup>
 

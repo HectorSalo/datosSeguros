@@ -162,13 +162,11 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun loadViewModel() {
         viewModel.labels.observe(viewLifecycleOwner, {
             if (_binding != null) {
-                if (it.isNotEmpty()) {
-                    if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-                        SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
-                        labels.clear()
-                        labels.addAll(it)
-                        loadLabels()
-                    }
+                if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
+                    SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
+                    labels.clear()
+                    labels.addAll(it)
+                    loadLabels()
                 }
             }
         })

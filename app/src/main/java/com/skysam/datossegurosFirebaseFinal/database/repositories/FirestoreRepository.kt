@@ -157,10 +157,16 @@ object FirestoreRepository {
 
                         val notes: MutableList<Note> = mutableListOf()
                         for (doc in value!!) {
+                            var labels = mutableListOf<String>()
+                            if (doc.get(Constants.ETIQUETAS) != null) {
+                                @Suppress("UNCHECKED_CAST")
+                                labels = doc.get(Constants.ETIQUETAS) as MutableList<String>
+                            }
                             val note = Note(
                                     doc.id,
                                     doc.getString(Constants.BD_TITULO_NOTAS)!!,
-                                    doc.getString(Constants.BD_CONTENIDO_NOTAS)!!
+                                    doc.getString(Constants.BD_CONTENIDO_NOTAS)!!,
+                                    labels = labels
                             )
                             notes.add(note)
                         }

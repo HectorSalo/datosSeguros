@@ -44,8 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import kotlin.Suppress;
-
 public class EditPasswordFragment extends Fragment {
 
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;

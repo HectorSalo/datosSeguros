@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +19,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note;
@@ -60,11 +64,26 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
         if (isExpanded) {
             viewHolderNota.contenido.setSingleLine(false);
             viewHolderNota.contenido.setEllipsize(null);
+            viewHolderNota.chipGroup.setVisibility(View.VISIBLE);
         } else {
             viewHolderNota.contenido.setSingleLine(true);
             viewHolderNota.contenido.setEllipsize(TextUtils.TruncateAt.END);
+            viewHolderNota.chipGroup.setVisibility(View.GONE);
         }
         viewHolderNota.arrow.setImageResource(isExpanded ? R.drawable.ic_keyboard_arrow_up_24 : R.drawable.ic_keyboard_arrow_down_24);
+
+        if (!listNota.get(i).getLabels().isEmpty()) {
+            viewHolderNota.chipGroup.removeAllViews();
+            for (String label: listNota.get(i).getLabels()) {
+                Chip chip = new Chip(mCtx);
+                chip.setText(label);
+                chip.setChipBackgroundColorResource(getColorPrimary());
+                chip.setTextColor(ContextCompat.getColor(mCtx, R.color.md_text_white));
+                viewHolderNota.chipGroup.addView(chip);
+            }
+        } else {
+            viewHolderNota.chipGroup.removeAllViews();
+        }
 
         viewHolderNota.menu.setOnClickListener(v -> {
             PopupMenu popupMenu = new PopupMenu(mCtx, viewHolderNota.menu);
@@ -120,6 +139,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
 
         TextView titulo, contenido, menu;
         CardView cardView;
+        ChipGroup chipGroup;
         ImageButton arrow;
 
         public ViewHolderNota(@NonNull View itemView) {
@@ -129,6 +149,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
             contenido = itemView.findViewById(R.id.tvcontenidoNota);
             menu = itemView.findViewById(R.id.tvmenuNota);
             cardView = itemView.findViewById(R.id.cardviewNota);
+            chipGroup = itemView.findViewById(R.id.chip_group);
             arrow = itemView.findViewById(R.id.ib_arrow);
 
             arrow.setOnClickListener(view -> {
@@ -232,6 +253,12 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
         listNota.remove(i);
         notifyDataSetChanged();
         Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
+    }
+
+    private int getColorPrimary() {
+        TypedValue typedValue = new TypedValue();
+        mCtx.getTheme().resolveAttribute(R.attr.colorPrimary, typedValue, true);
+        return typedValue.resourceId;
     }
 
     public void updateList (List<Note> newList) {

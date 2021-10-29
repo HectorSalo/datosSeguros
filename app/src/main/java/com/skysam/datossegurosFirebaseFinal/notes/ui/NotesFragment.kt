@@ -4,11 +4,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
@@ -29,6 +32,8 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
     private val notesRoom: MutableList<Note> = mutableListOf()
     private val notes: MutableList<Note> = mutableListOf()
     private val listSearch: MutableList<Note> = mutableListOf()
+    private val labels = mutableListOf<String>()
+    private val labelsToFilter = mutableListOf<String>()
     private lateinit var adapter: NoteAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -58,6 +63,10 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onResume() {
         super.onResume()
         loadPasswords()
+        if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
+            SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
+            loadLabels()
+        }
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_nota)
@@ -86,12 +95,27 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         search.setOnQueryTextListener(this)
         search.setOnCloseListener {
             binding.lottieAnimationView.visibility = View.GONE
+            labelsToFilter.clear()
+            if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
+                SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
+                loadLabels()
+            }
             false
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun loadViewModel() {
+        viewModel.labels.observe(viewLifecycleOwner, {
+            if (_binding != null) {
+                if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
+                    SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
+                    labels.clear()
+                    labels.addAll(it)
+                    loadLabels()
+                }
+            }
+        })
         viewModel.notesFirestore.observe(viewLifecycleOwner, {
             if (it.isNotEmpty()) {
                 notesFirestore.clear()
@@ -140,11 +164,12 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onQueryTextChange(newText: String?): Boolean {
         if (notes.isNotEmpty()) {
-            val userInput = newText!!.toLowerCase(Locale.ROOT)
+            binding.chipGroup.removeAllViews()
+            val userInput = newText!!.lowercase(Locale.ROOT)
             listSearch.clear()
 
             for (note in notes) {
-                if (note.title.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (note.title.lowercase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(note)
                 }
             }
@@ -157,6 +182,44 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
             adapter.updateList(listSearch.toList())
         }
         return false
+    }
+
+    private fun loadLabels() {
+        binding.chipGroup.removeAllViews()
+        for (label in labels) {
+            val chip = Chip(requireContext())
+            chip.text = label
+            chip.isCheckable = true
+            chip.isClickable = true
+            chip.setChipBackgroundColorResource(getColorPrimary())
+            chip.setTextColor(ContextCompat.getColor(requireContext(), R.color.md_text_white))
+            chip.setOnClickListener {
+                if (chip.isChecked) {
+                    labelsToFilter.add(label)
+                } else {
+                    labelsToFilter.remove(label)
+                }
+                filterLabel()
+            }
+
+            binding.chipGroup.addView(chip)
+        }
+    }
+
+    private fun filterLabel() {
+        val itemsToShow = mutableListOf<Note>()
+        for (label in labelsToFilter) {
+            for (item in notesFirestore) {
+                if (item.labels.contains(label) && !itemsToShow.contains(item)) itemsToShow.add(item)
+            }
+        }
+        if (labelsToFilter.isEmpty()) loadPasswords() else adapter.updateList(itemsToShow)
+    }
+
+    private fun getColorPrimary(): Int {
+        val typedValue = TypedValue()
+        requireActivity().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
+        return typedValue.resourceId
     }
 
 }

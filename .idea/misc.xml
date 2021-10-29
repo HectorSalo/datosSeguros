@@ -8,14 +8,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/cardview_contrasena.xml" value="0.19519927536231885" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/cardview_notas.xml" value="0.20652173913043478" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/cardview_tdc.xml" value="0.20652173913043478" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/dialog_add_label.xml" value="0.3546875" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_add_contrasena.xml" value="0.20878623188405798" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_editar_contrasena.xml" value="0.20878623188405798" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/passwords_fragment.xml" value="0.20652173913043478" />
-        <entry key="..\:/Users/Chirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/menu/menu_main.xml" value="0.3546875" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/activity_add.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/cardview_contrasena.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/cardview_notas.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/dialog_add_label.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_add_contrasena.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_add_nota.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_editar_contrasena.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/fragment_editar_nota.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/notes_fragment.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/layout/passwords_fragment.xml" value="0.2033514492753623" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/menu/menu_activity_add.xml" value="0.31527777777777777" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/menu/menu_main.xml" value="0.31527777777777777" />
+        <entry key="..\:/Users/hchirinos/AndroidStudioProjects/datosSeguros/app/src/main/res/xml/header_preferences.xml" value="0.2033514492753623" />
       </map>
     </option>
   </component>

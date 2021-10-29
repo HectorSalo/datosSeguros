@@ -11,7 +11,7 @@ import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
 /**
  * Created by Hector Chirinos (Home) on 28/4/2021.
  */
-@Database(entities = [Password::class, Account::class, Card::class, Note::class], version = 4)
+@Database(entities = [Password::class, Account::class, Card::class, Note::class], version = 5)
 @TypeConverters(RoomConverter::class)
 abstract class RoomDB: RoomDatabase() {
     abstract fun passwords(): com.skysam.datossegurosFirebaseFinal.database.room.daos.Password

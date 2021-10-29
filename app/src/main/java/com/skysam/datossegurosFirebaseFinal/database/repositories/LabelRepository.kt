@@ -62,6 +62,17 @@ object LabelRepository {
                     }
                 }
             getInstance()
+                .collection(Constants.BD_NOTAS)
+                .whereArrayContains(Constants.ETIQUETAS, label)
+                .get()
+                .addOnSuccessListener {
+                    for (doc in it) {
+                        getInstance().collection(Constants.BD_NOTAS)
+                            .document(doc.id)
+                            .update(Constants.ETIQUETAS, FieldValue.arrayRemove(label))
+                    }
+                }
+            getInstance()
                 .collection(Constants.ETIQUETAS)
                 .whereEqualTo(Constants.NOMBRE, label)
                 .get()
