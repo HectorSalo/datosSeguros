@@ -43,8 +43,8 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         adapter = NoteAdapter(notes.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
@@ -106,31 +106,32 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun loadViewModel() {
-        viewModel.labels.observe(viewLifecycleOwner, {
+        viewModel.labels.observe(viewLifecycleOwner) {
             if (_binding != null) {
                 if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-                    SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
+                    SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD
+                ) {
                     labels.clear()
                     labels.addAll(it)
                     loadLabels()
                 }
             }
-        })
-        viewModel.notesFirestore.observe(viewLifecycleOwner, {
+        }
+        viewModel.notesFirestore.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 notesFirestore.clear()
                 notesFirestore.addAll(it)
                 loadPasswords()
             }
-        })
+        }
 
-        viewModel.notesRoom.observe(viewLifecycleOwner, {
+        viewModel.notesRoom.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 notesRoom.clear()
                 notesRoom.addAll(it)
                 loadPasswords()
             }
-        })
+        }
     }
 
     private fun loadPasswords() {

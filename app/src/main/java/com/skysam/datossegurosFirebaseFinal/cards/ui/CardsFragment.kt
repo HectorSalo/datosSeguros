@@ -38,8 +38,8 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         adapter = CardAdapter(cards.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
@@ -92,21 +92,21 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun loadViewModel() {
-        viewModel.cardsFirestore.observe(viewLifecycleOwner, {
+        viewModel.cardsFirestore.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 cardsFirestore.clear()
                 cardsFirestore.addAll(it)
                 loadPasswords()
             }
-        })
+        }
 
-        viewModel.cardsRoom.observe(viewLifecycleOwner, {
+        viewModel.cardsRoom.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 cardsRoom.clear()
                 cardsRoom.addAll(it)
                 loadPasswords()
             }
-        })
+        }
     }
 
     private fun loadPasswords() {
@@ -140,12 +140,12 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onQueryTextChange(newText: String?): Boolean {
         if (cards.isNotEmpty()) {
-            val userInput = newText!!.toLowerCase(Locale.ROOT)
+            val userInput = newText!!.lowercase(Locale.ROOT)
             listSearch.clear()
 
             for (card in cards) {
-                if (card.bank.toLowerCase(Locale.ROOT).contains(userInput) ||
-                        card.user.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (card.bank.lowercase(Locale.ROOT).contains(userInput) ||
+                        card.user.lowercase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(card)
                 }
             }

@@ -3,9 +3,7 @@ package com.skysam.datossegurosFirebaseFinal.accounts.ui;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,15 +19,14 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.skysam.datossegurosFirebaseFinal.common.ConexionSQLite;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.skysam.datossegurosFirebaseFinal.R;
+import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
-import com.skysam.datossegurosFirebaseFinal.R;
-import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.List;

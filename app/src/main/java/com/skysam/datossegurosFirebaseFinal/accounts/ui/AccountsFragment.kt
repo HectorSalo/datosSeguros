@@ -38,8 +38,8 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         adapter = AccountAdapter(accountsFirestore.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
@@ -92,21 +92,21 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     private fun loadViewModel() {
-        viewModel.accountsFirestore.observe(viewLifecycleOwner, {
+        viewModel.accountsFirestore.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 accountsFirestore.clear()
                 accountsFirestore.addAll(it)
                 loadPasswords()
             }
-        })
+        }
 
-        viewModel.accountsRoom.observe(viewLifecycleOwner, {
+        viewModel.accountsRoom.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 accountsRoom.clear()
                 accountsRoom.addAll(it)
                 loadPasswords()
             }
-        })
+        }
     }
 
     private fun loadPasswords() {
@@ -140,12 +140,12 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     override fun onQueryTextChange(newText: String?): Boolean {
         if (accountsFirestore.isNotEmpty()) {
-            val userInput = newText!!.toLowerCase(Locale.ROOT)
+            val userInput = newText!!.lowercase(Locale.ROOT)
             listSearch.clear()
 
             for (account in accountsFirestore) {
-                if (account.bank.toLowerCase(Locale.ROOT).contains(userInput) ||
-                        account.user.toLowerCase(Locale.ROOT).contains(userInput)) {
+                if (account.bank.lowercase(Locale.ROOT).contains(userInput) ||
+                        account.user.lowercase(Locale.ROOT).contains(userInput)) {
                     listSearch.add(account)
                 }
             }
