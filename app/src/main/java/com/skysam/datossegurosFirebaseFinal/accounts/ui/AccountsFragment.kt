@@ -7,7 +7,10 @@ import android.os.Looper
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
@@ -19,7 +22,7 @@ import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
 import java.util.*
 
-class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
+class AccountsFragment : Fragment() {
 
     private var _binding: AccountFragmentBinding? = null
     private val binding get() = _binding!!
@@ -34,12 +37,53 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = AccountFragmentBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider, SearchView.OnQueryTextListener {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                val itemSearch = menu.findItem(R.id.menu_buscar)
+                val search = itemSearch.actionView as SearchView
+                search.setOnQueryTextListener(this)
+                search.setOnCloseListener {
+                    binding.lottieAnimationView.visibility = View.GONE
+                    false
+                }
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return false
+            }
+
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                if (accountsFirestore.isNotEmpty()) {
+                    val userInput = newText!!.lowercase(Locale.ROOT)
+                    listSearch.clear()
+
+                    for (account in accountsFirestore) {
+                        if (account.bank.lowercase(Locale.ROOT).contains(userInput) ||
+                            account.user.lowercase(Locale.ROOT).contains(userInput)) {
+                            listSearch.add(account)
+                        }
+                    }
+                    if (listSearch.isEmpty()) {
+                        binding.lottieAnimationView.visibility = View.VISIBLE
+                        binding.lottieAnimationView.playAnimation()
+                    } else {
+                        binding.lottieAnimationView.visibility = View.GONE
+                    }
+                    adapter.updateList(listSearch.toList())
+                }
+                return false
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         adapter = AccountAdapter(accountsFirestore.toList())
         binding.recycler.adapter = adapter
         binding.recycler.setHasFixedSize(true)
@@ -78,17 +122,6 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val itemSearch = menu.findItem(R.id.menu_buscar)
-        val search = itemSearch.actionView as SearchView
-        search.setOnQueryTextListener(this)
-        search.setOnCloseListener {
-            binding.lottieAnimationView.visibility = View.GONE
-            false
-        }
-        super.onCreateOptionsMenu(menu, inflater)
     }
 
     private fun loadViewModel() {
@@ -132,31 +165,5 @@ class AccountsFragment : Fragment(), SearchView.OnQueryTextListener {
             binding.tvSinLista.visibility = View.VISIBLE
         }
         binding.progressBar.visibility = View.GONE
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String?): Boolean {
-        if (accountsFirestore.isNotEmpty()) {
-            val userInput = newText!!.lowercase(Locale.ROOT)
-            listSearch.clear()
-
-            for (account in accountsFirestore) {
-                if (account.bank.lowercase(Locale.ROOT).contains(userInput) ||
-                        account.user.lowercase(Locale.ROOT).contains(userInput)) {
-                    listSearch.add(account)
-                }
-            }
-            if (listSearch.isEmpty()) {
-                binding.lottieAnimationView.visibility = View.VISIBLE
-                binding.lottieAnimationView.playAnimation()
-            } else {
-                binding.lottieAnimationView.visibility = View.GONE
-            }
-            adapter.updateList(listSearch.toList())
-        }
-        return false
     }
 }

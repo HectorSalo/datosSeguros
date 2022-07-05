@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Datos Seguros</string>
     <string name="title_contrasenas">Contraseñas</string>
-    <string name="title_cuentas">Cuentas Bancarias</string>
-    <string name="title_tarjetas">Tarjetas Bancarias</string>
+    <string name="title_cuentas">Cuentas</string>
+    <string name="title_tarjetas">Tarjetas</string>
     <string name="title_notas">Notas</string>
     <string name="title_tema">Temas</string>
     <string name="title_activity_add">Agregar Datos</string>

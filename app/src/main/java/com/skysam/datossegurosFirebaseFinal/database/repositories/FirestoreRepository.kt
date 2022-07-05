@@ -75,7 +75,7 @@ object FirestoreRepository {
                             )
                             passwords.add(pass)
                         }
-                        offer(passwords.toList())
+                        trySend(passwords.toList())
                     }
             awaitClose { request.remove() }
         }
@@ -106,7 +106,7 @@ object FirestoreRepository {
                             )
                             accounts.add(account)
                         }
-                        offer(accounts.toList())
+                        trySend(accounts.toList())
                     }
             awaitClose { request.remove() }
         }
@@ -138,7 +138,7 @@ object FirestoreRepository {
                             )
                             cards.add(card)
                         }
-                        offer(cards.toList())
+                        trySend(cards.toList())
                     }
             awaitClose { request.remove() }
         }
@@ -170,7 +170,7 @@ object FirestoreRepository {
                             )
                             notes.add(note)
                         }
-                        offer(notes.toList())
+                        trySend(notes.toList())
                     }
             awaitClose { request.remove() }
         }

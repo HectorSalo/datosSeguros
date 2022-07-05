@@ -138,9 +138,9 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
             constraintExpandable = itemView.findViewById(R.id.expandable);
 
             arrow.setOnClickListener(view -> {
-                Account accountModel = listBanco.get(getAdapterPosition());
+                Account accountModel = listBanco.get(getBindingAdapterPosition());
                 accountModel.setExpanded(!accountModel.isExpanded());
-                notifyItemChanged(getAdapterPosition());
+                notifyItemChanged(getBindingAdapterPosition());
             });
 
         }
@@ -230,7 +230,8 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
     public void eliminarFirebase(final Account i) {
         String doc = i.getId();
         FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS).document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CUENTAS);
+        CollectionReference reference = db.collection(Constants.BD_PROPIETARIOS)
+                .document(Auth.INSTANCE.getCurrenUser().getUid()).collection(Constants.BD_CUENTAS);
 
         reference.document(doc)
                 .delete()

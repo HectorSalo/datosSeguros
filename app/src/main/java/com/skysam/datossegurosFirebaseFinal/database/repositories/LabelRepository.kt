@@ -33,7 +33,7 @@ object LabelRepository {
                     for (doc in value!!) {
                         labels.add(doc.getString(Constants.NOMBRE)!!)
                     }
-                    offer(labels)
+                    trySend(labels)
                 }
             awaitClose { request.remove() }
         }
