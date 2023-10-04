@@ -104,46 +104,14 @@
                 android:inputType="number"
                 android:visibility="gone" />
 
-            <RadioGroup
-                android:id="@+id/radio_almacenamiento"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_below="@id/etIngreseOtro"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
 
-
-                <TextView
-                    android:id="@+id/textView10"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:paddingEnd="4dp"
-                    android:text="Guardar en:" />
-
-                <RadioButton
-                    android:id="@+id/radioButton_nube"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/radioNube"
-                    android:checked="true"/>
-
-                <RadioButton
-                    android:id="@+id/radioButton_dispositivo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/radioDispositivo" />
-            </RadioGroup>
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/extended_fab"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/radio_almacenamiento"
+                android:layout_below="@+id/etIngreseOtro"
                 android:text="@string/text_add_label"
                 android:textAllCaps="false"
                 android:textSize="12sp"

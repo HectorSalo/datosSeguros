@@ -21,8 +21,7 @@ import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account;
+import com.skysam.datossegurosFirebaseFinal.common.model.Account;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
 import java.util.Calendar;
@@ -34,7 +33,7 @@ public class AddCuentasFragment extends Fragment {
 
     private TextInputLayout inputLayoutTitular, inputLayoutBanco, inputLayoutNumero, inputLayoutCedula, inputLayoutTelefono, inputLayoutCorreo;
     private TextInputEditText etTitular, etBanco, etNumeroCuenta, etCedula, etTelefono, etCorreo;
-    private RadioButton rbAhorro, rbCorriente, rbNube, rbDispositivo;
+    private RadioButton rbAhorro, rbCorriente;
     private ProgressBar progressBar;
     private String spinnerSeleccion;
     private Spinner spinnerDocumento;
@@ -88,8 +87,6 @@ public class AddCuentasFragment extends Fragment {
         rbCorriente = vista.findViewById(R.id.radioButtonCorriente);
         spinnerDocumento = vista.findViewById(R.id.spinnerTipoDocumento);
         progressBar = vista.findViewById(R.id.progressBarAddCuenta);
-        rbNube = vista.findViewById(R.id.radioButton_nube);
-        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
 
         rbAhorro.setChecked(true);
 
@@ -158,11 +155,7 @@ public class AddCuentasFragment extends Fragment {
         }
 
         if (datoValido) {
-            if (rbNube.isChecked()) {
-                guardarCuentaFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
-            } else {
-                guardarCuentaRoom(titular, banco, documento, numeroCuenta, telefono, correo);
-            }
+            guardarCuentaFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
         }
     }
 
@@ -186,8 +179,6 @@ public class AddCuentasFragment extends Fragment {
         spinnerDocumento.setEnabled(false);
         rbAhorro.setEnabled(false);
         rbCorriente.setEnabled(false);
-        rbNube.setEnabled(false);
-        rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -221,30 +212,7 @@ public class AddCuentasFragment extends Fragment {
                     spinnerDocumento.setEnabled(true);
                     rbAhorro.setEnabled(true);
                     rbCorriente.setEnabled(true);
-                    rbNube.setEnabled(true);
-                    rbDispositivo.setEnabled(true);
                     buttonGuardar.setEnabled(true);
                 });
-    }
-
-    public void guardarCuentaRoom(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
-        Calendar calendar = Calendar.getInstance();
-        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
-        String tipo = "";
-
-        if (rbAhorro.isChecked()) {
-            tipo = "Ahorro";
-        } else if (rbCorriente.isChecked()) {
-            tipo = "Corriente";
-        }
-
-        Account account = new Account(String.valueOf(calendar.getTimeInMillis()),
-                titular, banco, cuentaNumero, cedula, spinnerSeleccion, tipo, telefono,
-                correo, false, false);
-
-        Room.INSTANCE.saveAccount(account);
-
-        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 }

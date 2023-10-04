@@ -4,29 +4,34 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card
-import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
+import com.skysam.datossegurosFirebaseFinal.common.model.Card
 import com.skysam.datossegurosFirebaseFinal.databinding.CardsFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
-import java.util.*
+import java.util.Locale
 
-class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
+class CardsFragment : Fragment(), SearchView.OnQueryTextListener, MenuProvider {
 
     private var _binding: CardsFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var fab: FloatingActionButton
     private val viewModel: MainViewModel by activityViewModels()
     private val cardsFirestore: MutableList<Card> = mutableListOf()
-    private val cardsRoom: MutableList<Card> = mutableListOf()
     private val cards: MutableList<Card> = mutableListOf()
     private val listSearch: MutableList<Card> = mutableListOf()
     private lateinit var adapter: CardAdapter
@@ -34,7 +39,7 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = CardsFragmentBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         return binding.root
     }
 
@@ -80,17 +85,6 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
         _binding = null
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val itemSearch = menu.findItem(R.id.menu_buscar)
-        val search = itemSearch.actionView as SearchView
-        search.setOnQueryTextListener(this)
-        search.setOnCloseListener {
-            binding.lottieAnimationView.visibility = View.GONE
-            false
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     private fun loadViewModel() {
         viewModel.cardsFirestore.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -99,30 +93,11 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
                 loadPasswords()
             }
         }
-
-        viewModel.cardsRoom.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                cardsRoom.clear()
-                cardsRoom.addAll(it)
-                loadPasswords()
-            }
-        }
     }
 
     private fun loadPasswords() {
         cards.clear()
-        when (SharedPref.getShowData()) {
-            Constants.PREFERENCE_SHOW_ALL -> {
-                cards.addAll(cardsFirestore)
-                cards.addAll(cardsRoom)
-            }
-            Constants.PREFERENCE_SHOW_CLOUD -> {
-                cards.addAll(cardsFirestore)
-            }
-            Constants.PREFERENCE_SHOW_DEVICE -> {
-                cards.addAll(cardsRoom)
-            }
-        }
+        cards.addAll(cardsFirestore)
         if (cards.isNotEmpty()) {
             adapter.updateList(cards.sortedWith(compareBy { it.bank }).toList())
             binding.recycler.visibility = View.VISIBLE
@@ -158,6 +133,20 @@ class CardsFragment : Fragment(), SearchView.OnQueryTextListener {
             adapter.updateList(listSearch.toList())
         }
         return false
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        val itemSearch = menu.findItem(R.id.menu_buscar)
+        val search = itemSearch.actionView as SearchView
+        search.setOnQueryTextListener(this)
+        search.setOnCloseListener {
+            binding.lottieAnimationView.visibility = View.GONE
+            false
+        }
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return true
     }
 
 }

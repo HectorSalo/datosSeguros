@@ -24,8 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account;
+import com.skysam.datossegurosFirebaseFinal.common.model.Account;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 
 import java.util.ArrayList;
@@ -89,11 +88,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog1, which) -> {
-                            if (listBanco.get(i).isSavedCloud()) {
-                                eliminarFirebase(listBanco.get(i));
-                            } else {
-                                eliminarRoom(listBanco.get(i));
-                            }
+                            eliminarFirebase(listBanco.get(i));
                         });
                         dialog.setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
                         dialog.setIcon(R.drawable.ic_delete);
@@ -243,13 +238,6 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.ViewHold
                 })
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
 
-    }
-
-    public void eliminarRoom(Account i) {
-        Room.INSTANCE.deleteAccount(i);
-        listBanco.remove(i);
-        notifyDataSetChanged();
-        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
     public void updateList (List<Account> newList) {

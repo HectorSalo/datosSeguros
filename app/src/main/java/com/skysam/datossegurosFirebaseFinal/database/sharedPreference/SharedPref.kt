@@ -15,16 +15,6 @@ object SharedPref {
                 Context.MODE_PRIVATE)
     }
 
-    fun getShowData(): String {
-        return getInstance().getString(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, Constants.PREFERENCE_SHOW_ALL)!!
-    }
-
-    fun changeShowData(newShow: String) {
-        val editor = getInstance().edit()
-        editor.putString(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, newShow)
-        editor.apply()
-    }
-
     fun getTheme(): String {
         return getInstance().getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO)!!
     }
@@ -48,7 +38,6 @@ object SharedPref {
     fun changeToDefault() {
         val editor = getInstance().edit()
         editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO)
-        editor.putString(Constants.PREFERENCE_ALMACENAMIENTO_NUBE, Constants.PREFERENCE_SHOW_ALL)
         editor.putString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO)
         editor.putString(Constants.PREFERENCE_PIN_RESPALDO, "0000")
         editor.apply()

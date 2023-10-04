@@ -5,31 +5,36 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
-import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
+import com.skysam.datossegurosFirebaseFinal.common.model.Note
 import com.skysam.datossegurosFirebaseFinal.databinding.NotesFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
-import java.util.*
+import java.util.Locale
 
-class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
+class NotesFragment : Fragment(), SearchView.OnQueryTextListener, MenuProvider {
 
     private var _binding: NotesFragmentBinding? = null
     private val binding get() = _binding!!
     private lateinit var fab: FloatingActionButton
     private val viewModel: MainViewModel by activityViewModels()
     private val notesFirestore: MutableList<Note> = mutableListOf()
-    private val notesRoom: MutableList<Note> = mutableListOf()
     private val notes: MutableList<Note> = mutableListOf()
     private val listSearch: MutableList<Note> = mutableListOf()
     private val labels = mutableListOf<String>()
@@ -39,7 +44,7 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = NotesFragmentBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         return binding.root
     }
 
@@ -63,10 +68,7 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onResume() {
         super.onResume()
         loadPasswords()
-        if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-            SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
-            loadLabels()
-        }
+        loadLabels()
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_nota)
@@ -89,32 +91,12 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         _binding = null
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val itemSearch = menu.findItem(R.id.menu_buscar)
-        val search = itemSearch.actionView as SearchView
-        search.setOnQueryTextListener(this)
-        search.setOnCloseListener {
-            binding.lottieAnimationView.visibility = View.GONE
-            labelsToFilter.clear()
-            if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-                SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
-                loadLabels()
-            }
-            false
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     private fun loadViewModel() {
         viewModel.labels.observe(viewLifecycleOwner) {
             if (_binding != null) {
-                if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-                    SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD
-                ) {
-                    labels.clear()
-                    labels.addAll(it)
-                    loadLabels()
-                }
+                labels.clear()
+                labels.addAll(it)
+                loadLabels()
             }
         }
         viewModel.notesFirestore.observe(viewLifecycleOwner) {
@@ -124,30 +106,11 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
                 loadPasswords()
             }
         }
-
-        viewModel.notesRoom.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                notesRoom.clear()
-                notesRoom.addAll(it)
-                loadPasswords()
-            }
-        }
     }
 
     private fun loadPasswords() {
         notes.clear()
-        when (SharedPref.getShowData()) {
-            Constants.PREFERENCE_SHOW_ALL -> {
-                notes.addAll(notesFirestore)
-                notes.addAll(notesRoom)
-            }
-            Constants.PREFERENCE_SHOW_CLOUD -> {
-                notes.addAll(notesFirestore)
-            }
-            Constants.PREFERENCE_SHOW_DEVICE -> {
-                notes.addAll(notesRoom)
-            }
-        }
+        notes.addAll(notesFirestore)
         if (notes.isNotEmpty()) {
             adapter.updateList(notes.sortedWith(compareBy { it.title }).toList())
             binding.recycler.visibility = View.VISIBLE
@@ -221,6 +184,22 @@ class NotesFragment : Fragment(), SearchView.OnQueryTextListener {
         val typedValue = TypedValue()
         requireActivity().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
         return typedValue.resourceId
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        val itemSearch = menu.findItem(R.id.menu_buscar)
+        val search = itemSearch.actionView as SearchView
+        search.setOnQueryTextListener(this)
+        search.setOnCloseListener {
+            binding.lottieAnimationView.visibility = View.GONE
+            labelsToFilter.clear()
+            loadLabels()
+            false
+        }
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return true
     }
 
 }

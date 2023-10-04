@@ -23,8 +23,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account;
+import com.skysam.datossegurosFirebaseFinal.common.model.Account;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
 import java.util.HashMap;
@@ -101,11 +100,7 @@ public class EditarCuentasFragment extends Fragment {
         ArrayAdapter<String> adapterDocumentos = new ArrayAdapter<>(getContext(), R.layout.spinner_opciones, spDocumentos);
         spinnerDocumento.setAdapter(adapterDocumentos);
 
-        if (isCloud) {
-            cargarDataFirebase();
-        } else {
-            cargarDataRoom();
-        }
+        cargarDataFirebase();
 
         Button button = vista.findViewById(R.id.guardarCuenta);
         button.setOnClickListener(v -> validarDatos());
@@ -158,36 +153,6 @@ public class EditarCuentasFragment extends Fragment {
                 requireActivity().finish();
             }
         });
-    }
-
-    public void cargarDataRoom() {
-        account = Room.INSTANCE.getAccountById(idDoc);
-        etTitular.setText(account.getUser());
-        etBanco.setText(account.getBank());
-        etNumeroCuenta.setText(account.getNumberAccount());
-        etCedula.setText(account.getNumberIdUser());
-        String tipo = account.getTypeAccount();
-        etTelefono.setText(account.getTelph());
-        etCorreo.setText(account.getEmail());
-        String tipoDocumento = account.getTypeIdUSer();
-
-        switch (tipoDocumento) {
-            case "Cédula":
-                spinnerDocumento.setSelection(0);
-                break;
-            case "RIF":
-                spinnerDocumento.setSelection(1);
-                break;
-            case "Pasaporte":
-                spinnerDocumento.setSelection(2);
-                break;
-        }
-
-        if (tipo.equals("Ahorro")) {
-            rbAhorro.setChecked(true);
-        } else if (tipo.equals("Corriente")) {
-            rbCorriente.setChecked(true);
-        }
     }
 
 
@@ -247,11 +212,7 @@ public class EditarCuentasFragment extends Fragment {
         }
 
         if (datoValido) {
-            if (isCloud) {
-                guardarDataFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
-            } else {
-                guardarDataRoom(titular, banco, documento, numeroCuenta, telefono, correo);
-            }
+            guardarDataFirebase(titular, banco, documento, numeroCuenta, telefono, correo);
         }
     }
 
@@ -309,29 +270,5 @@ public class EditarCuentasFragment extends Fragment {
                     rbCorriente.setEnabled(true);
                     button.setEnabled(true);
                 });
-    }
-
-    public void guardarDataRoom(String titular, String banco, String cedula, String cuentaNumero, String telefono, String correo) {
-        spinnerSeleccion = spinnerDocumento.getSelectedItem().toString();
-        String tipo = "";
-
-        if (rbAhorro.isChecked()) {
-            tipo = "Ahorro";
-        } else if (rbCorriente.isChecked()) {
-            tipo = "Corriente";
-        }
-        account.setUser(titular);
-        account.setBank(banco);
-        account.setNumberAccount(cuentaNumero);
-        account.setNumberIdUser(cedula);
-        account.setTypeAccount(tipo);
-        account.setTypeIdUSer(spinnerSeleccion);
-        account.setTelph(telefono);
-        account.setEmail(correo);
-
-        Room.INSTANCE.updateAccount(account);
-
-        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 }

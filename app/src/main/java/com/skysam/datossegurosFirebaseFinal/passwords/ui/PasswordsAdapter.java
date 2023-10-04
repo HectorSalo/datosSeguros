@@ -28,8 +28,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
+import com.skysam.datossegurosFirebaseFinal.common.model.Password;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -116,11 +115,7 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog1, which) -> {
-                            if (listContrasena.get(i).isSavedCloud()) {
-                                eliminarFirebase(listContrasena.get(i));
-                            } else {
-                                eliminarRoom(listContrasena.get(i));
-                            }
+                            eliminarFirebase(listContrasena.get(i));
                         });
                         dialog.setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
                         dialog.setIcon(R.drawable.ic_delete);
@@ -266,17 +261,10 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                 .addOnSuccessListener(aVoid -> {
                     listContrasena.remove(i);
                     notifyDataSetChanged();
-                    Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mCtx, "Eliminado", Toast.LENGTH_SHORT).show();
 
                 })
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
-    }
-
-    public void eliminarRoom(Password i) {
-        Room.INSTANCE.deletePassword(i);
-        listContrasena.remove(i);
-        notifyDataSetChanged();
-        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
     public void verUltimosPassFirebase(String idPass) {

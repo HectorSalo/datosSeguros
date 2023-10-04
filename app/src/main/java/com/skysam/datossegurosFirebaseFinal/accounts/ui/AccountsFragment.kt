@@ -4,23 +4,27 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
-import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
-import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
+import com.skysam.datossegurosFirebaseFinal.common.model.Account
 import com.skysam.datossegurosFirebaseFinal.databinding.AccountFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
-import java.util.*
+import java.util.Locale
 
 class AccountsFragment : Fragment() {
 
@@ -29,7 +33,6 @@ class AccountsFragment : Fragment() {
     private lateinit var fab: FloatingActionButton
     private val viewModel: MainViewModel by activityViewModels()
     private val accountsFirestore: MutableList<Account> = mutableListOf()
-    private val accountsRoom: MutableList<Account> = mutableListOf()
     private val accounts: MutableList<Account> = mutableListOf()
     private val listSearch: MutableList<Account> = mutableListOf()
     private lateinit var adapter: AccountAdapter
@@ -132,30 +135,11 @@ class AccountsFragment : Fragment() {
                 loadPasswords()
             }
         }
-
-        viewModel.accountsRoom.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                accountsRoom.clear()
-                accountsRoom.addAll(it)
-                loadPasswords()
-            }
-        }
     }
 
     private fun loadPasswords() {
         accounts.clear()
-        when (SharedPref.getShowData()) {
-            Constants.PREFERENCE_SHOW_ALL -> {
-                accounts.addAll(accountsFirestore)
-                accounts.addAll(accountsRoom)
-            }
-            Constants.PREFERENCE_SHOW_CLOUD -> {
-                accounts.addAll(accountsFirestore)
-            }
-            Constants.PREFERENCE_SHOW_DEVICE -> {
-                accounts.addAll(accountsRoom)
-            }
-        }
+        accounts.addAll(accountsFirestore)
         if (accounts.isNotEmpty()) {
             adapter.updateList(accounts.sortedWith(compareBy { it.bank }).toList())
             binding.recycler.visibility = View.VISIBLE

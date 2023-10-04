@@ -168,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
             GoogleSignInClient mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
             mGoogleSignInClient.signOut().addOnCompleteListener(this, task -> {
-                //FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(this, InicSesionActivity.class));
             });
         } else {

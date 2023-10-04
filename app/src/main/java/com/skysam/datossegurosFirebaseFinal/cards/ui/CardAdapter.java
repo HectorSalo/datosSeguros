@@ -21,8 +21,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card;
+import com.skysam.datossegurosFirebaseFinal.common.model.Card;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -90,11 +89,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog12, which) -> {
-                            if (listTarjeta.get(i).isSavedCloud()) {
-                                eliminarFirebase(listTarjeta.get(i));
-                            } else {
-                                eliminarRoom(listTarjeta.get(i));
-                            }
+                            eliminarFirebase(listTarjeta.get(i));
                         });
                         dialog.setNegativeButton("Cancelar", (dialog1, which) -> dialog1.dismiss());
                         dialog.setIcon(R.drawable.ic_delete);
@@ -245,13 +240,6 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.ViewHolderTarj
 
                 })
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
-    }
-
-    public void eliminarRoom(Card i) {
-        Room.INSTANCE.deleteCard(i);
-        listTarjeta.remove(i);
-        notifyDataSetChanged();
-        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
     public void updateList (List<Card> newList) {

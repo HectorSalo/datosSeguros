@@ -26,8 +26,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note;
+import com.skysam.datossegurosFirebaseFinal.common.model.Note;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddViewModel;
 
@@ -95,15 +94,9 @@ public class EditarNotaFragment extends Fragment {
                 break;
         }
 
-        if (isCloud) {
-            fab.setVisibility(View.VISIBLE);
-            chipGroup.setVisibility(View.VISIBLE);
-            cargarDataFirebase();
-        } else {
-            fab.setVisibility(View.GONE);
-            chipGroup.setVisibility(View.GONE);
-            cargarDataRoom();
-        }
+        fab.setVisibility(View.VISIBLE);
+        chipGroup.setVisibility(View.VISIBLE);
+        cargarDataFirebase();
 
         fab.setOnClickListener(view -> viewListLabels());
         button.setOnClickListener(v -> validarDatos());
@@ -135,12 +128,6 @@ public class EditarNotaFragment extends Fragment {
                 requireActivity().finish();
             }
         });
-    }
-
-    public void cargarDataRoom() {
-        note = Room.INSTANCE.getNoteById(idDoc);
-        etTitulo.setText(note.getTitle());
-        etContenido.setText(note.getContent());
     }
 
     private void viewListLabels() {
@@ -206,11 +193,7 @@ public class EditarNotaFragment extends Fragment {
             Toast.makeText(getContext(), "No se puede guardar una nota vacía", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (isCloud) {
-            guardarDataFirebase(titulo, contenido);
-        } else {
-            guardarDataRoom(titulo, contenido);
-        }
+        guardarDataFirebase(titulo, contenido);
     }
 
     public void guardarDataFirebase(String titulo, String contenido) {
@@ -239,14 +222,6 @@ public class EditarNotaFragment extends Fragment {
                     etContenido.setEnabled(true);
                     button.setEnabled(true);
                 });
-    }
-
-    public void guardarDataRoom(String titulo, String contenido) {
-        note.setTitle(titulo);
-        note.setContent(contenido);
-        Room.INSTANCE.updateNote(note);
-        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 
     private int getColorPrimary() {

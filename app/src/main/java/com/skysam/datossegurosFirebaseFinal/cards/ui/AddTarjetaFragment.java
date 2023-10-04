@@ -2,9 +2,6 @@ package com.skysam.datossegurosFirebaseFinal.cards.ui;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,17 +14,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +33,7 @@ public class AddTarjetaFragment extends Fragment {
     private TextInputLayout inputLayoutTitular, inputLayoutTarjeta, inputLayoutCVV, inputLayoutCedula, inputLayoutBanco, inputLayoutVencimiento, inputLayoutClave;
     private TextInputEditText etTitular, etTarjeta, etCVV, etCedula, etBanco, etVencimiento, etClave;
     private EditText etOtroTarjeta;
-    private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro, rbNube, rbDispositivo;
+    private RadioButton rbVisa, rbMastercard, rbOtro, rbMaestro;
     private ProgressBar progressBar;
     private String tipo;
     private Button buttonGuardar;
@@ -70,8 +66,6 @@ public class AddTarjetaFragment extends Fragment {
         rbVisa = vista.findViewById(R.id.radioButtonVisa);
         rbOtro = vista.findViewById(R.id.radioButtonOtroTarjeta);
         RadioGroup radioTarjeta = vista.findViewById(R.id.radioTarjeta);
-        rbNube = vista.findViewById(R.id.radioButton_nube);
-        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         buttonGuardar = vista.findViewById(R.id.guardarTarjeta);
         progressBar = vista.findViewById(R.id.progressBarAddTarjeta);
 
@@ -160,11 +154,7 @@ public class AddTarjetaFragment extends Fragment {
         if (clave.isEmpty()) {
             clave = "";
         }
-        if (rbNube.isChecked()) {
-            guardarTarjetaFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
-        } else {
-            guardarTarjetaRoom(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
-        }
+        guardarTarjetaFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
     }
 
     public void guardarTarjetaFirebase(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
@@ -178,8 +168,6 @@ public class AddTarjetaFragment extends Fragment {
         inputLayoutClave.setEnabled(false);
         rbOtro.setEnabled(false);
         rbMaestro.setEnabled(false);
-        rbNube.setEnabled(false);
-        rbDispositivo.setEnabled(false);
         rbMastercard.setEnabled(false);
         rbVisa.setEnabled(false);
         buttonGuardar.setEnabled(false);
@@ -222,30 +210,11 @@ public class AddTarjetaFragment extends Fragment {
                     inputLayoutClave.setEnabled(true);
                     rbOtro.setEnabled(true);
                     rbMaestro.setEnabled(true);
-                    rbNube.setEnabled(true);
-                    rbDispositivo.setEnabled(true);
                     rbMastercard.setEnabled(true);
                     rbVisa.setEnabled(true);
                     buttonGuardar.setEnabled(true);
                     Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    public void guardarTarjetaRoom(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
-        Calendar calendar = Calendar.getInstance();
-        if (rbMaestro.isChecked()) {
-            tipo = "Maestro";
-        } else if (rbMastercard.isChecked()) {
-            tipo = "Mastercard";
-        } else if (rbVisa.isChecked()) {
-            tipo = "Visa";
-        }
-        Card card = new Card(String.valueOf(calendar.getTimeInMillis()),
-                titular, banco, numeroTarjeta, cedula, tipo, cvv, vencimiento, clave, false, false);
-        Room.INSTANCE.saveCard(card);
-
-        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 
     public void escogerVencimiento() {

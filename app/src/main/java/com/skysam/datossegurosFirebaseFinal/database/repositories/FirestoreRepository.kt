@@ -7,10 +7,10 @@ import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.skysam.datossegurosFirebaseFinal.common.Constants
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
+import com.skysam.datossegurosFirebaseFinal.common.model.Account
+import com.skysam.datossegurosFirebaseFinal.common.model.Card
+import com.skysam.datossegurosFirebaseFinal.common.model.Note
+import com.skysam.datossegurosFirebaseFinal.common.model.Password
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow

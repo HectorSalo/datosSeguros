@@ -25,8 +25,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card;
+import com.skysam.datossegurosFirebaseFinal.common.model.Card;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
 import java.util.HashMap;
@@ -109,11 +108,7 @@ public class EditarTarjetaFragment extends Fragment {
             }
         });
 
-        if (isCloud) {
-            cargarDataFirebase();
-        } else {
-            cargarDataSQLite();
-        }
+        cargarDataFirebase();
 
         etVencimiento.setOnClickListener(v -> escogerVencimiento());
 
@@ -165,34 +160,6 @@ public class EditarTarjetaFragment extends Fragment {
                 requireActivity().finish();
             }
         });
-    }
-
-    public void cargarDataSQLite() {
-        card = Room.INSTANCE.getCardById(idDoc);
-        etTitular.setText(card.getUser());
-        etTarjeta.setText(card.getNumberCard());
-        etCVV.setText(card.getCvv());
-        etCedula.setText(card.getNumberIdUser());
-        String tipo = card.getTypeCard();
-        etBanco.setText(card.getBank());
-        etVencimiento.setText(card.getDateExpiration());
-        etClave.setText(card.getCode());
-
-        switch (tipo) {
-            case "Maestro":
-                rbMaestro.setChecked(true);
-                break;
-            case "Visa":
-                rbVisa.setChecked(true);
-                break;
-            case "Mastercard":
-                rbMastercard.setChecked(true);
-                break;
-            default:
-                rbOtro.setChecked(true);
-                etOtroTarjeta.setText(tipo);
-                break;
-        }
     }
 
 
@@ -275,11 +242,7 @@ public class EditarTarjetaFragment extends Fragment {
         }
 
         if (datoValido) {
-            if (isCloud) {
-                guardarDataFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
-            } else {
-                guardarDataRoom(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
-            }
+            guardarDataFirebase(titular, banco, tarjeta, cvv, vencimiento, cedula, clave);
         }
     }
 
@@ -341,30 +304,6 @@ public class EditarTarjetaFragment extends Fragment {
                     rbVisa.setEnabled(true);
                     button.setEnabled(true);
                 });
-    }
-
-    public void guardarDataRoom(String titular, String banco, String numeroTarjeta, String cvv, String vencimiento, String cedula, String clave) {
-        String tipo = "";
-        if (rbMaestro.isChecked()) {
-            tipo = "Maestro";
-        } else if (rbMastercard.isChecked()) {
-            tipo = "Mastercard";
-        } else if (rbVisa.isChecked()) {
-            tipo = "Visa";
-        }
-        card.setUser(titular);
-        card.setNumberCard(numeroTarjeta);
-        card.setCvv(cvv);
-        card.setNumberIdUser(cedula);
-        card.setTypeCard(tipo);
-        card.setBank(banco);
-        card.setDateExpiration(vencimiento);
-        card.setCode(clave);
-
-        Room.INSTANCE.updateCard(card);
-
-        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 
     public void escogerVencimiento() {

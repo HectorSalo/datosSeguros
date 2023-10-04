@@ -37,7 +37,6 @@ import com.skysam.datossegurosFirebaseFinal.BuildConfig;
 import com.skysam.datossegurosFirebaseFinal.common.EliminarCuenta;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 
@@ -243,7 +242,6 @@ public class SettingsActivity extends AppCompatActivity implements
 
             ListPreference listaBloqueo = findPreference(Constants.PREFERENCE_TIPO_BLOQUEO);
             ListPreference listaTemas = findPreference(Constants.PREFERENCE_TEMA);
-            ListPreference listShowData = findPreference(Constants.PREFERENCE_ALMACENAMIENTO_NUBE);
 
             switch (SharedPref.INSTANCE.getTheme()){
                 case Constants.PREFERENCE_AMARILLO:
@@ -269,18 +267,6 @@ public class SettingsActivity extends AppCompatActivity implements
                     break;
                 case Constants.PREFERENCE_PIN:
                     listaBloqueo.setValue(Constants.PREFERENCE_PIN);
-                    break;
-            }
-
-            switch (SharedPref.INSTANCE.getShowData()) {
-                case Constants.PREFERENCE_SHOW_ALL:
-                    listShowData.setValue(Constants.PREFERENCE_SHOW_ALL);
-                    break;
-                case Constants.PREFERENCE_SHOW_CLOUD:
-                    listShowData.setValue(Constants.PREFERENCE_SHOW_CLOUD);
-                    break;
-                case Constants.PREFERENCE_SHOW_DEVICE:
-                    listShowData.setValue(Constants.PREFERENCE_SHOW_DEVICE);
                     break;
             }
 
@@ -374,25 +360,6 @@ public class SettingsActivity extends AppCompatActivity implements
                                 requireActivity().startActivity(intent);
                                 requireActivity().overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                             }
-                            break;
-                    }
-                    return true;
-                });
-            }
-
-
-            if (listShowData != null) {
-                listShowData.setOnPreferenceChangeListener((preference, newValue) -> {
-                    String showData = (String) newValue;
-                    switch (showData) {
-                        case Constants.PREFERENCE_SHOW_ALL:
-                            SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_ALL);
-                            break;
-                        case Constants.PREFERENCE_SHOW_CLOUD:
-                            SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_CLOUD);
-                            break;
-                        case Constants.PREFERENCE_SHOW_DEVICE:
-                            SharedPref.INSTANCE.changeShowData(Constants.PREFERENCE_SHOW_DEVICE);
                             break;
                     }
                     return true;
@@ -657,10 +624,6 @@ public class SettingsActivity extends AppCompatActivity implements
 
             buttonNube.setOnClickListener(v -> recuperarContrasenaNube());
 
-            buttonDispositivo.setOnClickListener(v -> eliminarDataDispositivo(false));
-
-            buttonTodos.setOnClickListener(v -> eliminarDataDispositivo(true));
-
             return view;
         }
 
@@ -796,19 +759,6 @@ public class SettingsActivity extends AppCompatActivity implements
                 buttonTodos.setEnabled(true);
                 progressBar.setVisibility(View.GONE);
                 Toast.makeText(getContext(), "Datos eliminados de la Nube satisfactoriamente", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        private void eliminarDataDispositivo(boolean borrarTodo) {
-            Room.INSTANCE.deleteAllPasswords();
-            Room.INSTANCE.deleteAllAccounts();
-            Room.INSTANCE.deleteAllCards();
-            Room.INSTANCE.deleteAllNotes();
-
-            Toast.makeText(getContext(), "Datos eliminados del Dispositivo satisfactoriamente", Toast.LENGTH_LONG).show();
-
-            if (borrarTodo) {
-                recuperarContrasenaNube();
             }
         }
     }

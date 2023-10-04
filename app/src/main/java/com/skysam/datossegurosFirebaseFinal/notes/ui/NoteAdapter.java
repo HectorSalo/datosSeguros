@@ -25,8 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note;
+import com.skysam.datossegurosFirebaseFinal.common.model.Note;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
@@ -108,11 +107,7 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
                         dialog.setMessage("¿Desea eliminar estos datos de manera permanente?");
 
                         dialog.setPositiveButton("Eliminar", (dialog1, which) -> {
-                            if (listNota.get(i).isSavedCloud()) {
-                                eliminarFirebase(listNota.get(i));
-                            } else {
-                                eliminarRoom(listNota.get(i));
-                            }
+                            eliminarFirebase(listNota.get(i));
                         });
                         dialog.setNegativeButton("Cancelar", (dialog12, which) -> dialog12.dismiss());
                         dialog.setIcon(R.drawable.ic_delete);
@@ -246,13 +241,6 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolderNota
 
                 })
                 .addOnFailureListener(e -> Toast.makeText(mCtx, "Error al eliminar. Intente nuevamente", Toast.LENGTH_SHORT).show());
-    }
-
-    public void eliminarRoom(Note i) {
-        Room.INSTANCE.deleteNote(i);
-        listNota.remove(i);
-        notifyDataSetChanged();
-        Toast.makeText(mCtx,"Eliminado", Toast.LENGTH_SHORT).show();
     }
 
     private int getColorPrimary() {

@@ -1,12 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -22,17 +16,20 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddViewModel;
 
@@ -49,7 +46,6 @@ public class AddPasswordFragment extends Fragment {
     private TextInputEditText etServicio, etUsuario, etContrasena;
     private TextInputLayout inputLayoutUsuario, inputLayoutPass, inputLayoutServicio;
     private EditText etOtroDias;
-    private RadioButton rbNube, rbDispositivo;
     private ProgressBar progressBar;
     private Date fechaActual;
     private Spinner spinner;
@@ -86,9 +82,6 @@ public class AddPasswordFragment extends Fragment {
         inputLayoutUsuario = vista.findViewById(R.id.outlined_usuario);
         inputLayoutPass = vista.findViewById(R.id.outlined_pass);
         inputLayoutServicio = vista.findViewById(R.id.outlined_servicio);
-        RadioGroup radioGroup = vista.findViewById(R.id.radio_almacenamiento);
-        rbNube = vista.findViewById(R.id.radioButton_nube);
-        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         progressBar = vista.findViewById(R.id.progressBar);
         spinner = vista.findViewById(R.id.spinner);
         ExtendedFloatingActionButton fab = vista.findViewById(R.id.extended_fab);
@@ -136,16 +129,6 @@ public class AddPasswordFragment extends Fragment {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
-
-        radioGroup.setOnCheckedChangeListener((radioGroup1, id) -> {
-            if (id == R.id.radioButton_nube) {
-                fab.setVisibility(View.VISIBLE);
-                chipGroup.setVisibility(View.VISIBLE);
-            } else {
-                fab.setVisibility(View.INVISIBLE);
-                chipGroup.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -262,11 +245,7 @@ public class AddPasswordFragment extends Fragment {
             return;
         }
 
-        if (rbNube.isChecked()) {
-            guardarContrasenaFirebase(servicio, contrasena, usuario, vigencia);
-        } else {
-            guardarContrasenaRoom(servicio, contrasena, usuario, vigencia);
-        }
+        guardarContrasenaFirebase(servicio, contrasena, usuario, vigencia);
     }
 
     public void guardarContrasenaFirebase(String servicio, String contrasena, String usuario, String vigencia) {
@@ -275,8 +254,6 @@ public class AddPasswordFragment extends Fragment {
         inputLayoutUsuario.setEnabled(false);
         inputLayoutPass.setEnabled(false);
         spinner.setEnabled(false);
-        rbNube.setEnabled(false);
-        rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -303,22 +280,8 @@ public class AddPasswordFragment extends Fragment {
             inputLayoutUsuario.setEnabled(true);
             inputLayoutPass.setEnabled(true);
             spinner.setEnabled(true);
-            rbNube.setEnabled(true);
-            rbDispositivo.setEnabled(true);
             buttonGuardar.setEnabled(true);
             Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
         });
-    }
-
-    public void guardarContrasenaRoom(String servicio, String contrasena, String usuario, String vigencia) {
-        Password password = new Password(String.valueOf(fechaActual.getTime()),
-                servicio, usuario, contrasena, Integer.parseInt(vigencia), fechaActual.getTime(),
-                false, null, null, null, null,
-                null, false, new ArrayList<>());
-
-        Room.INSTANCE.savePassword(password);
-
-        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 }

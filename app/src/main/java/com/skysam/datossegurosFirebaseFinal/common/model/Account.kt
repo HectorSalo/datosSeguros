@@ -1,15 +1,10 @@
-package com.skysam.datossegurosFirebaseFinal.database.room.entities
-
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import com.skysam.datossegurosFirebaseFinal.common.Constants
+package com.skysam.datossegurosFirebaseFinal.common.model
 
 /**
  * Created by Hector Chirinos (Home) on 28/4/2021.
  */
-@Entity(tableName = Constants.BD_CUENTAS)
 data class Account(
-        @PrimaryKey val id: String,
+        val id: String,
         var user: String,
         var bank: String,
         var numberAccount: String,

@@ -3,11 +3,10 @@ package com.skysam.datossegurosFirebaseFinal.generalActivitys
 import androidx.lifecycle.*
 import com.skysam.datossegurosFirebaseFinal.database.repositories.FirestoreRepository
 import com.skysam.datossegurosFirebaseFinal.database.repositories.LabelRepository
-import com.skysam.datossegurosFirebaseFinal.database.room.Room
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Account
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Card
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
+import com.skysam.datossegurosFirebaseFinal.common.model.Account
+import com.skysam.datossegurosFirebaseFinal.common.model.Card
+import com.skysam.datossegurosFirebaseFinal.common.model.Note
+import com.skysam.datossegurosFirebaseFinal.common.model.Password
 
 class MainViewModel : ViewModel() {
     val passwordsFirestore: LiveData<List<Password>> = FirestoreRepository.getPasswords().asLiveData()
@@ -15,11 +14,6 @@ class MainViewModel : ViewModel() {
     val cardsFirestore: LiveData<List<Card>> = FirestoreRepository.getCards().asLiveData()
     val notesFirestore: LiveData<List<Note>> = FirestoreRepository.getNotes().asLiveData()
     val labels: LiveData<MutableList<String>> = LabelRepository.getLabels().asLiveData()
-
-    val passwordsRoom: LiveData<MutableList<Password>> = Room.getPasswords().asLiveData()
-    val accountsRoom: LiveData<MutableList<Account>> = Room.getAccounts().asLiveData()
-    val cardsRoom: LiveData<MutableList<Card>> = Room.getCards().asLiveData()
-    val notesRoom: LiveData<MutableList<Note>> = Room.getNotes().asLiveData()
 
     fun deleteLabels(labels: MutableList<String>) {
         LabelRepository.deleteLabels(labels)

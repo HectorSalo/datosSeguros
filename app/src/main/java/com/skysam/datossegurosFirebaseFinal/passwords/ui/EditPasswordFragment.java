@@ -31,8 +31,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password;
+import com.skysam.datossegurosFirebaseFinal.common.model.Password;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddViewModel;
 
@@ -152,15 +151,9 @@ public class EditPasswordFragment extends Fragment {
             }
         });
 
-        if (isCloud) {
-            fab.setVisibility(View.VISIBLE);
-            chipGroup.setVisibility(View.VISIBLE);
-            cargarDataFirebase();
-        } else {
-            fab.setVisibility(View.GONE);
-            chipGroup.setVisibility(View.GONE);
-            cargarDataRoom();
-        }
+        fab.setVisibility(View.VISIBLE);
+        chipGroup.setVisibility(View.VISIBLE);
+        cargarDataFirebase();
 
         fab.setOnClickListener(view -> viewListLabels());
         button.setOnClickListener(v -> validarDatos());
@@ -235,56 +228,6 @@ public class EditPasswordFragment extends Fragment {
 
             }
         });
-    }
-
-    public void cargarDataRoom() {
-        passwordRoom = Room.INSTANCE.getPasswordById(idDoc);
-        etServicio.setText(passwordRoom.getService());
-        etUsuario.setText(passwordRoom.getUser());
-        etContrasena.setText(passwordRoom.getPassword());
-        contrasenaVieja = passwordRoom.getPassword();
-
-        String vigencia = String.valueOf(passwordRoom.getExpiration());
-
-        switch (vigencia) {
-            case "0":
-                spinner.setSelection(5);
-                break;
-            case "30":
-                spinner.setSelection(1);
-                break;
-            case "60":
-                spinner.setSelection(2);
-                break;
-            case "90":
-                spinner.setSelection(3);
-                break;
-            case "120":
-                spinner.setSelection(4);
-                break;
-            default:
-                spinner.setSelection(6);
-                etOtro.setVisibility(View.VISIBLE);
-                etOtro.setText(vigencia);
-                break;
-        }
-        position = spinner.getSelectedItemPosition();
-
-        if (passwordRoom.getPassOld1() != null) {
-            pass1 = passwordRoom.getPassOld1();
-        }
-
-        if (passwordRoom.getPassOld2() != null) {
-            pass2 = passwordRoom.getPassOld2();
-        }
-
-        if (passwordRoom.getPassOld3() != null) {
-            pass3 = passwordRoom.getPassOld3();
-        }
-
-        if (passwordRoom.getPassOld4() != null) {
-            pass4 = passwordRoom.getPassOld4();
-        }
     }
 
     private void viewListLabels() {
@@ -387,12 +330,7 @@ public class EditPasswordFragment extends Fragment {
             Toast.makeText(getContext(), "Debe seleccionar la vigencia de la contraseña", Toast.LENGTH_SHORT).show();
             return;
         }
-
-        if (isCloud) {
-            guardarDataFirebase(servicio, contrasena, usuario, vigencia);
-        } else {
-            guardarDataRoom(servicio, contrasena, usuario, vigencia);
-        }
+        guardarDataFirebase(servicio, contrasena, usuario, vigencia);
     }
 
     public void guardarDataFirebase(String servicio, String contrasenaNueva, String usuario, String vigencia) {
@@ -459,39 +397,6 @@ public class EditPasswordFragment extends Fragment {
                 });
 
 
-    }
-
-    public void guardarDataRoom(String servicio, String contrasenaNueva, String usuario, String vigencia) {
-        if (!contrasenaNueva.equals(contrasenaVieja)) {
-            passwordRoom.setService(servicio);
-            passwordRoom.setUser(usuario);
-            passwordRoom.setPassword(contrasenaNueva);
-            passwordRoom.setExpiration(Integer.parseInt(vigencia));
-            passwordRoom.setDateCreated(fechaActual.getTime());
-            passwordRoom.setPassOld1(contrasenaVieja);
-            passwordRoom.setPassOld2(pass1);
-            passwordRoom.setPassOld3(pass2);
-            passwordRoom.setPassOld4(pass3);
-            passwordRoom.setPassOld5(pass4);
-        } else {
-            if (spinner.getSelectedItemPosition() != position) {
-                fechaEnviar = fechaActual;
-
-                passwordRoom.setService(servicio);
-                passwordRoom.setUser(usuario);
-                passwordRoom.setPassword(contrasenaNueva);
-                passwordRoom.setExpiration(Integer.parseInt(vigencia));
-                passwordRoom.setDateCreated(fechaActual.getTime());
-            } else {
-                passwordRoom.setService(servicio);
-                passwordRoom.setUser(usuario);
-                passwordRoom.setExpiration(Integer.parseInt(vigencia));
-            }
-        }
-        Room.INSTANCE.updatePassword(passwordRoom);
-
-        Toast.makeText(getContext(), "Modificado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 
     private int getColorPrimary() {

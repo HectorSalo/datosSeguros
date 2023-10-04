@@ -26,8 +26,7 @@ import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
-import com.skysam.datossegurosFirebaseFinal.database.room.Room;
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Note;
+import com.skysam.datossegurosFirebaseFinal.common.model.Note;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddViewModel;
 
@@ -41,7 +40,6 @@ import java.util.Map;
 public class AddNotaFragment extends Fragment {
 
     private EditText etTitulo, etContenido;
-    private RadioButton rbNube, rbDispositivo;
     private ProgressBar progressBar;
     private Button buttonGuardar;
     private ArrayList<String> labels;
@@ -67,10 +65,7 @@ public class AddNotaFragment extends Fragment {
         etTitulo = vista.findViewById(R.id.etTitulo);
         etContenido = vista.findViewById(R.id.etContenido);
         progressBar = vista.findViewById(R.id.progressBarAddNota);
-        rbNube = vista.findViewById(R.id.radioButton_nube);
-        rbDispositivo = vista.findViewById(R.id.radioButton_dispositivo);
         buttonGuardar = vista.findViewById(R.id.guardarNota);
-        RadioGroup radioGroup = vista.findViewById(R.id.radio_almacenamiento);
         ExtendedFloatingActionButton fab = vista.findViewById(R.id.extended_fab);
         chipGroup = vista.findViewById(R.id.chip_group);
 
@@ -90,16 +85,6 @@ public class AddNotaFragment extends Fragment {
                 buttonGuardar.setBackgroundColor(getResources().getColor(R.color.color_fucsia));
                 break;
         }
-
-        radioGroup.setOnCheckedChangeListener((radioGroup1, id) -> {
-            if (id == R.id.radioButton_nube) {
-                fab.setVisibility(View.VISIBLE);
-                chipGroup.setVisibility(View.VISIBLE);
-            } else {
-                fab.setVisibility(View.INVISIBLE);
-                chipGroup.setVisibility(View.INVISIBLE);
-            }
-        });
 
         fab.setOnClickListener(view -> viewListLabels());
 
@@ -175,19 +160,13 @@ public class AddNotaFragment extends Fragment {
             Toast.makeText(getContext(), "No se puede guardar una nota vacía", Toast.LENGTH_SHORT).show();
             return;
         }
-        if (rbNube.isChecked()) {
-            guardarNotaFirebase(titulo, contenido);
-        } else {
-            guardarNotaRoom(titulo, contenido);
-        }
+        guardarNotaFirebase(titulo, contenido);
     }
 
     public void guardarNotaFirebase(String titulo, String contenido) {
         progressBar.setVisibility(View.VISIBLE);
         etTitulo.setEnabled(false);
         etContenido.setEnabled(false);
-        rbNube.setEnabled(false);
-        rbDispositivo.setEnabled(false);
         buttonGuardar.setEnabled(false);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -209,18 +188,7 @@ public class AddNotaFragment extends Fragment {
                     Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     etTitulo.setEnabled(true);
                     etContenido.setEnabled(true);
-                    rbNube.setEnabled(true);
-                    rbDispositivo.setEnabled(true);
                     buttonGuardar.setEnabled(true);
                 });
-    }
-
-    public void guardarNotaRoom(String titulo, String contenido) {
-        Calendar calendar = Calendar.getInstance();
-        Note note = new Note(String.valueOf(calendar.getTimeInMillis()), titulo, contenido,
-                false, false, new ArrayList<>());
-        Room.INSTANCE.saveNote(note);
-        Toast.makeText(getContext(), "Guardado exitosamente", Toast.LENGTH_SHORT).show();
-        requireActivity().finish();
     }
 }

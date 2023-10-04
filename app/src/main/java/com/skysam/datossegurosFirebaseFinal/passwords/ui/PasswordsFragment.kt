@@ -5,31 +5,36 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.chip.Chip
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.skysam.datossegurosFirebaseFinal.R
 import com.skysam.datossegurosFirebaseFinal.common.Constants
-import com.skysam.datossegurosFirebaseFinal.database.room.entities.Password
-import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref
+import com.skysam.datossegurosFirebaseFinal.common.model.Password
 import com.skysam.datossegurosFirebaseFinal.databinding.PasswordsFragmentBinding
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddActivity
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainViewModel
-import java.util.*
+import java.util.Locale
 
-class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
+class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener, MenuProvider {
 
     private lateinit var fab: FloatingActionButton
     private var _binding: PasswordsFragmentBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainViewModel by activityViewModels()
     private val passwordsFirestore: MutableList<Password> = mutableListOf()
-    private val passwordsRoom: MutableList<Password> = mutableListOf()
     private val passwords: MutableList<Password> = mutableListOf()
     private val listSearch: MutableList<Password> = mutableListOf()
     private val labels = mutableListOf<String>()
@@ -39,7 +44,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
         _binding = PasswordsFragmentBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true)
+        requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         return binding.root
     }
 
@@ -61,30 +66,11 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
         loadViewModel()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        val itemSearch = menu.findItem(R.id.menu_buscar)
-        val search = itemSearch.actionView as SearchView
-        search.setOnQueryTextListener(this)
-        search.setOnCloseListener {
-            binding.lottieAnimationView.visibility = View.GONE
-            labelsToFilter.clear()
-            if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-                SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
-                loadLabels()
-            }
-            false
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
 
     override fun onResume() {
         super.onResume()
         loadPasswords()
-        if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-            SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD) {
-            loadLabels()
-        }
+        loadLabels()
         fab.hide()
         Handler(Looper.getMainLooper()).postDelayed({
             fab.setImageResource(R.drawable.ic_add_contrasena)
@@ -136,18 +122,7 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
 
     private fun loadPasswords() {
         passwords.clear()
-        when (SharedPref.getShowData()) {
-            Constants.PREFERENCE_SHOW_ALL -> {
-                passwords.addAll(passwordsFirestore)
-                passwords.addAll(passwordsRoom)
-            }
-            Constants.PREFERENCE_SHOW_CLOUD -> {
-                passwords.addAll(passwordsFirestore)
-            }
-            Constants.PREFERENCE_SHOW_DEVICE -> {
-                passwords.addAll(passwordsRoom)
-            }
-        }
+        passwords.addAll(passwordsFirestore)
         if (passwords.isNotEmpty()) {
             adapter.updateList(passwords.sortedWith(compareBy { it.service }).toList())
             binding.recycler.visibility = View.VISIBLE
@@ -162,27 +137,15 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
     private fun loadViewModel() {
         viewModel.labels.observe(viewLifecycleOwner) {
             if (_binding != null) {
-                if (SharedPref.getShowData() == Constants.PREFERENCE_SHOW_ALL ||
-                    SharedPref.getShowData() == Constants.PREFERENCE_SHOW_CLOUD
-                ) {
-                    labels.clear()
-                    labels.addAll(it)
-                    loadLabels()
-                }
+                labels.clear()
+                labels.addAll(it)
+                loadLabels()
             }
         }
         viewModel.passwordsFirestore.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 passwordsFirestore.clear()
                 passwordsFirestore.addAll(it)
-                loadPasswords()
-            }
-        }
-
-        viewModel.passwordsRoom.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                passwordsRoom.clear()
-                passwordsRoom.addAll(it)
                 loadPasswords()
             }
         }
@@ -224,5 +187,21 @@ class PasswordsFragment : Fragment(), SearchView.OnQueryTextListener {
         val typedValue = TypedValue()
         requireActivity().theme.resolveAttribute(R.attr.colorPrimary, typedValue, true)
         return typedValue.resourceId
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        val itemSearch = menu.findItem(R.id.menu_buscar)
+        val search = itemSearch.actionView as SearchView
+        search.setOnQueryTextListener(this)
+        search.setOnCloseListener {
+            binding.lottieAnimationView.visibility = View.GONE
+            labelsToFilter.clear()
+            loadLabels()
+            false
+        }
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        return true
     }
 }
