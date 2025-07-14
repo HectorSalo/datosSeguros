@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.DatosSegurosYellow" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="colorPrimary">@color/color_yellow_ligth</item>
+        <item name="colorPrimaryDark">@color/color_yellow_dark</item>
+        <item name="colorAccent">@color/color_yellow_dark</item>
+        <item name="colorSurface">@color/color_blue_grey</item>
+        <item name="android:windowBackground">@color/color_blue_grey</item>
+    </style>
+
+    <style name="Theme.DatosSegurosRed" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="colorPrimary">@color/color_red</item>
+        <item name="colorPrimaryDark">@color/color_red_ligth</item>
+        <item name="colorAccent">@color/color_red_ligth</item>
+        <item name="colorSurface">@color/color_black_ligth</item>
+        <item name="android:windowBackground">@color/color_black_ligth</item>
+    </style>
+
+    <style name="Theme.DatosSegurosBrwon" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="colorPrimary">@color/color_beige</item>
+        <item name="colorPrimaryDark">@color/color_camel</item>
+        <item name="colorAccent">@color/color_camel</item>
+        <item name="colorSurface">@color/color_brown</item>
+        <item name="android:windowBackground">@color/color_brown</item>
+    </style>
+
+    <style name="Theme.DatosSegurosLila" parent="Theme.MaterialComponents.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="colorPrimary">@color/color_rose</item>
+        <item name="colorPrimaryDark">@color/color_fucsia</item>
+        <item name="colorAccent">@color/color_fucsia</item>
+        <item name="colorSurface">@color/color_purple</item>
+        <item name="android:windowBackground">@color/color_purple</item>
+    </style>
+</resources>
