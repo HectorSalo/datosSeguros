@@ -172,7 +172,6 @@ public class InicSesionActivity extends AppCompatActivity{
 
     public void autenticarFirebaseGoogle (GoogleSignInAccount acct) {
         activityInicSesionBinding.progressBar.setVisibility(View.VISIBLE);
-        Log.d("msg", "firebaseAuthWithGoogle:" + acct.getId());
 
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
