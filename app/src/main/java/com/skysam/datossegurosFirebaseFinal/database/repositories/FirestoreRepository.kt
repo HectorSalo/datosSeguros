@@ -1,11 +1,11 @@
 package com.skysam.datossegurosFirebaseFinal.database.repositories
 
 import android.content.ContentValues.TAG
-import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.Query
 import com.skysam.datossegurosFirebaseFinal.common.Constants
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth
 import com.skysam.datossegurosFirebaseFinal.common.model.Account
 import com.skysam.datossegurosFirebaseFinal.common.model.Card
@@ -32,7 +32,7 @@ object FirestoreRepository {
                     .orderBy(Constants.BD_SERVICIO, Query.Direction.ASCENDING)
                     .addSnapshotListener(MetadataChanges.INCLUDE) { value, error ->
                         if (error != null) {
-                            Log.w(TAG, "Listen failed.", error)
+                            SecureLog.w(TAG, "Listen failed.", error)
                             return@addSnapshotListener
                         }
 
@@ -88,7 +88,7 @@ object FirestoreRepository {
                     .orderBy(Constants.BD_BANCO, Query.Direction.ASCENDING)
                     .addSnapshotListener { value, error ->
                         if (error != null) {
-                            Log.w(TAG, "Listen failed.", error)
+                            SecureLog.w(TAG, "Listen failed.", error)
                             return@addSnapshotListener
                         }
 
@@ -119,7 +119,7 @@ object FirestoreRepository {
                     .orderBy(Constants.BD_TITULAR_TARJETA, Query.Direction.ASCENDING)
                     .addSnapshotListener { value, error ->
                         if (error != null) {
-                            Log.w(TAG, "Listen failed.", error)
+                            SecureLog.w(TAG, "Listen failed.", error)
                             return@addSnapshotListener
                         }
 
@@ -151,7 +151,7 @@ object FirestoreRepository {
                     .orderBy(Constants.BD_TITULO_NOTAS, Query.Direction.ASCENDING)
                     .addSnapshotListener { value, error ->
                         if (error != null) {
-                            Log.w(TAG, "Listen failed.", error)
+                            SecureLog.w(TAG, "Listen failed.", error)
                             return@addSnapshotListener
                         }
 

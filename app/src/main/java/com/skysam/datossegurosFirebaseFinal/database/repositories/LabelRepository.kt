@@ -1,9 +1,9 @@
 package com.skysam.datossegurosFirebaseFinal.database.repositories
 
 import android.content.ContentValues
-import android.util.Log
 import com.google.firebase.firestore.*
 import com.skysam.datossegurosFirebaseFinal.common.Constants
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -25,7 +25,7 @@ object LabelRepository {
                 .orderBy(Constants.NOMBRE, Query.Direction.ASCENDING)
                 .addSnapshotListener { value, error ->
                     if (error != null) {
-                        Log.w(ContentValues.TAG, "Listen failed.", error)
+                        SecureLog.w(ContentValues.TAG, "Listen failed.", error)
                         return@addSnapshotListener
                     }
 
