@@ -7,11 +7,6 @@ buildscript {
 
     repositories {
         google()
-        jcenter() {
-            content {
-                includeGroup "com.ajts.androidmads"
-            }
-        }
         mavenCentral()
     }
     dependencies {
@@ -26,11 +21,6 @@ buildscript {
 allprojects {
     repositories {
         google()
-        jcenter() {
-            content {
-                includeGroup "com.ajts.androidmads"
-            }
-        }
         mavenCentral()
     }
 }
