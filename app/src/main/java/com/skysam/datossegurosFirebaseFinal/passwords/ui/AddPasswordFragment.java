@@ -1,7 +1,6 @@
 package com.skysam.datossegurosFirebaseFinal.passwords.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +28,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.AddViewModel;
@@ -274,7 +274,7 @@ public class AddPasswordFragment extends Fragment {
             requireActivity().finish();
 
         }).addOnFailureListener(e -> {
-            Log.w("msg", "Error adding document", e);
+            SecureLog.w("msg", "Error adding document", e);
             progressBar.setVisibility(View.GONE);
             inputLayoutServicio.setEnabled(true);
             inputLayoutUsuario.setEnabled(true);

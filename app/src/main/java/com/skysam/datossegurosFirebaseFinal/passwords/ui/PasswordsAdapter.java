@@ -7,7 +7,6 @@ import android.content.Context;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,6 +31,7 @@ import com.skysam.datossegurosFirebaseFinal.common.model.Password;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.EditarActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -332,11 +332,11 @@ public class PasswordsAdapter extends RecyclerView.Adapter<PasswordsAdapter.View
                         textView5.setText(pass5);
                     }
                 } else {
-                    Log.d("msg", "No such document");
+                    SecureLog.d("msg", "No such document");
                 }
 
             } else {
-                Log.d("msg", "Error:", task.getException());
+                SecureLog.d("msg", "Error:", task.getException());
             }
             progress.dismiss();
         });

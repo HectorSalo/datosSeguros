@@ -5,8 +5,11 @@ import com.skysam.datossegurosFirebaseFinal.BuildConfig
 
 object SecureLog {
     @JvmStatic
-    fun d(tag: String, msg: String) {
-        if (BuildConfig.DEBUG) Log.d(tag, msg)
+    @JvmOverloads
+    fun d(tag: String, msg: String, t: Throwable? = null) {
+        if (BuildConfig.DEBUG) {
+            if (t != null) Log.d(tag, msg, t) else Log.d(tag, msg)
+        }
     }
 
     @JvmStatic
