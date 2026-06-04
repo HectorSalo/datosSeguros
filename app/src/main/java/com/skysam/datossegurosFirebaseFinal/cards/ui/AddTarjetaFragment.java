@@ -2,7 +2,6 @@ package com.skysam.datossegurosFirebaseFinal.cards.ui;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
 
@@ -199,7 +199,7 @@ public class AddTarjetaFragment extends Fragment {
                     requireActivity().finish();
 
                 }).addOnFailureListener(e -> {
-                    Log.w("msg", "Error adding document", e);
+                    SecureLog.w("msg", "Error adding document", e);
                     progressBar.setVisibility(View.GONE);
                     inputLayoutTitular.setEnabled(true);
                     inputLayoutBanco.setEnabled(true);

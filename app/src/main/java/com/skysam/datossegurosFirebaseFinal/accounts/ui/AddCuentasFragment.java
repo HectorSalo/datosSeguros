@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.skysam.datossegurosFirebaseFinal.database.firebase.Auth;
 import com.skysam.datossegurosFirebaseFinal.common.model.Account;
@@ -200,7 +200,7 @@ public class AddCuentasFragment extends Fragment {
                     requireActivity().finish();
 
                 }).addOnFailureListener(e -> {
-                    Log.w("msg", "Error adding document", e);
+                    SecureLog.w("msg", "Error adding document", e);
                     progressBar.setVisibility(View.GONE);
                     Toast.makeText(getContext(), "Error al guadar. Intente nuevamente", Toast.LENGTH_SHORT).show();
                     inputLayoutTitular.setEnabled(true);
