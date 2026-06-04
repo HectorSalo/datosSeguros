@@ -2,7 +2,6 @@ package com.skysam.datossegurosFirebaseFinal.settings;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,6 +34,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.skysam.datossegurosFirebaseFinal.BuildConfig;
 import com.skysam.datossegurosFirebaseFinal.common.EliminarCuenta;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
 import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.SharedPref;
@@ -521,7 +521,7 @@ public class SettingsActivity extends AppCompatActivity implements
                 user.updateEmail(email)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                Log.d("msg", "User email address updated.");
+                                SecureLog.d("msg", "User email address updated.");
                                 Toast.makeText(getContext(), "Correo actualizado", Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);
                                 startActivity(new Intent(getContext(), SettingsActivity.class));
@@ -550,7 +550,7 @@ public class SettingsActivity extends AppCompatActivity implements
                 user.updatePassword(pass)
                         .addOnCompleteListener(task -> {
                             if (task.isSuccessful()) {
-                                Log.d("msg", "User password updated.");
+                                SecureLog.d("msg", "User password updated.");
                                 Toast.makeText(getContext(), "Contraseña actualizada", Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);
                                 startActivity(new Intent(getContext(), SettingsActivity.class));
