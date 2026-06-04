@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.skysam.datossegurosFirebaseFinal.common.Keyboard;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 
@@ -94,7 +94,7 @@ public class RegistrarActivity extends AppCompatActivity {
             mAuth.createUserWithEmailAndPassword(usuarioS, contrasenaS)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            Log.d("msg", "createUserWithEmail:success");
+                            SecureLog.d("msg", "createUserWithEmail:success");
                             progressBarRegistrar.setVisibility(View.GONE);
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
@@ -105,7 +105,7 @@ public class RegistrarActivity extends AppCompatActivity {
                             contrasena.setEnabled(true);
                             repetirContrasena.setEnabled(true);
                             button.setEnabled(true);
-                            Log.w("msg", "createUserWithEmail:failure", task.getException());
+                            SecureLog.w("msg", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(RegistrarActivity.this, "Error al Registrar\nPor favor, intente nuevamente",
                                     Toast.LENGTH_LONG).show();
 

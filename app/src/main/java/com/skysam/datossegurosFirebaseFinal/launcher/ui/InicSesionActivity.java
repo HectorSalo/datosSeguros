@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.skysam.datossegurosFirebaseFinal.common.Keyboard;
+import com.skysam.datossegurosFirebaseFinal.common.SecureLog;
 import com.skysam.datossegurosFirebaseFinal.databinding.ActivityInicSesionBinding;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
@@ -119,7 +119,7 @@ public class InicSesionActivity extends AppCompatActivity{
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
-                            Log.d("msg", "signInWithEmail:success");
+                            SecureLog.d("msg", "signInWithEmail:success");
                             activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
@@ -129,7 +129,7 @@ public class InicSesionActivity extends AppCompatActivity{
                             activityInicSesionBinding.inputLayoutPass.setEnabled(true);
                             activityInicSesionBinding.inputLayoutEmail.setEnabled(true);
                             activityInicSesionBinding.button.setEnabled(true);
-                            Log.w("msg", "signInWithEmail:failure", task.getException());
+                            SecureLog.w("msg", "signInWithEmail:failure", task.getException());
                             switch (task.getException().getMessage()) {
                                 case "There is no user record corresponding to this identifier. The user may have been deleted.":
                                     Toast.makeText(getApplicationContext(), "No existe el usuario, debe Registrarlo",
@@ -164,7 +164,7 @@ public class InicSesionActivity extends AppCompatActivity{
                 }
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
-                Log.e("msg", "Google sign in failed", e);
+                SecureLog.e("msg", "Google sign in failed", e);
                 // ...
             }
         }
@@ -178,13 +178,13 @@ public class InicSesionActivity extends AppCompatActivity{
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         // Sign in success, update UI with the signed-in user's information
-                        Log.d("msg", "signInWithCredential:success");
+                        SecureLog.d("msg", "signInWithCredential:success");
                         activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         finish();
                     } else {
                         // If sign in fails, display a message to the user.
-                        Log.w("msg", "signInWithCredential:failure", task.getException());
+                        SecureLog.w("msg", "signInWithCredential:failure", task.getException());
                         activityInicSesionBinding.progressBar.setVisibility(View.GONE);
                         Toast.makeText(getApplicationContext(), "Error al iniciar sesión\nPor favor, verifique los datos del Usuario y su conexión a internet",
                                 Toast.LENGTH_LONG).show();
@@ -199,7 +199,7 @@ public class InicSesionActivity extends AppCompatActivity{
 
         auth.sendPasswordResetEmail(email).addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
-                Log.d("msg", "Correo enviado");
+                SecureLog.d("msg", "Correo enviado");
             }
         });
     }
