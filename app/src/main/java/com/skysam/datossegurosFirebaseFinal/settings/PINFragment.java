@@ -22,13 +22,14 @@ import com.skysam.datossegurosFirebaseFinal.launcher.ui.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.PinStorage;
 import com.google.android.material.textfield.TextInputLayout;
 
 
 public class PINFragment extends Fragment {
 
     private EditText etPin, etPinRepetir;
-    private String pinGuardado, bloqueoEscogido;
+    private String bloqueoEscogido;
     private TextInputLayout layoutPin;
     private int valorNull;
     private SharedPreferences sharedPreferences;
@@ -58,8 +59,6 @@ public class PINFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         sharedPreferences = requireActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        pinGuardado = sharedPreferences.getString(Constants.PREFERENCE_PIN_RESPALDO, "0000");
 
         String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
@@ -116,13 +115,13 @@ public class PINFragment extends Fragment {
         layoutPin.setError("");
         String pin = etPin.getText().toString();
 
-        if (pin.equals(pinGuardado)) {
+        if (PinStorage.verify(pin)) {
             if (valorNull == 0) {
                 if (bloqueoEscogido.equals(Constants.PREFERENCE_SIN_BLOQUEO)) {
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_SIN_BLOQUEO);
-                    editor.putString(Constants.PREFERENCE_PIN_RESPALDO, "0000");
                     editor.apply();
+                    PinStorage.reset();
                     startActivity(new Intent(getContext(), MainActivity.class));
                 }
                 if (bloqueoEscogido.equals(Constants.PREFERENCE_PIN)) {
@@ -180,8 +179,8 @@ public class PINFragment extends Fragment {
             if (pin.equals(pinRepetir)) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_PIN);
-                editor.putString(Constants.PREFERENCE_PIN_RESPALDO, pin);
                 editor.apply();
+                PinStorage.save(pin);
                 startActivity(new Intent(getContext(), MainActivity.class));
             } else {
                 etPinRepetir.setError("El PIN no coincide");
