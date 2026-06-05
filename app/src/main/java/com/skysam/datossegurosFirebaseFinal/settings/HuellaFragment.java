@@ -29,13 +29,14 @@ import com.skysam.datossegurosFirebaseFinal.launcher.ui.InicSesionActivity;
 import com.skysam.datossegurosFirebaseFinal.generalActivitys.MainActivity;
 import com.skysam.datossegurosFirebaseFinal.R;
 import com.skysam.datossegurosFirebaseFinal.common.Constants;
+import com.skysam.datossegurosFirebaseFinal.database.sharedPreference.PinStorage;
 import com.google.android.material.textfield.TextInputLayout;
 
 
 public class HuellaFragment extends Fragment {
     private TextView textViewHuella, tvAccederPin;
     private EditText etPin, etPinRepetir;
-    private String pinGuardado, bloqueoGuardado;
+    private String bloqueoGuardado;
     private SharedPreferences sharedPreferences;
     private int valorNull;
     private LinearLayout linearHuella, linearPin;
@@ -70,8 +71,6 @@ public class HuellaFragment extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         sharedPreferences = requireActivity().getSharedPreferences(user.getUid(), Context.MODE_PRIVATE);
-
-        pinGuardado = sharedPreferences.getString(Constants.PREFERENCE_PIN_RESPALDO, "0000");
 
         String tema = sharedPreferences.getString(Constants.PREFERENCE_TEMA, Constants.PREFERENCE_AMARILLO);
 
@@ -182,7 +181,7 @@ public class HuellaFragment extends Fragment {
         etPin.setError(null);
         String pinS = etPin.getText().toString();
 
-        if (pinS.equals(pinGuardado)) {
+        if (PinStorage.verify(pinS)) {
             if (valorNull != 1) {
                 linearPin.setVisibility(View.GONE);
                 linearHuella.setVisibility(View.VISIBLE);
@@ -199,8 +198,8 @@ public class HuellaFragment extends Fragment {
     public void guardarPIN(String pin) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(Constants.PREFERENCE_TIPO_BLOQUEO, Constants.PREFERENCE_HUELLA);
-        editor.putString(Constants.PREFERENCE_PIN_RESPALDO, pin);
         editor.commit();
+        PinStorage.save(pin);
     }
 
 
