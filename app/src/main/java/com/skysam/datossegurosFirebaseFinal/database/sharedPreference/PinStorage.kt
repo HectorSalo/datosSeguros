@@ -21,7 +21,6 @@ import javax.crypto.spec.PBEKeySpec
 
 object PinStorage {
     private const val TAG = "PinStorage"
-    private const val DEFAULT_PIN = "0000"
     private const val KEY_PIN_HASH = "pinHash"
     private const val KEY_PIN_SALT = "pinSalt"
     private const val KEY_PIN_HASH_ENC = "pinHashEnc"
@@ -62,6 +61,7 @@ object PinStorage {
         val ok = runVerifyAgainstStores(sp, pin)
         if (ok) {
             clearAttempts(sp)
+            clearPlaintextResidueIfMigrated(sp)
         } else {
             recordFailedAttempt(sp)
         }
@@ -91,7 +91,7 @@ object PinStorage {
                 .remove(KEY_PIN_HASH_ENC)
                 .remove(KEY_PIN_SALT_ENC)
         }
-        editor.putString(Constants.PREFERENCE_PIN_RESPALDO, pin)
+        editor.remove(Constants.PREFERENCE_PIN_RESPALDO)
             .apply()
     }
 
@@ -104,7 +104,7 @@ object PinStorage {
             .remove(KEY_PIN_SALT)
             .remove(KEY_PIN_FAILED_COUNT)
             .remove(KEY_PIN_LOCKOUT_UNTIL)
-            .putString(Constants.PREFERENCE_PIN_RESPALDO, DEFAULT_PIN)
+            .remove(Constants.PREFERENCE_PIN_RESPALDO)
             .apply()
     }
 
@@ -157,7 +157,7 @@ object PinStorage {
     }
 
     private fun verifyLegacyAndMigrateIfNeeded(sp: SharedPreferences, pin: String): Boolean {
-        val legacy = sp.getString(Constants.PREFERENCE_PIN_RESPALDO, DEFAULT_PIN)
+        val legacy = sp.getString(Constants.PREFERENCE_PIN_RESPALDO, null) ?: return false
         if (pin != legacy) return false
         try {
             save(pin)
@@ -165,6 +165,14 @@ object PinStorage {
             SecureLog.w(TAG, "PIN auto-migration failed; staying on legacy", t)
         }
         return true
+    }
+
+    private fun clearPlaintextResidueIfMigrated(sp: SharedPreferences) {
+        val migrated = sp.getString(KEY_PIN_HASH_ENC, null) != null ||
+                sp.getString(KEY_PIN_HASH, null) != null
+        if (migrated && sp.contains(Constants.PREFERENCE_PIN_RESPALDO)) {
+            sp.edit().remove(Constants.PREFERENCE_PIN_RESPALDO).apply()
+        }
     }
 
     private fun promoteLegacyHashToEncrypted(
