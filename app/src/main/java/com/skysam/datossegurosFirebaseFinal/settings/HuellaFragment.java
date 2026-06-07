@@ -181,6 +181,11 @@ public class HuellaFragment extends Fragment {
         etPin.setError(null);
         String pinS = etPin.getText().toString();
 
+        if (PinStorage.isLocked()) {
+            etPin.setError(mensajeBloqueo());
+            return;
+        }
+
         if (PinStorage.verify(pinS)) {
             if (valorNull != 1) {
                 linearPin.setVisibility(View.GONE);
@@ -191,8 +196,23 @@ public class HuellaFragment extends Fragment {
                 startActivity(new Intent(getContext(), InicSesionActivity.class));
             }
         } else {
-            etPin.setError("El PIN no coincide con el almacenado");
+            if (PinStorage.isLocked()) {
+                etPin.setError(mensajeBloqueo());
+            } else {
+                etPin.setError("El PIN no coincide con el almacenado");
+            }
         }
+    }
+
+    private String mensajeBloqueo() {
+        long restanteMs = PinStorage.lockoutRemainingMs();
+        long segundos = (restanteMs + 999) / 1000;
+        if (segundos >= 60) {
+            long minutos = (segundos + 59) / 60;
+            return "Demasiados intentos fallidos. Intenta nuevamente en " + minutos
+                    + (minutos == 1 ? " minuto." : " minutos.");
+        }
+        return "Demasiados intentos fallidos. Intenta nuevamente en " + segundos + " segundos.";
     }
 
     public void guardarPIN(String pin) {

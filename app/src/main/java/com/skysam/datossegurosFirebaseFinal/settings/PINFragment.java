@@ -115,6 +115,11 @@ public class PINFragment extends Fragment {
         layoutPin.setError("");
         String pin = etPin.getText().toString();
 
+        if (PinStorage.isLocked()) {
+            layoutPin.setError(mensajeBloqueo());
+            return;
+        }
+
         if (PinStorage.verify(pin)) {
             if (valorNull == 0) {
                 if (bloqueoEscogido.equals(Constants.PREFERENCE_SIN_BLOQUEO)) {
@@ -138,8 +143,23 @@ public class PINFragment extends Fragment {
                 startActivity(new Intent(getContext(), MainActivity.class));
             }
         } else {
-            layoutPin.setError("El PIN no coincide con el almacenado");
+            if (PinStorage.isLocked()) {
+                layoutPin.setError(mensajeBloqueo());
+            } else {
+                layoutPin.setError("El PIN no coincide con el almacenado");
+            }
         }
+    }
+
+    private String mensajeBloqueo() {
+        long restanteMs = PinStorage.lockoutRemainingMs();
+        long segundos = (restanteMs + 999) / 1000;
+        if (segundos >= 60) {
+            long minutos = (segundos + 59) / 60;
+            return "Demasiados intentos fallidos. Intenta nuevamente en " + minutos
+                    + (minutos == 1 ? " minuto." : " minutos.");
+        }
+        return "Demasiados intentos fallidos. Intenta nuevamente en " + segundos + " segundos.";
     }
 
     public void validarPinNuevo() {
