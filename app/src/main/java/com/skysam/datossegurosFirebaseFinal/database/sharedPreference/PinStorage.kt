@@ -18,17 +18,10 @@ object PinStorage {
     private const val KEY_PIN_SALT = "pinSalt"
     private const val KEY_PIN_HASH_ENC = "pinHashEnc"
     private const val KEY_PIN_SALT_ENC = "pinSaltEnc"
-    private const val KEY_PIN_FAILED_COUNT = "pinFailedCount"
-    private const val KEY_PIN_LOCKOUT_UNTIL = "pinLockoutUntilEpochMs"
     private const val SALT_LENGTH_BYTES = 16
     private const val PBKDF2_ITERATIONS = 100_000
     private const val PBKDF2_KEY_LENGTH_BITS = 256
     private const val PBKDF2_ALGORITHM = "PBKDF2WithHmacSHA256"
-
-    private const val LOCKOUT_THRESHOLD_SOFT = 5
-    private const val LOCKOUT_THRESHOLD_HARD = 10
-    private const val LOCKOUT_DURATION_SOFT_MS = 60_000L
-    private const val LOCKOUT_DURATION_HARD_MS = 5 * 60_000L
 
     private fun prefs(): SharedPreferences =
         DatosSeguros.DatosSeguros.getContext().getSharedPreferences(
@@ -40,16 +33,16 @@ object PinStorage {
     fun verify(pin: String): Boolean {
         val sp = prefs()
 
-        if (System.currentTimeMillis() < currentLockoutUntil(sp)) {
+        if (PinRateLimiter.isLocked(sp)) {
             return false
         }
 
         val ok = runVerifyAgainstStores(sp, pin)
         if (ok) {
-            clearAttempts(sp)
+            PinRateLimiter.clear(sp)
             clearPlaintextResidueIfMigrated(sp)
         } else {
-            recordFailedAttempt(sp)
+            PinRateLimiter.recordFailure(sp)
         }
         return ok
     }
@@ -83,25 +76,22 @@ object PinStorage {
 
     @JvmStatic
     fun reset() {
-        prefs().edit()
+        val sp = prefs()
+        sp.edit()
             .remove(KEY_PIN_HASH_ENC)
             .remove(KEY_PIN_SALT_ENC)
             .remove(KEY_PIN_HASH)
             .remove(KEY_PIN_SALT)
-            .remove(KEY_PIN_FAILED_COUNT)
-            .remove(KEY_PIN_LOCKOUT_UNTIL)
             .remove(Constants.PREFERENCE_PIN_RESPALDO)
             .apply()
+        PinRateLimiter.clear(sp)
     }
 
     @JvmStatic
-    fun isLocked(): Boolean = lockoutRemainingMs() > 0L
+    fun isLocked(): Boolean = PinRateLimiter.isLocked(prefs())
 
     @JvmStatic
-    fun lockoutRemainingMs(): Long {
-        val remaining = currentLockoutUntil(prefs()) - System.currentTimeMillis()
-        return if (remaining > 0L) remaining else 0L
-    }
+    fun lockoutRemainingMs(): Long = PinRateLimiter.remainingMs(prefs())
 
     private fun runVerifyAgainstStores(sp: SharedPreferences, pin: String): Boolean {
         val encHash = sp.getString(KEY_PIN_HASH_ENC, null)
@@ -187,34 +177,5 @@ object PinStorage {
         } finally {
             spec.clearPassword()
         }
-    }
-
-    private fun currentFailedCount(sp: SharedPreferences): Int =
-        sp.getInt(KEY_PIN_FAILED_COUNT, 0)
-
-    private fun currentLockoutUntil(sp: SharedPreferences): Long =
-        sp.getLong(KEY_PIN_LOCKOUT_UNTIL, 0L)
-
-    private fun recordFailedAttempt(sp: SharedPreferences) {
-        val next = currentFailedCount(sp) + 1
-        val duration = computeLockoutDurationMs(next)
-        val editor = sp.edit().putInt(KEY_PIN_FAILED_COUNT, next)
-        if (duration > 0L) {
-            editor.putLong(KEY_PIN_LOCKOUT_UNTIL, System.currentTimeMillis() + duration)
-        }
-        editor.apply()
-    }
-
-    private fun clearAttempts(sp: SharedPreferences) {
-        sp.edit()
-            .remove(KEY_PIN_FAILED_COUNT)
-            .remove(KEY_PIN_LOCKOUT_UNTIL)
-            .apply()
-    }
-
-    private fun computeLockoutDurationMs(failedCount: Int): Long = when {
-        failedCount < LOCKOUT_THRESHOLD_SOFT -> 0L
-        failedCount < LOCKOUT_THRESHOLD_HARD -> LOCKOUT_DURATION_SOFT_MS
-        else -> LOCKOUT_DURATION_HARD_MS
     }
 }
