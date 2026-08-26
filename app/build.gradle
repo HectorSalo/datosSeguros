@@ -4,14 +4,14 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    compileSdkVersion 35
+    compileSdkVersion 36
 
     defaultConfig {
         applicationId 'com.skysam.datossegurosFirebaseFinal'
         minSdkVersion 28
-        targetSdkVersion 35
-        versionCode 16
-        versionName "7.3"
+        targetSdkVersion 36
+        versionCode 18
+        versionName "7.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
